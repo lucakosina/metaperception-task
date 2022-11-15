@@ -9,11 +9,11 @@ var boxDist = 200; //distance between the boxes
 
 // left box
 var leftBoxStartX = window.innerWidth / 2 - squareWidth / 2 - boxDist;
-var leftBoxStartY = window.innerHeight / 2 - squareWidth / 2;
+var leftBoxStartY = (window.innerHeight - 50) / 2 - squareWidth / 2;
 
 //right box
 var rightBoxStartX = window.innerWidth / 2 - squareWidth / 2 + boxDist;
-var rightBoxStartY = window.innerHeight / 2 - squareWidth / 2;
+var rightBoxStartY = (window.innerHeight - 50) / 2 - squareWidth / 2;
 
 export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
   var dotCir = dotRadius * 2;

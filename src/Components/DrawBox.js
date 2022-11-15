@@ -6,11 +6,11 @@ var squareWidth = 250;
 
 //left box
 var leftBoxStartX = window.innerWidth / 2 - squareWidth / 2 - boxDist;
-var leftBoxStartY = window.innerHeight / 2 - squareWidth / 2;
+var leftBoxStartY = (window.innerHeight - 50) / 2 - squareWidth / 2;
 
 //right box
 var rightBoxStartX = window.innerWidth / 2 - squareWidth / 2 + boxDist;
-var rightBoxStartY = window.innerHeight / 2 - squareWidth / 2;
+var rightBoxStartY = (window.innerHeight - 50) / 2 - squareWidth / 2;
 
 class DrawBox extends React.Component {
   constructor(props) {

@@ -21,7 +21,7 @@ class DrawFix extends React.Component {
           <Layer>
             <Rect
               x={window.innerWidth / 2 + this.state.fixWidVert / 2}
-              y={window.innerHeight / 2 - this.state.fixHeiVert / 2}
+              y={(window.innerHeight - 50) / 2 - this.state.fixHeiVert / 2}
               width={this.state.fixWidVert}
               height={this.state.fixHeiVert}
               fill="black"
@@ -33,7 +33,7 @@ class DrawFix extends React.Component {
                 this.state.fixWidHori / 2 +
                 this.state.fixHeiHori
               }
-              y={window.innerHeight / 2 - this.state.fixHeiHori / 2}
+              y={(window.innerHeight - 50) / 2 - this.state.fixHeiHori / 2}
               width={this.state.fixWidHori}
               height={this.state.fixHeiHori}
               fill="black"

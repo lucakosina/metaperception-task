@@ -9,6 +9,7 @@ import styles from "./style/taskStyle.module.css";
 import * as utils from "./utils.js";
 import * as staircase from "./staircase.js";
 import withRouter from "./withRouter.js";
+import * as ConfSlider from "./DrawConfSlider.js";
 
 //import { DATABASE_URL } from "./config";
 
@@ -44,7 +45,7 @@ class TutorDotsTask extends React.Component {
       // trial timings in ms
       fixTimeLag: 1000, //1000
       fbTimeLag: 500, //500
-      stimTimeLag: 1000, //300
+      stimTimeLag: 500, //300
       respTimeLag: 3000,
       respFbTimeLag: 1000,
       itiTimeLag: 500, //500
@@ -66,10 +67,10 @@ class TutorDotsTask extends React.Component {
       responseKey: 0,
       respTime: 0,
       respFbTime: 0,
-      leftChoice: 0,
-      rightChoice: 0,
+      choice: null,
       confLevel: 0,
       confTime: 0,
+      correct: null,
 
       dotRadius: 5,
 
@@ -77,10 +78,10 @@ class TutorDotsTask extends React.Component {
       responseMatrix: [true, true],
       reversals: 0,
       stairDir: ["up", "up"],
-      dotsStair1: 4.65, //in log space; this is about 104 dots which is 70 dots shown for the first one
-      dotsStair2: 0,
-      dotsStairLeft: 0,
-      dotsStairRight: 0,
+      dotStair1: 4.65, //in log space; this is about 104 dots which is 70 dots shown for the first one
+      dotStair2: 0,
+      dotStairLeft: 0,
+      dotStairRight: 0,
       count: 0,
 
       // screen parameters
@@ -107,6 +108,7 @@ class TutorDotsTask extends React.Component {
     this.handleInstruct = this.handleInstruct.bind(this);
     this.handleBegin = this.handleBegin.bind(this);
     this.handleResp = this.handleResp.bind(this);
+    this.handleConfResp = this.handleConfResp.bind(this);
     this.instructText = this.instructText.bind(this);
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,25 +145,43 @@ class TutorDotsTask extends React.Component {
     var respTime =
       timePressed -
       (this.state.trialTime + this.state.fixTime + this.state.stimTime);
-    var leftChoice;
-    var rightChoice;
+
+    var choice;
     if (keyPressed === 1) {
-      leftChoice = 10;
-      rightChoice = 0;
+      choice = "left";
     } else if (keyPressed === 2) {
-      leftChoice = 0;
-      rightChoice = 10;
+      choice = "right";
     } else {
-      leftChoice = 0;
-      rightChoice = 0;
+      choice = null;
       console.log("No response made!");
     }
 
+    var correct;
+    var response;
+    if (this.state.dotDiffLeft > this.state.dotDiffRight && choice === "left") {
+      response = true;
+      correct = 1;
+    } else if (
+      this.state.dotDiffLeft < this.state.dotDiffRight &&
+      choice === "right"
+    ) {
+      response = true;
+      correct = 1;
+    } else {
+      response = false;
+      correct = 0;
+    }
+
+    console.log("response: " + response);
+
+    var responseMatrix = this.state.responseMatrix.concat(response);
+
     this.setState({
       responseKey: keyPressed,
-      leftChoice: leftChoice,
-      rightChoice: rightChoice,
+      choice: choice,
       respTime: respTime,
+      correct: correct,
+      responseMatrix: responseMatrix,
     });
 
     setTimeout(
@@ -170,6 +190,18 @@ class TutorDotsTask extends React.Component {
       }.bind(this),
       0
     );
+  }
+
+  handleConfResp(keyPressed, timePressed) {
+    var whichButton = keyPressed;
+    if (whichButton === 3) {
+      setTimeout(
+        function () {
+          this.renderFix();
+        }.bind(this),
+        0
+      );
+    }
   }
 
   // handle key keyPressed
@@ -228,6 +260,41 @@ class TutorDotsTask extends React.Component {
       default:
     }
   };
+
+  // handle key keyPressed
+  _handleConfRespKey = (event) => {
+    var keyPressed;
+    var timePressed;
+    var leftKey = this.state.respKeyCode[0];
+    var rightKey = this.state.respKeyCode[1];
+
+    switch (event.keyCode) {
+      case leftKey:
+        //    this is left choice
+        keyPressed = 1;
+        timePressed = Math.round(performance.now());
+        this.handleConfResp(keyPressed, timePressed);
+        break;
+      case rightKey:
+        //    this is right choice
+        keyPressed = 2;
+        timePressed = Math.round(performance.now());
+        this.handleConfResp(keyPressed, timePressed);
+        break;
+      case 32:
+        //    this is enter
+        keyPressed = 3;
+        timePressed = Math.round(performance.now());
+        this.handleConfResp(keyPressed, timePressed);
+        break;
+      default:
+    }
+  };
+
+  handleCallbackConf(callBackValue) {
+    this.setState({ confValue: callBackValue });
+    console.log("Confidence is: " + this.state.confValue);
+  }
 
   // To ask them for the valence rating of the noises
   // before we start the task
@@ -380,6 +447,7 @@ class TutorDotsTask extends React.Component {
   // FOUR COMPONENTS OF THE TASK, Fixation, Stimulus/Response, Feedback and Confidence
 
   renderFix() {
+    document.removeEventListener("keydown", this._handleConfRespKey);
     if (this.state.taskScreen === true) {
       //console.log("Fixation IS RENDERED as taskScreen is TRUE");
       //if trials are still ongoing
@@ -390,15 +458,19 @@ class TutorDotsTask extends React.Component {
       var stimPos = this.state.pracPos[trialNum - 1];
 
       var s2 = staircase.staircase(
-        this.state.dotsStair1,
+        this.state.dotStair1,
         this.state.responseMatrix,
         this.state.stairDir,
         trialNum
       );
 
-      var dotsStair1 = s2.diff;
+      var dotStair1 = s2.diff;
       var stairDir = s2.direction;
       var responseMatrix = s2.stepcount;
+
+      console.log("dotsStair: " + dotStair1);
+      console.log("stairDir: " + stairDir);
+      console.log("responseMat: " + responseMatrix);
 
       var reversals;
       if (s2.reversal) {
@@ -410,19 +482,19 @@ class TutorDotsTask extends React.Component {
 
       var dotDiffLeft;
       var dotDiffRight;
-      var dotsStairLeft;
-      var dotsStairRight;
+      var dotStairLeft;
+      var dotStairRight;
 
       if (stimPos === 1) {
-        dotsStairLeft = dotsStair1;
-        dotsStairRight = 0;
-        dotDiffLeft = Math.round(Math.exp(dotsStairLeft));
-        dotDiffRight = dotsStairRight; //should be 0
+        dotStairLeft = dotStair1;
+        dotStairRight = 0;
+        dotDiffLeft = Math.round(Math.exp(dotStairLeft));
+        dotDiffRight = dotStairRight; //should be 0
       } else {
-        dotsStairLeft = 0;
-        dotsStairRight = dotsStair1;
-        dotDiffLeft = dotsStairLeft; //should be 0
-        dotDiffRight = Math.round(Math.exp(dotsStairRight));
+        dotStairLeft = 0;
+        dotStairRight = dotStair1;
+        dotDiffLeft = dotStairLeft; //should be 0
+        dotDiffRight = Math.round(Math.exp(dotStairRight));
       }
 
       //Reset all parameters
@@ -439,14 +511,16 @@ class TutorDotsTask extends React.Component {
         fbTime: 0,
         confLevel: 0,
         confTime: 0,
+        choice: null,
+        correct: null,
 
         reversals: reversals,
         responseMatrix: responseMatrix,
         //Calculate the for the paramters for the stim
-        dotDiffStim1: Math.round(Math.exp(dotsStair1)),
+        dotDiffStim1: Math.round(Math.exp(dotStair1)),
         dotDiffStim2: 0,
-        dotsStairLeft: dotsStairLeft,
-        dotsStairRight: dotsStairRight,
+        dotStairLeft: dotStairLeft,
+        dotStairRight: dotStairRight,
         dotDiffLeft: dotDiffLeft,
         dotDiffRight: dotDiffRight,
       });
@@ -532,10 +606,26 @@ class TutorDotsTask extends React.Component {
 
     setTimeout(
       function () {
-        this.renderFix();
+        this.renderConfScale();
       }.bind(this),
       this.state.respFbTimeLag
     );
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  renderConfScale() {
+    document.addEventListener("keydown", this._handleConfRespKey);
+
+    var initialValue = utils.randomInt(60, 85);
+
+    this.setState({
+      instructScreen: false,
+      taskScreen: true,
+      taskSection: "confidence",
+      confInitial: initialValue,
+    });
+
+    // it will deploy the next trial with spacebar keypress
   }
 
   componentDidMount() {
@@ -596,10 +686,28 @@ class TutorDotsTask extends React.Component {
       ) {
         text = (
           <div>
-            <DrawChoice.DrawChoice
-              leftChoice={this.state.leftChoice}
-              rightChoice={this.state.rightChoice}
-            />
+            <DrawChoice.DrawChoice choice={this.state.choice} />
+          </div>
+        );
+      } else if (
+        this.state.instructScreen === false &&
+        this.state.taskScreen === true &&
+        this.state.taskSection === "confidence"
+      ) {
+        text = (
+          <div>
+            Rate your confidence on the probability that your choice was
+            correct:
+            <br />
+            <br />
+            <br />
+            <br />
+            <center>
+              <ConfSlider.ConfSlider
+                callBackValue={this.handleCallbackConf.bind(this)}
+                initialValue={this.state.confInitial}
+              />
+            </center>
           </div>
         );
       }

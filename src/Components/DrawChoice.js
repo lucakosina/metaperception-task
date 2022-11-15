@@ -6,13 +6,27 @@ var squareWidth = 250;
 
 //left box
 var leftBoxStartX = window.innerWidth / 2 - squareWidth / 2 - boxDist;
-var leftBoxStartY = window.innerHeight / 2 - squareWidth / 2;
+var leftBoxStartY = (window.innerHeight - 50) / 2 - squareWidth / 2;
 
 //right box
 var rightBoxStartX = window.innerWidth / 2 - squareWidth / 2 + boxDist;
-var rightBoxStartY = window.innerHeight / 2 - squareWidth / 2;
+var rightBoxStartY = (window.innerHeight - 50) / 2 - squareWidth / 2;
 
-export const DrawChoice = ({ leftChoice, rightChoice }) => {
+export const DrawChoice = ({ choice }) => {
+  var leftChoice;
+  var rightChoice;
+
+  if (choice === "left") {
+    leftChoice = 10;
+    rightChoice = 0;
+  } else if (choice === "right") {
+    leftChoice = 0;
+    rightChoice = 10;
+  } else {
+    leftChoice = 0;
+    rightChoice = 0;
+  }
+
   const [leftBoxState, setLeftBoxState] = React.useState(leftChoice);
   const [rightBoxState, setRightBoxState] = React.useState(rightChoice);
 

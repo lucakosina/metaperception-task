@@ -25,6 +25,9 @@ export function staircase(dotDiff, prevTrialPerf, dir, trialNum) {
       else if (trialNum > 11) dotDiff -= 0.1;
       // for next 5 trials of the practice
 
+      // changes the last trial to incorrect
+      // so if previous two trials were correct and the staircase increased difficulty
+      // it needs two more trials again before it lowers again in value
       prevTrialPerf[prevTrialPerf.length - 1] = false;
 
       dir[0] = dir[1]; // Set the direction two trials ago to the direction one trial ago
