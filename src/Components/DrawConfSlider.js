@@ -35,22 +35,27 @@ function valuetext(value: number) {
 }
 
 export function ConfSlider({ callBackValue, initialValue }) {
+  const [value, setValue] = React.useState(initialValue);
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+    console.log(newValue);
+    callBackValue(newValue);
+  };
+
   return (
     <Box sx={{ width: 500 }}>
       <Slider
+        color="primary"
         aria-label="Always visible"
-        defaultValue={initialValue}
-        getAriaValueText={valuetext}
         step={1}
         marks={marks}
         min={50}
         max={100}
         track={false}
         valueLabelDisplay="on"
-        onChange={(event) => {
-          const newValue = event.target.value;
-          callBackValue(newValue);
-        }}
+        value={value}
+        onChange={handleChange}
       />
     </Box>
   );

@@ -1,11 +1,9 @@
 import React from "react";
-//import { Button } from "react-bootstrap";
-
 import DrawFix from "./DrawFix";
 import * as DrawDots from "./DrawDots";
 import DrawBox from "./DrawBox";
 import * as DrawChoice from "./DrawChoice";
-import styles from "./style/taskStyle.module.css";
+import style from "./style/taskStyle.module.css";
 import * as utils from "./utils.js";
 import * as staircase from "./staircase.js";
 import withRouter from "./withRouter.js";
@@ -268,6 +266,8 @@ class TutorDotsTask extends React.Component {
     var leftKey = this.state.respKeyCode[0];
     var rightKey = this.state.respKeyCode[1];
 
+    console.log("Confidence is when pressed: " + this.state.confValue);
+
     switch (event.keyCode) {
       case leftKey:
         //    this is left choice
@@ -293,7 +293,7 @@ class TutorDotsTask extends React.Component {
 
   handleCallbackConf(callBackValue) {
     this.setState({ confValue: callBackValue });
-    console.log("Confidence is: " + this.state.confValue);
+    console.log("Confidence is: " + callBackValue);
   }
 
   // To ask them for the valence rating of the noises
@@ -651,7 +651,7 @@ class TutorDotsTask extends React.Component {
         this.state.taskSection === "fixation"
       ) {
         text = (
-          <div>
+          <div className={style.boxStyle}>
             <DrawFix />
           </div>
         );
@@ -661,7 +661,7 @@ class TutorDotsTask extends React.Component {
         this.state.taskSection === "stimulus"
       ) {
         text = (
-          <div>
+          <div className={style.boxStyle}>
             <DrawDots.DrawDots
               dotRadius={this.state.dotRadius}
               dotDiffLeft={this.state.dotDiffLeft}
@@ -675,7 +675,7 @@ class TutorDotsTask extends React.Component {
         this.state.taskSection === "choice"
       ) {
         text = (
-          <div>
+          <div className={style.boxStyle}>
             <DrawBox />
           </div>
         );
@@ -685,7 +685,7 @@ class TutorDotsTask extends React.Component {
         this.state.taskSection === "choiceFeedback"
       ) {
         text = (
-          <div>
+          <div className={style.boxStyle}>
             <DrawChoice.DrawChoice choice={this.state.choice} />
           </div>
         );
@@ -708,6 +708,11 @@ class TutorDotsTask extends React.Component {
                 initialValue={this.state.confInitial}
               />
             </center>
+            <br />
+            Complete guess/Absolutely certain
+            <br />
+            <br />
+            Press the [SPACEBAR] to continue
           </div>
         );
       }
@@ -725,7 +730,13 @@ class TutorDotsTask extends React.Component {
       );
     }
 
-    return <div className={styles.main}>{text}</div>;
+    return (
+      <div className={style.bg}>
+        <div className={style.textFrame}>
+          <div className={style.fontStyle}>{text}</div>
+        </div>
+      </div>
+    );
   }
 }
 

@@ -1,12 +1,47 @@
-.main {
+.fontStyle {
   display: flex;
   justify-content: center;
   align-items: center;
   height: auto;
   margin: 50px;
-  color: black;
+  color: white;
   font-size: 18px;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Courier New", monospace;
+}
+
+.boxStyle {
+  margin: 0px;
+}
+.textFrame {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.7);
+  /* opacity: 0.8; */
+  border-radius: 30px;
+  border: 1px solid white;
+  margin: 50px 200px 50px 200px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  height: 80vh;
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12),
+    0 2px 4px -1px rgba(0, 0, 0, 0.3);
+}
+
+.bg {
+  /* The image used */
+  background-image: url("../img/space-bg2.jpg");
+
+  /* Full height */
+  height: auto;
+  min-height: 100%;
+  min-width: 1024px;
+  width: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+  /* background-attachment: fixed; */
 }
 
 html,

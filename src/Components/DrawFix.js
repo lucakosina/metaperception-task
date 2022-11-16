@@ -1,6 +1,9 @@
 import React from "react";
 import { Stage, Layer, Rect } from "react-konva";
 
+var bufferFix = 400;
+var bufferFixWin = 0;
+
 class DrawFix extends React.Component {
   constructor(props) {
     super(props);
@@ -17,14 +20,19 @@ class DrawFix extends React.Component {
 
     text = (
       <div>
-        <Stage width={window.innerWidth} height={window.innerHeight}>
+        <Stage
+          width={window.innerWidth}
+          height={window.innerHeight - bufferFixWin}
+        >
           <Layer>
             <Rect
               x={window.innerWidth / 2 + this.state.fixWidVert / 2}
-              y={(window.innerHeight - 50) / 2 - this.state.fixHeiVert / 2}
+              y={
+                (window.innerHeight - bufferFix) / 2 - this.state.fixHeiVert / 2
+              }
               width={this.state.fixWidVert}
               height={this.state.fixHeiVert}
-              fill="black"
+              fill="white"
             />
 
             <Rect
@@ -33,10 +41,12 @@ class DrawFix extends React.Component {
                 this.state.fixWidHori / 2 +
                 this.state.fixHeiHori
               }
-              y={(window.innerHeight - 50) / 2 - this.state.fixHeiHori / 2}
+              y={
+                (window.innerHeight - bufferFix) / 2 - this.state.fixHeiHori / 2
+              }
               width={this.state.fixWidHori}
               height={this.state.fixHeiHori}
-              fill="black"
+              fill="white"
             />
           </Layer>
         </Stage>

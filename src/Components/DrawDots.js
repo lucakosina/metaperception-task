@@ -6,14 +6,16 @@ import * as utils from "./utils.js";
 //create black stimulus box
 var squareWidth = 250; //250
 var boxDist = 200; //distance between the boxes
+var bufferFix = 400;
+var bufferFixWin = 0;
 
 // left box
 var leftBoxStartX = window.innerWidth / 2 - squareWidth / 2 - boxDist;
-var leftBoxStartY = (window.innerHeight - 50) / 2 - squareWidth / 2;
+var leftBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 
 //right box
 var rightBoxStartX = window.innerWidth / 2 - squareWidth / 2 + boxDist;
-var rightBoxStartY = (window.innerHeight - 50) / 2 - squareWidth / 2;
+var rightBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 
 export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
   var dotCir = dotRadius * 2;
@@ -56,7 +58,7 @@ export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
   const [dotsRightShow, setDotsRightShow] = React.useState(rightDotShownCoor);
 
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight}>
+    <Stage width={window.innerWidth} height={window.innerHeight - bufferFixWin}>
       <Layer>
         <Rect
           x={leftBoxStartX}
@@ -64,6 +66,8 @@ export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
           width={squareWidth}
           height={squareWidth}
           fill="black"
+          strokeWidth={2.5} // border width
+          stroke="white" // border color
         />
         <Rect
           x={rightBoxStartX}
@@ -71,6 +75,8 @@ export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
           width={squareWidth}
           height={squareWidth}
           fill="black"
+          strokeWidth={2.5} // border width
+          stroke="white" // border color
         />
       </Layer>
       <Layer>
