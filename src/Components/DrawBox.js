@@ -1,5 +1,6 @@
 import React from "react";
-import { Stage, Layer, Rect } from "react-konva";
+import { Stage, Layer, Rect, Text } from "react-konva";
+import style from "./style/taskStyle.module.css";
 
 var boxDist = 200; //distance between the boxes
 var squareWidth = 250;
@@ -51,6 +52,22 @@ class DrawBox extends React.Component {
               fill="black"
               strokeWidth={2.5} // border width
               stroke="white" // border color
+            />
+            <Text
+              fill="white"
+              x={this.state.leftBoxStartX}
+              y={this.state.leftBoxStartY - 50}
+              text="Press W for left choice."
+              fontSize={16}
+              fontFamily="Courier New"
+            />
+            <Text
+              fill="white"
+              x={this.state.rightBoxStartX}
+              y={this.state.rightBoxStartY - 50}
+              text="Press O for right choice."
+              fontSize={16}
+              fontFamily="Courier New"
             />
           </Layer>
         </Stage>

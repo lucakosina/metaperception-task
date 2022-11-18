@@ -51,7 +51,7 @@ class StartPage extends React.Component {
       consentComplete: 1,
     });
 
-    this.props.navigate("/TutorDotsTask", {
+    this.props.navigate("/MetaPerTut", {
       state: {
         userID: this.state.userID,
         date: this.state.date,

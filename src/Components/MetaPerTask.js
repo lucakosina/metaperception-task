@@ -14,7 +14,7 @@ import * as ConfSlider from "./DrawConfSlider.js";
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 // THIS CODES THE TUTORIAL SESSIONS + QUIZ FOR THE TASK
-class TutorDotsTask extends React.Component {
+class MetaPerTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   // CONSTRUCTOR
   constructor(props) {
@@ -66,8 +66,9 @@ class TutorDotsTask extends React.Component {
       respTime: 0,
       respFbTime: 0,
       choice: null,
-      confLevel: 0,
+      confLevel: null,
       confTime: 0,
+      confMove: null, //can only move to next trial if conf was toggled
       correct: null,
 
       dotRadius: 5,
@@ -192,10 +193,11 @@ class TutorDotsTask extends React.Component {
 
   handleConfResp(keyPressed, timePressed) {
     var whichButton = keyPressed;
-    if (whichButton === 3) {
+    if (whichButton === 3 && this.state.confMove === true) {
+      document.removeEventListener("keydown", this._handleConfRespKey);
       setTimeout(
         function () {
-          this.renderFix();
+          this.trialReset();
         }.bind(this),
         0
       );
@@ -263,24 +265,10 @@ class TutorDotsTask extends React.Component {
   _handleConfRespKey = (event) => {
     var keyPressed;
     var timePressed;
-    var leftKey = this.state.respKeyCode[0];
-    var rightKey = this.state.respKeyCode[1];
 
     console.log("Confidence is when pressed: " + this.state.confValue);
 
     switch (event.keyCode) {
-      case leftKey:
-        //    this is left choice
-        keyPressed = 1;
-        timePressed = Math.round(performance.now());
-        this.handleConfResp(keyPressed, timePressed);
-        break;
-      case rightKey:
-        //    this is right choice
-        keyPressed = 2;
-        timePressed = Math.round(performance.now());
-        this.handleConfResp(keyPressed, timePressed);
-        break;
       case 32:
         //    this is enter
         keyPressed = 3;
@@ -294,6 +282,10 @@ class TutorDotsTask extends React.Component {
   handleCallbackConf(callBackValue) {
     this.setState({ confValue: callBackValue });
     console.log("Confidence is: " + callBackValue);
+
+    if (this.state.confValue !== null) {
+      this.setState({ confMove: true });
+    }
   }
 
   // To ask them for the valence rating of the noises
@@ -324,11 +316,11 @@ class TutorDotsTask extends React.Component {
           Please do your best to rate your confidence accurately and do take
           advantage of the whole rating scale.
           <br /> <br />
-          <span>
-            [<strong>NEXT</strong> →]
-            <br /> <br />
-            Use the left and right arrow keys to navigate the pages.
-          </span>
+          <center>
+            <br />
+            Use the ← and → keys to navigate the pages.
+            <br />[<strong>→</strong>]
+          </center>
         </span>
       </div>
     );
@@ -344,9 +336,9 @@ class TutorDotsTask extends React.Component {
           trial.
           <br />
           <br />
-          <span>
-            [← <strong>BACK</strong>] [<strong>NEXT</strong> →]
-          </span>
+          <center>
+            [<strong>←</strong>] [<strong>→</strong>]
+          </center>
         </span>
       </div>
     );
@@ -359,8 +351,10 @@ class TutorDotsTask extends React.Component {
           <br />
           <br />
           In this practice phase we will tell you whether your judgements are
-          right or wrong. <br></br>If you are <strong>correct</strong>, the box
-          that you selected will be outlined in{" "}
+          right or wrong. <br />
+          <br />
+          If you are <strong>correct</strong>, the box that you selected will be
+          outlined in{" "}
           <font color="blue">
             <strong>blue</strong>
           </font>
@@ -376,12 +370,11 @@ class TutorDotsTask extends React.Component {
           these trials.
           <br />
           <br />
-          Press [<strong>SPACEBAR</strong>] to begin the practice.
-          <br />
-          <br />
-          <span>
-            [← <strong>BACK</strong>]
-          </span>
+          <center>
+            Press [<strong>SPACEBAR</strong>] to begin the practice.
+            <br />
+            <br />[<strong>←</strong>]
+          </center>
         </span>
       </div>
     );
@@ -390,6 +383,7 @@ class TutorDotsTask extends React.Component {
       <div>
         <span>
           End of practice!
+          <br />
           <br />
           Press [<strong>SPACEBAR]</strong> to move on to the task.
         </span>
@@ -413,19 +407,10 @@ class TutorDotsTask extends React.Component {
     // remove access to left/right/space keys for the instructions
     document.removeEventListener("keydown", this._handleInstructKey);
     document.removeEventListener("keydown", this._handleBeginKey);
-    //add access to left/right/space keys for the task
-
-    // change state to make sure the screen is changed for the task
-    this.setState({
-      instructScreen: false,
-      taskScreen: true,
-      taskSection: "fixation",
-    });
-
     // push to render fixation for the first trial
     setTimeout(
       function () {
-        this.renderFix();
+        this.trialReset();
       }.bind(this),
       0
     );
@@ -445,109 +430,116 @@ class TutorDotsTask extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////
   // FOUR COMPONENTS OF THE TASK, Fixation, Stimulus/Response, Feedback and Confidence
+  trialReset() {
+    var trialNum = this.state.trialNum + 1; //trialNum is 0, so it starts from 1
+    var stimPos = this.state.pracPos[trialNum - 1]; //shuffle the order for the dotDiffLeft
+
+    // run staircase
+    var s2 = staircase.staircase(
+      this.state.dotStair1,
+      this.state.responseMatrix,
+      this.state.stairDir,
+      trialNum
+    );
+
+    var dotStair1 = s2.diff;
+    var stairDir = s2.direction;
+    var responseMatrix = s2.stepcount;
+
+    console.log("dotsStair: " + dotStair1);
+    console.log("stairDir: " + stairDir);
+    console.log("responseMat: " + responseMatrix);
+
+    var reversals;
+    if (s2.reversal) {
+      // Check for reversal. If true, add one to reversals variable
+      reversals = 1;
+    } else {
+      reversals = 0;
+    }
+
+    var dotDiffLeft;
+    var dotDiffRight;
+    var dotStairLeft;
+    var dotStairRight;
+
+    if (stimPos === 1) {
+      dotStairLeft = dotStair1;
+      dotStairRight = 0;
+      dotDiffLeft = Math.round(Math.exp(dotStairLeft));
+      dotDiffRight = dotStairRight; //should be 0
+    } else {
+      dotStairLeft = 0;
+      dotStairRight = dotStair1;
+      dotDiffLeft = dotStairLeft; //should be 0
+      dotDiffRight = Math.round(Math.exp(dotStairRight));
+    }
+
+    //Reset all parameters
+    this.setState({
+      instructScreen: false,
+      taskScreen: true,
+      trialNum: trialNum,
+      fixTime: 0,
+      stimTime: 0,
+      responseKey: 0,
+      reactionTime: 0,
+      fbTime: 0,
+      confLevel: null,
+      confTime: 0,
+      confMove: false,
+      choice: null,
+      correct: null,
+      stimPos: stimPos,
+      reversals: reversals,
+      responseMatrix: responseMatrix,
+      //Calculate the for the paramters for the stim
+      dotDiffStim1: Math.round(Math.exp(dotStair1)),
+      dotDiffStim2: 0,
+      dotStairLeft: dotStairLeft,
+      dotStairRight: dotStairRight,
+      dotDiffLeft: dotDiffLeft,
+      dotDiffRight: dotDiffRight,
+    });
+
+    console.log(this.state.trialNum);
+    console.log(this.state.trialNumTotal);
+
+    if (this.state.trialNum < this.state.trialNumTotal + 1) {
+      setTimeout(
+        function () {
+          this.renderFix();
+        }.bind(this),
+        0
+      );
+    } else {
+      // if the trials have reached the total trial number
+      setTimeout(
+        function () {
+          this.tutorEnd();
+        }.bind(this),
+        0
+      );
+    }
+  }
 
   renderFix() {
-    document.removeEventListener("keydown", this._handleConfRespKey);
-    if (this.state.taskScreen === true) {
-      //console.log("Fixation IS RENDERED as taskScreen is TRUE");
-      //if trials are still ongoing
-      var trialNum = this.state.trialNum + 1; //trialNum is 0, so it starts from 1
-      var trialTime = Math.round(performance.now());
+    var trialTime = Math.round(performance.now());
 
-      //shuffle the order for the dotDiffLeft
-      var stimPos = this.state.pracPos[trialNum - 1];
+    //Show fixation
+    this.setState({
+      instructScreen: false,
+      taskScreen: true,
+      taskSection: "fixation",
+      trialTime: trialTime,
+    });
 
-      var s2 = staircase.staircase(
-        this.state.dotStair1,
-        this.state.responseMatrix,
-        this.state.stairDir,
-        trialNum
-      );
-
-      var dotStair1 = s2.diff;
-      var stairDir = s2.direction;
-      var responseMatrix = s2.stepcount;
-
-      console.log("dotsStair: " + dotStair1);
-      console.log("stairDir: " + stairDir);
-      console.log("responseMat: " + responseMatrix);
-
-      var reversals;
-      if (s2.reversal) {
-        // Check for reversal. If true, add one to reversals variable
-        reversals = 1;
-      } else {
-        reversals = 0;
-      }
-
-      var dotDiffLeft;
-      var dotDiffRight;
-      var dotStairLeft;
-      var dotStairRight;
-
-      if (stimPos === 1) {
-        dotStairLeft = dotStair1;
-        dotStairRight = 0;
-        dotDiffLeft = Math.round(Math.exp(dotStairLeft));
-        dotDiffRight = dotStairRight; //should be 0
-      } else {
-        dotStairLeft = 0;
-        dotStairRight = dotStair1;
-        dotDiffLeft = dotStairLeft; //should be 0
-        dotDiffRight = Math.round(Math.exp(dotStairRight));
-      }
-
-      //Reset all parameters
-      this.setState({
-        instructScreen: false,
-        taskScreen: true,
-        taskSection: "fixation",
-        trialNum: trialNum,
-        trialTime: trialTime,
-        fixTime: 0,
-        stimTime: 0,
-        responseKey: 0,
-        reactionTime: 0,
-        fbTime: 0,
-        confLevel: 0,
-        confTime: 0,
-        choice: null,
-        correct: null,
-
-        reversals: reversals,
-        responseMatrix: responseMatrix,
-        //Calculate the for the paramters for the stim
-        dotDiffStim1: Math.round(Math.exp(dotStair1)),
-        dotDiffStim2: 0,
-        dotStairLeft: dotStairLeft,
-        dotStairRight: dotStairRight,
-        dotDiffLeft: dotDiffLeft,
-        dotDiffRight: dotDiffRight,
-      });
-
-      console.log(this.state.trialNum);
-      console.log(this.state.trialNumTotal);
-
-      if (this.state.trialNum < this.state.trialNumTotal + 1) {
-        setTimeout(
-          function () {
-            this.renderStim();
-          }.bind(this),
-          this.state.fixTimeLag
-        );
-      } else {
-        // if the trials have reached the total trial number
-        setTimeout(
-          function () {
-            this.tutorEnd();
-          }.bind(this),
-          0
-        );
-      }
-    } else {
-      // if state.taskScreen is set as false
-      console.log("Fixation NOT RENDERED as taskScreen is FALSE");
-    }
+    setTimeout(
+      function () {
+        this.renderStim();
+      }.bind(this),
+      this.state.fixTimeLag
+    );
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -616,7 +608,7 @@ class TutorDotsTask extends React.Component {
   renderConfScale() {
     document.addEventListener("keydown", this._handleConfRespKey);
 
-    var initialValue = utils.randomInt(60, 85);
+    var initialValue = utils.randomInt(70, 80);
 
     this.setState({
       instructScreen: false,
@@ -696,8 +688,10 @@ class TutorDotsTask extends React.Component {
       ) {
         text = (
           <div>
-            Rate your confidence on the probability that your choice was
-            correct:
+            <center>
+              Rate your confidence on the probability that your choice was
+              correct:
+            </center>
             <br />
             <br />
             <br />
@@ -709,10 +703,10 @@ class TutorDotsTask extends React.Component {
               />
             </center>
             <br />
-            Complete guess/Absolutely certain
             <br />
             <br />
-            Press the [SPACEBAR] to continue
+            <br />
+            <center>Press [SPACEBAR] to continue</center>
           </div>
         );
       }
@@ -723,7 +717,7 @@ class TutorDotsTask extends React.Component {
             <span>DEBUG MODE</span>
             <br />
             <span>
-              Press the [<strong>SPACEBAR</strong>] to skip to next section.
+              Press [<strong>SPACEBAR</strong>] to skip to next section.
             </span>
           </p>
         </div>
@@ -740,4 +734,4 @@ class TutorDotsTask extends React.Component {
   }
 }
 
-export default withRouter(TutorDotsTask);
+export default withRouter(MetaPerTask);

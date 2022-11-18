@@ -10,14 +10,66 @@ var bufferFix = 400;
 var bufferFixWin = 0;
 
 // left box
-var leftBoxStartX = window.innerWidth / 2 - squareWidth / 2 - boxDist;
-var leftBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
+var boxStartX = 0;
+var boxStartY = 0;
+
+export const DrawDotsEx1 = ({ dotRadius, dotDiff }) => {
+  var dotCir = dotRadius * 2;
+
+  var dotPos = utils.genDotPos(boxStartX, boxStartY, squareWidth, dotCir);
+
+  var dotPosX = dotPos[0];
+  var dotPosY = dotPos[1];
+  utils.shuffleSame(dotPosX, dotPosY); // randomise the shown vs hidden dots
+
+  var dotTotal = (squareWidth / dotCir) * (squareWidth / dotCir);
+
+  var dotShown = Math.floor(dotTotal / 2) + dotDiff;
+  var dotCorrXShown = dotPosX.slice(0, dotShown - 1);
+  var dotCorrYShown = dotPosY.slice(0, dotShown - 1);
+
+  var dotShownCoor = utils.genDots(dotCorrXShown, dotCorrYShown);
+  const [dotsShow, setDotsShow] = React.useState(dotShownCoor);
+
+  return (
+    <Stage x={0} y={0} width={250} height={250}>
+      <Layer>
+        <Rect
+          x={boxStartX}
+          y={boxStartY}
+          width={squareWidth}
+          height={squareWidth}
+          fill="black"
+          strokeWidth={2.5} // border width
+          stroke="white" // border color
+        />
+      </Layer>
+      <Layer>
+        {dotsShow.map((dotsShow) => (
+          <Circle
+            key={dotsShow.id}
+            id={dotsShow.id}
+            x={dotsShow.x}
+            y={dotsShow.y}
+            radius={dotRadius}
+            fill="white"
+            opacity={1}
+          />
+        ))}
+      </Layer>
+    </Stage>
+  );
+};
+
+// left box
+var leftBoxStartX = 0;
+var leftBoxStartY = 0;
 
 //right box
-var rightBoxStartX = window.innerWidth / 2 - squareWidth / 2 + boxDist;
-var rightBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
+var rightBoxStartX = boxDist + squareWidth / 2;
+var rightBoxStartY = 0;
 
-export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
+export const DrawDotsEx2 = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
   var dotCir = dotRadius * 2;
 
   var leftDotPos = utils.genDotPos(
@@ -43,7 +95,7 @@ export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
 
   var dotTotal = (squareWidth / dotCir) * (squareWidth / dotCir);
 
-  var leftDotShown = Math.floor(dotTotal / 2) + dotDiffLeft;
+  var leftDotShown = Math.floor(dotTotal / 2) + dotDiffLeft - 50; //more the loss more pronounced
   var leftDotCorrXShown = leftDotPosX.slice(0, leftDotShown - 1);
   var leftDotCorrYShown = leftDotPosY.slice(0, leftDotShown - 1);
 
@@ -58,7 +110,7 @@ export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
   const [dotsRightShow, setDotsRightShow] = React.useState(rightDotShownCoor);
 
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight - bufferFixWin}>
+    <Stage x={0} y={0} width={600} height={250}>
       <Layer>
         <Rect
           x={leftBoxStartX}

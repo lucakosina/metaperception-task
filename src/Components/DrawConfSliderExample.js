@@ -49,7 +49,7 @@ function valuetext(value: number) {
   return value;
 }
 
-export function ConfSlider({ callBackValue, initialValue }) {
+export function ConfSliderEx1({ callBackValue, initialValue }) {
   const [value, setValue] = React.useState(initialValue);
 
   const handleChange = (event, newValue) => {

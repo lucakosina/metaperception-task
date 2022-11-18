@@ -1,5 +1,5 @@
 import React from "react";
-import { Stage, Layer, Rect } from "react-konva";
+import { Stage, Layer, Rect, Text } from "react-konva";
 
 var boxDist = 200; //distance between the boxes
 var squareWidth = 250;
@@ -14,27 +14,49 @@ var leftBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 var rightBoxStartX = window.innerWidth / 2 - squareWidth / 2 + boxDist;
 var rightBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 
-export const DrawChoice = ({ choice }) => {
+export const DrawFeedback = ({ choice, correct }) => {
   var leftChoice;
   var rightChoice;
   var rightColour;
   var leftColour;
+  var leftText;
+  var rightText;
 
-  if (choice === "left") {
+  if (choice === "left" && correct === 1) {
     leftChoice = 10;
-    leftColour = "#87C1FF";
+    leftColour = "green";
     rightChoice = 2.5;
     rightColour = "white";
-  } else if (choice === "right") {
+    leftText = "Correct!";
+    rightText = "";
+  } else if (choice === "right" && correct === 1) {
     leftChoice = 2.5;
     leftColour = "white";
     rightChoice = 10;
-    rightColour = "#87C1FF";
+    rightColour = "green";
+    leftText = "";
+    rightText = "Correct!";
+  } else if (choice === "left" && correct === 0) {
+    leftChoice = 10;
+    leftColour = "red";
+    rightChoice = 2.5;
+    rightColour = "white";
+    leftText = "Incorrect!";
+    rightText = "This was the correct choice.";
+  } else if (choice === "right" && correct === 0) {
+    leftChoice = 2.5;
+    leftColour = "white";
+    rightChoice = 10;
+    rightColour = "red";
+    rightText = "Incorrect!";
+    leftText = "This was the correct choice.";
   } else {
     leftChoice = 2.5;
     rightChoice = 2.5;
     leftColour = "white";
     rightColour = "white";
+    leftText = "";
+    rightText = "";
   }
 
   const [leftBoxState, setLeftBoxState] = React.useState(leftChoice);
@@ -60,6 +82,31 @@ export const DrawChoice = ({ choice }) => {
           fill="black"
           strokeWidth={rightBoxState} // border width
           stroke={rightColour} // border color
+        />
+        <Text
+          fill="white"
+          x={leftBoxStartX}
+          y={leftBoxStartY - 50}
+          text={leftText}
+          fontSize={16}
+          fontFamily="Courier New"
+        />
+        <Text
+          fill="white"
+          x={rightBoxStartX}
+          y={rightBoxStartY - 50}
+          text={rightText}
+          fontSize={16}
+          fontFamily="Courier New"
+        />
+
+        <Text
+          fill="white"
+          x={window.innerWidth / 2 - 150}
+          y={window.innerHeight / 2}
+          text="Press the [SPACEBAR] to continue"
+          fontSize={16}
+          fontFamily="Courier New"
         />
       </Layer>
     </Stage>

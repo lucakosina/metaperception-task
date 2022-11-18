@@ -12,6 +12,19 @@
 .boxStyle {
   margin: 0px;
 }
+
+.confTextLeft {
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  float: left;
+}
+
+.confTextRight {
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  float: right;
+}
+
 .textFrame {
   position: relative;
   background-color: rgba(0, 0, 0, 0.7);
@@ -24,6 +37,10 @@
   height: 80vh;
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12),
     0 2px 4px -1px rgba(0, 0, 0, 0.3);
+}
+
+.textCenter {
+  text-align: center;
 }
 
 .bg {
@@ -42,6 +59,15 @@
   background-size: cover;
   position: absolute;
   /* background-attachment: fixed; */
+}
+
+.astro {
+  position: absolute;
+  width: 150;
+  height: auto;
+  zindex: -1;
+  bottom: 10px;
+  right: 0px;
 }
 
 html,
