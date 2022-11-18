@@ -10,7 +10,7 @@ import * as utils from "./utils.js";
 import * as staircase from "./staircase.js";
 import withRouter from "./withRouter.js";
 import * as ConfSlider from "./DrawConfSlider.js";
-import * as ConfSliderEx1 from "./DrawConfSliderExample.js";
+import * as ConfSliderEx from "./DrawConfSliderExample.js";
 import astrodude from "./img/astronaut.png";
 import { Stage, Layer, Rect, Text } from "react-konva";
 
@@ -104,7 +104,7 @@ class MetaPerTut extends React.Component {
       quizNum: 0,
       quizCor: null,
       quizCorTotal: null,
-      quizAnsShuff: [],
+      quizAns:[2,1,2,3],
 
       // screen parameters
       instructScreen: true,
@@ -255,18 +255,34 @@ class MetaPerTut extends React.Component {
   }
 
   handleQuizResp(keyPressed) {
-    var curInstructNum = this.state.quizNum;
+var quizNum = this.state.quizNum;
     var whichButton = keyPressed;
 
-    if (whichButton === 3 && curInstructNum <= this.state.quizNumTotal) {
+    if (whichButton === this.state.quizAns[quizNum-1]){
+
+    var  quizTotal = this.state.quizTotal + 1;
+      this.setState({
+        quizCor: 1,
+        quizTotal: quizTotal,
+      });
+
+    } else {
+
+      this.setState({
+        quizCor: 0,
+      });
+    }
+
+    if (quizNum <= this.state.quizNumTotal) {
       //go to next quiz qn
       this.setState({
-        quizNum: curInstructNum + 1,
+        quizNum: quizNum + 1,
       });
     } else if (
-      whichButton === 3 &&
-      curInstructNum === this.state.quizNumTotal
+
+      quizNum === this.state.quizNumTotal
     ) {
+          document.removeEventListener("keydown", this._handleQuizKey);
       //end quiz, head back to instructions
       this.setState({
         instructScreen: true,
@@ -575,7 +591,7 @@ class MetaPerTut extends React.Component {
           <br />
           <br />
           <center>
-            <ConfSliderEx1.ConfSliderEx1
+            <ConfSliderEx.ConfSliderEx1
               callBackValue={this.handleCallbackConf.bind(this)}
               initialValue={68}
             />
@@ -603,7 +619,7 @@ class MetaPerTut extends React.Component {
         <br />
         <br />
         <center>
-          <ConfSliderEx1.ConfSliderEx1
+          <ConfSliderEx.ConfSliderEx1
             callBackValue={this.handleCallbackConf.bind(this)}
             initialValue={50}
           />
@@ -619,7 +635,7 @@ class MetaPerTut extends React.Component {
         <br />
         <br />
         <center>
-          <ConfSliderEx1.ConfSliderEx1
+          <ConfSliderEx.ConfSliderEx1
             callBackValue={this.handleCallbackConf.bind(this)}
             initialValue={100}
           />
@@ -643,7 +659,7 @@ class MetaPerTut extends React.Component {
         <br />
         <br />
         <center>
-          <ConfSliderEx1.ConfSliderEx1
+          <ConfSliderEx.ConfSliderEx1
             callBackValue={this.handleCallbackConf.bind(this)}
             initialValue={74}
           />
@@ -823,6 +839,7 @@ class MetaPerTut extends React.Component {
     // remove access to left/right/space keys for the instructions
     document.removeEventListener("keydown", this._handleInstructKey);
     document.removeEventListener("keydown", this._handleBeginKey);
+    document.addEventListener("keydown", this._handleQuizKey);
 
     this.setState({
       instructScreen: false,
