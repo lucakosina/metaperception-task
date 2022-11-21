@@ -37,7 +37,7 @@ class MetaPerTut extends React.Component {
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
 
-    var trialNumTotal = 3; //26
+    var trialNumTotal = 4; //26
 
     //the stim position
     var pracStimPos = Array(Math.round(trialNumTotal / 2))
@@ -99,16 +99,16 @@ class MetaPerTut extends React.Component {
       count: 0,
 
       //quiz paramters
-      quizTry: 0,
+      quizTry: 1,
       quizNumTotal: 4,
       quizNum: 0,
       quizCor: null,
       quizCorTotal: null,
-      quizAns:[2,1,2,3],
+      quizAns: [2, 1, 2, 3],
 
       // screen parameters
       instructScreen: true,
-      instructNum: 6, //start from 1
+      instructNum: 1, //start from 1
       taskScreen: false,
       taskSection: null,
       debug: false,
@@ -131,8 +131,9 @@ class MetaPerTut extends React.Component {
     this.handleBegin = this.handleBegin.bind(this);
     this.handleResp = this.handleResp.bind(this);
     this.handleNextResp = this.handleNextResp.bind(this);
+    this.handleQuizResp = this.handleQuizResp.bind(this);
     this.instructText = this.instructText.bind(this);
-
+    this.quizText = this.quizText.bind(this);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
@@ -183,6 +184,13 @@ class MetaPerTut extends React.Component {
       setTimeout(
         function () {
           this.quizBegin();
+        }.bind(this),
+        0
+      );
+    } else if (whichButton === 3 && curInstructNum === 10) {
+      setTimeout(
+        function () {
+          this.redirectToNextTask();
         }.bind(this),
         0
       );
@@ -247,49 +255,49 @@ class MetaPerTut extends React.Component {
       document.removeEventListener("keydown", this._handleNextRespKey);
       setTimeout(
         function () {
-          this.trialReset();
+          this.renderTutorSave();
         }.bind(this),
         0
       );
     }
   }
 
-  handleQuizResp(keyPressed) {
-var quizNum = this.state.quizNum;
+  handleQuizResp(keyPressed, timePressed) {
+    var quizNum = this.state.quizNum;
     var whichButton = keyPressed;
+    var quizCorTotal = this.state.quizCorTotal;
+    var quizCor;
 
-    if (whichButton === this.state.quizAns[quizNum-1]){
-
-    var  quizTotal = this.state.quizTotal + 1;
+    // calculate if quiz was correct or not
+    if (whichButton === this.state.quizAns[quizNum - 1]) {
+      quizCorTotal = quizCorTotal + 1;
+      quizCor = 1;
       this.setState({
-        quizCor: 1,
-        quizTotal: quizTotal,
+        quizCor: quizCor,
+        quizCorTotal: quizCorTotal,
+        quizTime: timePressed,
       });
-
     } else {
-
+      quizCor = 0;
       this.setState({
-        quizCor: 0,
+        quizCor: quizCor,
+        quizTime: timePressed,
       });
     }
 
-    if (quizNum <= this.state.quizNumTotal) {
-      //go to next quiz qn
-      this.setState({
-        quizNum: quizNum + 1,
-      });
-    } else if (
+    console.log("Keypress: " + whichButton);
+    console.log("QuizNum: " + quizNum);
+    console.log("QuizCor: " + quizCor);
+    console.log("QuizCorTotal: " + quizCorTotal);
+    console.log("QuizAns: " + this.state.quizAns);
+    console.log("quizNumTotal: " + this.state.quizNumTotal);
 
-      quizNum === this.state.quizNumTotal
-    ) {
-          document.removeEventListener("keydown", this._handleQuizKey);
-      //end quiz, head back to instructions
-      this.setState({
-        instructScreen: true,
-        taskScreen: false,
-        instructNum: 10,
-      });
-    }
+    setTimeout(
+      function () {
+        this.renderQuizSave();
+      }.bind(this),
+      0
+    );
   }
 
   // handle key keyPressed
@@ -352,12 +360,13 @@ var quizNum = this.state.quizNum;
   // handle key keyPressed
   _handleNextRespKey = (event) => {
     var keyPressed;
-
+    var timePressed;
     switch (event.keyCode) {
       case 32:
         //    this is spacebar
         keyPressed = 3;
-        this.handleNextResp(keyPressed);
+        timePressed = Math.round(performance.now());
+        this.handleNextResp(keyPressed, timePressed);
         break;
       default:
     }
@@ -400,6 +409,22 @@ var quizNum = this.state.quizNum;
   // To ask them for the valence rating of the noises
   // before we start the task
   instructText(instructNum) {
+    let quizFeedback1;
+    let quizFeedback2;
+
+    if (this.state.quizTry > 1) {
+      quizFeedback1 =
+        "You scored " +
+        this.state.quizCorTotal +
+        "/4 correctly. Please read the instructions carefully.";
+      quizFeedback2 =
+        "Your task is to choose the battery card with the higher charge level, i.e., more number of white dots.";
+    } else {
+      quizFeedback1 = "Well done!";
+      quizFeedback2 =
+        "You saw that choosing the battery card with the higher charge level, i.e., more number of white dots was the correct answer.";
+    }
+
     let instruct_text1 = (
       <div>
         <span>
@@ -455,8 +480,9 @@ var quizNum = this.state.quizNum;
       <div>
         <span>
           As there are many new battery cards to go through, we will show you
-          two cards at one time, and you will have to choose the battery card
-          which has <strong>the higher charge</strong>.
+          two cards at one time. You will have to choose the battery card which
+          has <strong>the higher charge</strong>, i.e., the one with{" "}
+          <strong>more white dots</strong>.
         </span>
         <br />
         <br />
@@ -490,7 +516,7 @@ var quizNum = this.state.quizNum;
     let instruct_text4 = (
       <div>
         <span>
-          You can choose the battery cards with a keypress.
+          You can select the battery card of your choice with a keypress.
           <br />
           <br />
           If the battery card on the <strong>left</strong> has more charge,{" "}
@@ -538,13 +564,16 @@ var quizNum = this.state.quizNum;
     let instruct_text5 = (
       <div>
         <span>
-          You will have {this.state.trialNumTotal} times to choose the battery
+          You will have {this.state.trialNumTotal} chances to choose the battery
           card with the higher charge.
           <br />
           <br />
-          Please pay attention closely as the charge level of the battery cards
-          will be <strong>flashed quickly only once</strong>. Make your
-          selection <strong>after the charge level indicator disappears</strong>
+          For every choice, you will be presented with a white cross in the
+          middle of the screen first before the battery cards appear. Please pay
+          attention closely as the charge level indicator (white dots) of the
+          battery cards will be <strong>flashed quickly only once</strong>. Make
+          your selection{" "}
+          <strong>after the charge level indicator disappears</strong>
           .
           <br />
           <br />
@@ -559,7 +588,7 @@ var quizNum = this.state.quizNum;
           <br />
           <br />
           <center>
-            Press [<strong>SPACEBAR]</strong> to begin the practice.
+            Press [<strong>SPACEBAR</strong>] to begin the practice.
           </center>
           <br />
           <center>
@@ -572,11 +601,10 @@ var quizNum = this.state.quizNum;
     let instruct_text6 = (
       <div>
         <span>
-          Well done!
+          {quizFeedback1}
           <br />
           <br />
-          You saw that choosing the battery card with the higher charge level
-          was the correct answer.
+          {quizFeedback2}
           <br />
           <br />
           During the main task, you will also have to indicate your{" "}
@@ -611,7 +639,7 @@ var quizNum = this.state.quizNum;
     let instruct_text7 = (
       <div>
         If you are <strong>very unsure</strong> that you made a correct
-        judgement, you should select a 50% of being correct, or the{" "}
+        judgement, you should select a 50% chance of being correct, or the{" "}
         <strong>left</strong> end of the scale. It means that your choice was a
         complete guess.
         <br />
@@ -628,8 +656,9 @@ var quizNum = this.state.quizNum;
         <br />
         <br />
         If you are <strong>very sure</strong> that you made a correct judgement,
-        you should select a 100% of being correct, or the <strong>left</strong>{" "}
-        end of the scale. It means that you are absolutely certain.
+        you should select a 100% chance of being correct, or the{" "}
+        <strong>right</strong> end of the scale. It means that you are
+        absolutely certain that your choice was correct.
         <br />
         <br />
         <br />
@@ -668,8 +697,9 @@ var quizNum = this.state.quizNum;
         <br />
         <br />
         <br />
-        You can use the slider by clicking any point on the scale, or dragging
-        the circle indicator. You can try it out for yourself above.
+        You can use the slider by clicking any point along the scale, or
+        dragging the circle indicator along the scale. You can try it out for
+        yourself above.
         <br />
         <br />
         During the main task, once you have selected your rating, you will have
@@ -686,7 +716,7 @@ var quizNum = this.state.quizNum;
     let instruct_text9 = (
       <div>
         Before you begin, you have to pass a quick quiz to make sure that you
-        have understood the key points of your task.
+        have understood the key points of your task for today.
         <br />
         <br />
         Note: You will have to get <strong>all</strong> quiz questions correct.
@@ -700,6 +730,20 @@ var quizNum = this.state.quizNum;
         <br />
         <center>
           [<strong>←</strong>]
+        </center>
+      </div>
+    );
+
+    let instruct_text10 = (
+      <div>
+        Amazing! You scored 4/4 for the quiz.
+        <br />
+        <br />
+        You are ready to start the main task.
+        <br />
+        <br />
+        <center>
+          Press [<strong>SPACEBAR</strong>] to begin.
         </center>
       </div>
     );
@@ -723,6 +767,8 @@ var quizNum = this.state.quizNum;
         return <div>{instruct_text8}</div>;
       case 9:
         return <div>{instruct_text9}</div>;
+      case 10:
+        return <div>{instruct_text10}</div>;
       default:
     }
   }
@@ -732,8 +778,8 @@ var quizNum = this.state.quizNum;
   quizText(quizNum) {
     let quiz_text1 = (
       <div>
-        Q{this.state.quizNum} You are shown two battery cards to inspect. What
-        do you do?
+        <strong>Q{this.state.quizNum}:</strong> You are shown two battery cards
+        to inspect. What do you do?
         <br />
         <br />
         [1] - I choose the battery card with the lower number of dots.
@@ -748,9 +794,10 @@ var quizNum = this.state.quizNum;
 
     let quiz_text2 = (
       <div>
-        Q{this.state.quizNum} You have made your choice on the battery card with
-        the higher charge. However, you are <strong>very unsure</strong> about
-        your choice. How would you rate your confidence on the rating scale?
+        <strong>Q{this.state.quizNum}:</strong> You have made your choice on the
+        battery card with the higher charge. However, you are{" "}
+        <strong>very unsure</strong> about your choice. How would you rate your
+        confidence on the rating scale?
         <br />
         <br />
         [1] - I would pick the left end of the scale (50% correct).
@@ -765,9 +812,9 @@ var quizNum = this.state.quizNum;
 
     let quiz_text3 = (
       <div>
-        Q{this.state.quizNum} On the next set of battery cards, you are{" "}
-        <strong>very sure</strong> about your choice. How would you rate your
-        confidence on the rating scale?
+        <strong>Q{this.state.quizNum}:</strong> On the next set of battery
+        cards, you are <strong>very sure</strong> about your choice. How would
+        you rate your confidence on the rating scale?
         <br />
         <br />
         [1] - I would pick the left end of the scale (50% correct).
@@ -782,9 +829,9 @@ var quizNum = this.state.quizNum;
 
     let quiz_text4 = (
       <div>
-        Q{this.state.quizNum} On the next set of battery cards, you are{" "}
-        <strong>somewhat sure</strong> about your choice. How would you rate
-        your confidence on the rating scale?
+        <strong>Q{this.state.quizNum}:</strong> On the next set of battery
+        cards, you are <strong>somewhat sure</strong> about your choice. How
+        would you rate your confidence on the rating scale?
         <br />
         <br />
         [1] - I would pick the left end of the scale (50% correct).
@@ -841,12 +888,53 @@ var quizNum = this.state.quizNum;
     document.removeEventListener("keydown", this._handleBeginKey);
     document.addEventListener("keydown", this._handleQuizKey);
 
+    // If I want to shuffle quiz answers?
+
     this.setState({
       instructScreen: false,
       taskScreen: true,
       taskSection: "quiz",
       quizNum: 1,
+      quizCorTotal: 0,
+      quizCor: null,
     });
+  }
+
+  quizreset() {
+    var quizNum = this.state.quizNum;
+    var quizCorTotal = this.state.quizCorTotal;
+
+    if (quizNum < this.state.quizNumTotal) {
+      //go to next quiz qn
+      this.setState({
+        quizNum: quizNum + 1,
+      });
+    } else if (quizNum === this.state.quizNumTotal) {
+      document.removeEventListener("keydown", this._handleQuizKey);
+      //end quiz, head back to instructions
+
+      //if full marks
+      if (quizCorTotal === this.state.quizNumTotal) {
+        console.log("PASS QUIZ");
+        this.setState({
+          instructScreen: true,
+          taskScreen: false,
+          instructNum: 10,
+          taskSection: "instruct",
+        });
+      } else {
+        //if they got one wrong
+        console.log("fAIL QUIZ");
+        var quizTry = this.state.quizTry + 1;
+        this.setState({
+          instructScreen: true,
+          taskScreen: false,
+          instructNum: 6,
+          taskSection: "instruct",
+          quizTry: quizTry,
+        });
+      }
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -927,7 +1015,7 @@ var quizNum = this.state.quizNum;
     console.log(this.state.trialNum);
     console.log(this.state.trialNumTotal);
 
-    if (this.state.trialNum < this.state.trialNumTotal + 1) {
+    if (trialNum < this.state.trialNumTotal + 1) {
       setTimeout(
         function () {
           this.renderFix();
@@ -1030,11 +1118,128 @@ var quizNum = this.state.quizNum;
   renderCorFb() {
     document.addEventListener("keydown", this._handleNextRespKey);
 
+    var rewFbTime =
+      Math.round(performance.now()) -
+      [
+        this.state.trialTime +
+          this.state.fixTime +
+          this.state.stimTime +
+          this.state.respTime +
+          this.state.respFbTime,
+      ];
+
     this.setState({
       instructScreen: false,
       taskScreen: true,
       taskSection: "corFeedback",
+      rewFbTime: rewFbTime,
     });
+  }
+
+  renderTutorSave() {
+    var userID = this.state.userID;
+
+    let saveString = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      trialNum: this.state.trialNum,
+      trialTime: this.state.trialTime,
+      fixTime: this.state.fixTime,
+      stimTime: this.state.stimTime,
+      dotDiffLeft: this.state.dotDiffLeft,
+      dotDiffRight: this.state.dotDiffRight,
+      dotDiffStim1: this.state.dotDiffStim1,
+      dotDiffStim2: this.state.dotDiffStim2,
+      responseKey: this.state.responseKey,
+      respTime: this.state.respTime,
+      respFbTime: this.state.respFbTime,
+      choice: this.state.choice,
+      confLevel: this.state.confLevel,
+      confTime: this.state.confTime,
+      correct: this.state.correct,
+
+      // staircase parameters
+      responseMatrix: this.state.responseMatrix,
+      reversals: this.state.reversals,
+      stairDir: this.state.stairDir,
+      dotStair1: this.state.dotStair1,
+      dotStair2: this.state.dotStair2,
+      dotStairLeft: this.state.dotStairLeft,
+      dotStairRight: this.state.dotStairRight,
+      count: this.state.count,
+    };
+
+    //    try {
+    //      fetch(`${DATABASE_URL}/tut_data/` + userID, {
+    //          method: "POST",
+    //          headers: {
+    //            Accept: "application/json",
+    //            "Content-Type": "application/json",
+    //          },
+    //          body: JSON.stringify(saveString),
+    //        });
+    //      } catch (e) {
+    //        console.log("Cant post?");
+    //      }
+
+    setTimeout(
+      function () {
+        this.trialReset();
+      }.bind(this),
+      10
+    );
+  }
+
+  renderQuizSave() {
+    var userID = this.state.userID;
+    var userID = this.state.userID;
+
+    let saveString = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+
+      //quiz paramters
+      quizTry: this.state.quizTry,
+      quizTime: this.state.quizTime,
+      quizNumTotal: this.state.quizNumTotal,
+      quizNum: this.state.quizNum,
+      quizCor: this.state.quizCor,
+      quizCorTotal: this.state.quizCorTotal,
+    };
+
+    //    try {
+    //      fetch(`${DATABASE_URL}/quiz_data/` + userID, {
+    //          method: "POST",
+    //          headers: {
+    //            Accept: "application/json",
+    //            "Content-Type": "application/json",
+    //          },
+    //          body: JSON.stringify(saveString),
+    //        });
+    //      } catch (e) {
+    //        console.log("Cant post?");
+    //      }
+
+    setTimeout(
+      function () {
+        this.quizreset();
+      }.bind(this),
+      10
+    );
+  }
+
+  redirectToNextTask() {
+    this.props.navigate("/MetaPerTask", {
+      state: {
+        userID: this.state.userID,
+        date: this.state.date,
+        startTime: this.state.startTime,
+      },
+    });
+
+    console.log("UserID is: " + this.state.userID);
   }
 
   componentDidMount() {
@@ -1122,7 +1327,14 @@ var quizNum = this.state.quizNum;
         this.state.taskScreen === true &&
         this.state.taskSection === "quiz"
       ) {
-        text = <div> {this.quizText(this.state.quizNum)}</div>;
+        text = (
+          <div>
+            {this.quizText(this.state.quizNum)}
+            <br />
+            <br />
+            <center>Please use the top row number keys to respond.</center>
+          </div>
+        );
       }
     } else if (this.state.debug === true) {
       text = (

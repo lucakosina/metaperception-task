@@ -24,13 +24,15 @@ class MetaPerTask extends React.Component {
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
 
-    var trialNumTotal = 10; //26
+    var trialNumTotal = 12; //26
+    var trialNumPerBlock = 3;
+    var blockNumTotal = Math.round(trialNumTotal / trialNumPerBlock);
 
     //the stim position
-    var pracStimPos = Array(Math.round(trialNumTotal / 2))
+    var stimPos = Array(Math.round(trialNumTotal / 2))
       .fill(1)
       .concat(Array(Math.round(trialNumTotal / 2)).fill(2));
-    utils.shuffle(pracStimPos);
+    utils.shuffle(stimPos);
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -44,17 +46,20 @@ class MetaPerTask extends React.Component {
       fixTimeLag: 1000, //1000
       fbTimeLag: 500, //500
       stimTimeLag: 500, //300
-      respTimeLag: 3000,
       respFbTimeLag: 1000,
       itiTimeLag: 500, //500
 
       //trial parameters
       trialNumTotal: trialNumTotal,
-      pracPos: pracStimPos,
+      trialNumPerBlock: trialNumPerBlock,
+      blockNumTotal: blockNumTotal,
+      stimPos: stimPos,
       respKeyCode: [87, 79], // for left and right choice keys, currently it is W and O
 
       //trial by trial paramters
+      blockNum: 0,
       trialNum: 0,
+      trialNumInBlock: 0,
       trialTime: 0,
       fixTime: 0,
       stimTime: 0,
@@ -70,6 +75,19 @@ class MetaPerTask extends React.Component {
       confTime: 0,
       confMove: null, //can only move to next trial if conf was toggled
       correct: null,
+
+      //dot paramters
+      dotRadius: 5,
+
+      // staircase parameters
+      responseMatrix: [true, true],
+      reversals: 0,
+      stairDir: ["up", "up"],
+      dotStair1: 4.65, //in log space; this is about 104 dots which is 70 dots shown for the first one
+      dotStair2: 0,
+      dotStairLeft: 0,
+      dotStairRight: 0,
+      count: 0,
 
       dotRadius: 5,
 
@@ -119,20 +137,40 @@ class MetaPerTask extends React.Component {
     var curInstructNum = this.state.instructNum;
     var whichButton = keyPressed;
 
-    if (whichButton === 1 && curInstructNum > 1) {
+    if (whichButton === 1 && curInstructNum === 2) {
+      // from page 2 , I can move back a page
       this.setState({ instructNum: curInstructNum - 1 });
-    } else if (whichButton === 2 && curInstructNum < 3) {
+    } else if (whichButton === 2 && curInstructNum === 1) {
+      // from page 1 , I can move forward a page
       this.setState({ instructNum: curInstructNum + 1 });
     }
   }
 
   handleBegin(keyPressed) {
+    document.removeEventListener("keydown", this._handleInstructKey);
+    document.removeEventListener("keydown", this._handleBeginKey);
     var curInstructNum = this.state.instructNum;
     var whichButton = keyPressed;
-    if (whichButton === 3 && curInstructNum === 3) {
+    if (whichButton === 3 && curInstructNum === 2) {
+      // begin the task
+      console.log("BEGIN");
       setTimeout(
         function () {
-          this.tutorBegin();
+          this.taskBegin();
+        }.bind(this),
+        0
+      );
+    } else if (whichButton === 3 && curInstructNum === 3) {
+      // continue after a block break
+      var blockNum = this.state.blockNum + 1;
+      this.setState({
+        trialNumInBlock: 0,
+        blockNum: blockNum,
+      });
+
+      setTimeout(
+        function () {
+          this.trialReset();
         }.bind(this),
         0
       );
@@ -197,7 +235,7 @@ class MetaPerTask extends React.Component {
       document.removeEventListener("keydown", this._handleConfRespKey);
       setTimeout(
         function () {
-          this.trialReset();
+          this.renderTaskSave();
         }.bind(this),
         0
       );
@@ -294,31 +332,27 @@ class MetaPerTask extends React.Component {
     let instruct_text1 = (
       <div>
         <span>
-          Welcome to the task!
+          The spaceship&apos;s power is dropping low - we need your help to sort
+          the battery cards quickly!
           <br /> <br />
-          We will now ask you to judge which of two images contains more dots,
-          before asking you to rate your confidence in your judgement.
+          You will have {this.state.trialNumTotal} set pairs of battery cards to
+          make your decisions. This will be split over{" "}
+          {this.state.blockNumTotal} sections with {this.state.trialNumPerBlock}{" "}
+          sets of batteries each so that you can take breaks in between.
           <br /> <br />
-          At the beginning of each trial, you will be presented with a black
-          cross in the middle of the screen. Focus your attention on it. Then,
-          two black boxes with a number of white dots will be flashed and you
-          will be asked to judge which box had a higher number of dots.
+          If the battery on the <strong>left</strong> has higher charge (more
+          dots), <strong>press W</strong>.
           <br /> <br />
-          If the box on the <strong>left</strong> had more dots,{" "}
-          <strong>press W</strong>. <br /> <br />
-          If the box on the <strong>right</strong> had more dots,{" "}
-          <strong> press O</strong>. <br /> <br />
-          Please respond quickly and to the best of your ability.
+          If the battery on the <strong>right</strong> has higher charge (more
+          dots), <strong> press O</strong>.
           <br /> <br />
-          You will then rate your confidence in your judgement on a scale with
-          the mouse.
-          <br /> <br />
-          Please do your best to rate your confidence accurately and do take
-          advantage of the whole rating scale.
+          Please respond quickly and to the best of your ability. This time, you{" "}
+          <strong>will not</strong> be told whether your choice was correct or
+          incorrect.
           <br /> <br />
           <center>
-            <br />
             Use the ← and → keys to navigate the pages.
+            <br />
             <br />[<strong>→</strong>]
           </center>
         </span>
@@ -328,16 +362,23 @@ class MetaPerTask extends React.Component {
     let instruct_text2 = (
       <div>
         <span>
-          You will now continue directly to the experiment. The dots will
-          presented only for a short period of time.
-          <br />
-          <br />
-          You will be asked to rate your confidence in your judgement after each
-          trial.
-          <br />
-          <br />
+          After making your choice, you will then rate your confidence in your
+          judgement on the rating scale.
+          <br /> <br />
+          Please do your best to rate your confidence accurately and do take
+          advantage of the <strong>whole length</strong> of the rating scale.
+          <br /> <br />
+          You will not be allowed to move on to the next set of batteries if you
+          do not adjust the rating scale.
+          <br /> <br />
+          If you do well in the task, you can receive up to{" "}
+          <strong>£2 bonus</strong>!
+          <br /> <br />
           <center>
-            [<strong>←</strong>] [<strong>→</strong>]
+            When you are ready, please press the [<strong>SPACEBAR</strong>] to
+            start.
+            <br />
+            <br />[<strong>←</strong>]
           </center>
         </span>
       </div>
@@ -346,34 +387,16 @@ class MetaPerTask extends React.Component {
     let instruct_text3 = (
       <div>
         <span>
-          We will now ask you to carry out some practice trials. Please respond
-          only when the dots have disappeared.
+          You have completed {this.state.blockNum} out of{" "}
+          {this.state.blockNumTotal} blocks!
           <br />
           <br />
-          In this practice phase we will tell you whether your judgements are
-          right or wrong. <br />
-          <br />
-          If you are <strong>correct</strong>, the box that you selected will be
-          outlined in{" "}
-          <font color="blue">
-            <strong>blue</strong>
-          </font>
-          .
-          <br />
-          <br />
-          If you are <strong>incorrect</strong>, the box that you selected will
-          be outlined in{" "}
-          <font color="red">
-            <strong>red</strong>
-          </font>
-          . You will not need to rate your confidence of your judgements on
-          these trials.
+          You can now pause for a break.
           <br />
           <br />
           <center>
-            Press [<strong>SPACEBAR</strong>] to begin the practice.
-            <br />
-            <br />[<strong>←</strong>]
+            Press the [<strong>SPACEBAR</strong>] when you are ready to
+            continue.
           </center>
         </span>
       </div>
@@ -382,10 +405,17 @@ class MetaPerTask extends React.Component {
     let instruct_text4 = (
       <div>
         <span>
-          End of practice!
+          You have completed {this.state.blockNum} out of{" "}
+          {this.state.blockNumTotal} blocks!
           <br />
           <br />
-          Press [<strong>SPACEBAR]</strong> to move on to the task.
+          You can now pause for a break.
+          <br />
+          <br />
+          <center>
+            Press the [<strong>SPACEBAR</strong>] when you are ready to
+            continue.
+          </center>
         </span>
       </div>
     );
@@ -403,7 +433,7 @@ class MetaPerTask extends React.Component {
     }
   }
 
-  tutorBegin() {
+  taskBegin() {
     // remove access to left/right/space keys for the instructions
     document.removeEventListener("keydown", this._handleInstructKey);
     document.removeEventListener("keydown", this._handleBeginKey);
@@ -416,7 +446,7 @@ class MetaPerTask extends React.Component {
     );
   }
 
-  tutorEnd() {
+  taskEnd() {
     // remove access to left/right/space keys for the instructions
     //  document.removeEventListener("keyup", this._handleRespKey);
     // change state to make sure the screen is changed for the task
@@ -432,8 +462,10 @@ class MetaPerTask extends React.Component {
   // FOUR COMPONENTS OF THE TASK, Fixation, Stimulus/Response, Feedback and Confidence
   trialReset() {
     var trialNum = this.state.trialNum + 1; //trialNum is 0, so it starts from 1
-    var stimPos = this.state.pracPos[trialNum - 1]; //shuffle the order for the dotDiffLeft
+    var trialNumInBlock = this.state.trialNumInBlock + 1;
+    var stimPos = this.state.stimPos[trialNum - 1]; //shuffle the order for the dotDiffLeft
 
+    console.log("NEW TRIAL");
     // run staircase
     var s2 = staircase.staircase(
       this.state.dotStair1,
@@ -480,6 +512,8 @@ class MetaPerTask extends React.Component {
       instructScreen: false,
       taskScreen: true,
       trialNum: trialNum,
+      trialNumInBlock: trialNumInBlock,
+      taskSection: "iti",
       fixTime: 0,
       stimTime: 0,
       responseKey: 0,
@@ -502,10 +536,11 @@ class MetaPerTask extends React.Component {
       dotDiffRight: dotDiffRight,
     });
 
-    console.log(this.state.trialNum);
+    console.log(trialNum);
     console.log(this.state.trialNumTotal);
 
-    if (this.state.trialNum < this.state.trialNumTotal + 1) {
+    if (trialNum < this.state.trialNumTotal + 1) {
+      console.log("render fix");
       setTimeout(
         function () {
           this.renderFix();
@@ -516,7 +551,7 @@ class MetaPerTask extends React.Component {
       // if the trials have reached the total trial number
       setTimeout(
         function () {
-          this.tutorEnd();
+          this.taskEnd();
         }.bind(this),
         0
       );
@@ -525,7 +560,7 @@ class MetaPerTask extends React.Component {
 
   renderFix() {
     var trialTime = Math.round(performance.now());
-
+    console.log("render fix now");
     //Show fixation
     this.setState({
       instructScreen: false,
@@ -545,7 +580,7 @@ class MetaPerTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderStim() {
     var fixTime = Math.round(performance.now()) - this.state.trialTime;
-
+    console.log("render stim now");
     this.setState({
       instructScreen: false,
       taskScreen: true,
@@ -620,6 +655,100 @@ class MetaPerTask extends React.Component {
     // it will deploy the next trial with spacebar keypress
   }
 
+  renderTaskSave() {
+    var userID = this.state.userID;
+
+    let saveString = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      trialNum: this.state.trialNum,
+      blockNum: this.state.blockNum,
+      trialNumInBlock: this.state.trialNumInBlock,
+      trialTime: this.state.trialTime,
+      fixTime: this.state.fixTime,
+      stimTime: this.state.stimTime,
+      dotDiffLeft: this.state.dotDiffLeft,
+      dotDiffRight: this.state.dotDiffRight,
+      dotDiffStim1: this.state.dotDiffStim1,
+      dotDiffStim2: this.state.dotDiffStim2,
+      responseKey: this.state.responseKey,
+      respTime: this.state.respTime,
+      respFbTime: this.state.respFbTime,
+      choice: this.state.choice,
+      confLevel: this.state.confLevel,
+      confTime: this.state.confTime,
+      correct: this.state.correct,
+
+      // staircase parameters
+      responseMatrix: this.state.responseMatrix,
+      reversals: this.state.reversals,
+      stairDir: this.state.stairDir,
+      dotStair1: this.state.dotStair1,
+      dotStair2: this.state.dotStair2,
+      dotStairLeft: this.state.dotStairLeft,
+      dotStairRight: this.state.dotStairRight,
+      count: this.state.count,
+
+      //quiz paramters
+      quizTry: this.state.quizTry,
+      quizTime: this.state.quizTime,
+      quizNumTotal: this.state.quizNumTotal,
+      quizNum: this.state.quizNum,
+      quizCor: this.state.quizCor,
+      quizCorTotal: this.state.quizCorTotal,
+    };
+
+    //    try {
+    //      fetch(`${DATABASE_URL}/tut_data/` + userID, {
+    //          method: "POST",
+    //          headers: {
+    //            Accept: "application/json",
+    //            "Content-Type": "application/json",
+    //          },
+    //          body: JSON.stringify(saveString),
+    //        });
+    //      } catch (e) {
+    //        console.log("Cant post?");
+    //      }
+
+    console.log("In save: " + this.state.trialNumInBlock);
+    console.log("In save: " + this.state.trialNumPerBlock);
+    console.log("In save: " + this.state.trialNumInBlock);
+    console.log("In save: " + this.state.trialNumTotal);
+
+    if (
+      this.state.trialNumInBlock === this.state.trialNumPerBlock &&
+      this.state.trialNum !== this.state.trialNumTotal
+    ) {
+      //and not the last trial, because that will be sent to trialReset to end the task
+
+      console.log("REST TIME");
+      setTimeout(
+        function () {
+          this.restBlock();
+        }.bind(this),
+        10
+      );
+    } else {
+      setTimeout(
+        function () {
+          this.trialReset();
+        }.bind(this),
+        10
+      );
+    }
+  }
+
+  restBlock() {
+    this.setState({
+      instructScreen: true,
+      instructNum: 3,
+      taskScreen: false,
+      taskSection: "break",
+    });
+  }
+
   componentDidMount() {
     window.scrollTo(0, 0);
   }
@@ -637,6 +766,12 @@ class MetaPerTask extends React.Component {
         text = <div> {this.instructText(this.state.instructNum)}</div>;
         console.log("THIS SHOULD BE INSTRUCTION BLOCK");
         console.log(this.state.instructNum);
+      } else if (
+        this.state.instructScreen === false &&
+        this.state.taskScreen === true &&
+        this.state.taskSection === "iti"
+      ) {
+        text = <div className={style.boxStyle}></div>;
       } else if (
         this.state.instructScreen === false &&
         this.state.taskScreen === true &&
@@ -706,7 +841,13 @@ class MetaPerTask extends React.Component {
             <br />
             <br />
             <br />
-            <center>Press [SPACEBAR] to continue</center>
+            <center>
+              Press [SPACEBAR] to continue.
+              <br />
+              <br />
+              You will not allowed to move on unless you have adjusted the
+              scale.
+            </center>
           </div>
         );
       }
