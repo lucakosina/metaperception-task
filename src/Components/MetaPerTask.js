@@ -11,6 +11,8 @@ import * as ConfSlider from "./DrawConfSlider.js";
 
 //import { DATABASE_URL } from "./config";
 
+// Still have yet to code the pre and post task confidence!
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
 // THIS CODES THE TUTORIAL SESSIONS + QUIZ FOR THE TASK
@@ -53,16 +55,17 @@ class MetaPerTask extends React.Component {
       trialNumTotal: trialNumTotal,
       trialNumPerBlock: trialNumPerBlock,
       blockNumTotal: blockNumTotal,
-      stimPos: stimPos,
+      stimPosList: stimPos,
       respKeyCode: [87, 79], // for left and right choice keys, currently it is W and O
 
       //trial by trial paramters
-      blockNum: 0,
+      blockNum: 1,
       trialNum: 0,
       trialNumInBlock: 0,
       trialTime: 0,
       fixTime: 0,
       stimTime: 0,
+      stimPos: 0,
       dotDiffLeft: 0,
       dotDiffRight: 0,
       dotDiffStim1: 0,
@@ -147,8 +150,6 @@ class MetaPerTask extends React.Component {
   }
 
   handleBegin(keyPressed) {
-    document.removeEventListener("keydown", this._handleInstructKey);
-    document.removeEventListener("keydown", this._handleBeginKey);
     var curInstructNum = this.state.instructNum;
     var whichButton = keyPressed;
     if (whichButton === 3 && curInstructNum === 2) {
@@ -164,13 +165,23 @@ class MetaPerTask extends React.Component {
       // continue after a block break
       var blockNum = this.state.blockNum + 1;
       this.setState({
+        instructScreen: false,
+        taskScreen: true,
+        taskSection: "iti",
         trialNumInBlock: 0,
         blockNum: blockNum,
       });
 
       setTimeout(
         function () {
-          this.trialReset();
+          this.taskBegin();
+        }.bind(this),
+        10
+      );
+    } else if (whichButton === 3 && curInstructNum === 4) {
+      setTimeout(
+        function () {
+          this.redirectToNextTask();
         }.bind(this),
         0
       );
@@ -232,7 +243,6 @@ class MetaPerTask extends React.Component {
   handleConfResp(keyPressed, timePressed) {
     var whichButton = keyPressed;
     if (whichButton === 3 && this.state.confMove === true) {
-      document.removeEventListener("keydown", this._handleConfRespKey);
       setTimeout(
         function () {
           this.renderTaskSave();
@@ -304,7 +314,7 @@ class MetaPerTask extends React.Component {
     var keyPressed;
     var timePressed;
 
-    console.log("Confidence is when pressed: " + this.state.confValue);
+    console.log("Confidence: " + this.state.confValue);
 
     switch (event.keyCode) {
       case 32:
@@ -319,7 +329,7 @@ class MetaPerTask extends React.Component {
 
   handleCallbackConf(callBackValue) {
     this.setState({ confValue: callBackValue });
-    console.log("Confidence is: " + callBackValue);
+    //  console.log("Confidence is: " + callBackValue);
 
     if (this.state.confValue !== null) {
       this.setState({ confMove: true });
@@ -405,16 +415,17 @@ class MetaPerTask extends React.Component {
     let instruct_text4 = (
       <div>
         <span>
-          You have completed {this.state.blockNum} out of{" "}
-          {this.state.blockNumTotal} blocks!
+          Amazing! You have completed sorting through all of the battery cards!
           <br />
           <br />
-          You can now pause for a break.
+          Our spaceship power is back to a good level.
+          <br />
+          <br />
+          For a job well done, you have earned £2 bonus.
           <br />
           <br />
           <center>
-            Press the [<strong>SPACEBAR</strong>] when you are ready to
-            continue.
+            Press the [<strong>SPACEBAR</strong>] to continue.
           </center>
         </span>
       </div>
@@ -463,7 +474,8 @@ class MetaPerTask extends React.Component {
   trialReset() {
     var trialNum = this.state.trialNum + 1; //trialNum is 0, so it starts from 1
     var trialNumInBlock = this.state.trialNumInBlock + 1;
-    var stimPos = this.state.stimPos[trialNum - 1]; //shuffle the order for the dotDiffLeft
+
+    var stimPos = this.state.stimPosList[trialNum - 1]; //shuffle the order for the dotDiffLeft
 
     console.log("NEW TRIAL");
     // run staircase
@@ -478,9 +490,9 @@ class MetaPerTask extends React.Component {
     var stairDir = s2.direction;
     var responseMatrix = s2.stepcount;
 
-    console.log("dotsStair: " + dotStair1);
-    console.log("stairDir: " + stairDir);
-    console.log("responseMat: " + responseMatrix);
+    //  console.log("dotsStair: " + dotStair1);
+    //  console.log("stairDir: " + stairDir);
+    //  console.log("responseMat: " + responseMatrix);
 
     var reversals;
     if (s2.reversal) {
@@ -536,35 +548,23 @@ class MetaPerTask extends React.Component {
       dotDiffRight: dotDiffRight,
     });
 
-    console.log(trialNum);
-    console.log(this.state.trialNumTotal);
-
-    if (trialNum < this.state.trialNumTotal + 1) {
-      console.log("render fix");
-      setTimeout(
-        function () {
-          this.renderFix();
-        }.bind(this),
-        0
-      );
-    } else {
-      // if the trials have reached the total trial number
-      setTimeout(
-        function () {
-          this.taskEnd();
-        }.bind(this),
-        0
-      );
-    }
+    setTimeout(
+      function () {
+        this.renderFix();
+      }.bind(this),
+      0
+    );
   }
 
   renderFix() {
+    console.log("trialNumInBlock Fix: " + this.state.trialNumInBlock);
+
     var trialTime = Math.round(performance.now());
-    console.log("render fix now");
+    console.log("render fix");
     //Show fixation
     this.setState({
-      instructScreen: false,
-      taskScreen: true,
+      //  instructScreen: false,
+      //  taskScreen: true,
       taskSection: "fixation",
       trialTime: trialTime,
     });
@@ -580,10 +580,10 @@ class MetaPerTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderStim() {
     var fixTime = Math.round(performance.now()) - this.state.trialTime;
-    console.log("render stim now");
+    console.log("render stim");
     this.setState({
-      instructScreen: false,
-      taskScreen: true,
+      //    instructScreen: false,
+      //    taskScreen: true,
       taskSection: "stimulus",
       fixTime: fixTime,
     });
@@ -604,8 +604,8 @@ class MetaPerTask extends React.Component {
       [this.state.trialTime + this.state.fixTime];
 
     this.setState({
-      instructScreen: false,
-      taskScreen: true,
+      //  instructScreen: false,
+      //  taskScreen: true,
       taskSection: "choice",
       stimTime: stimTime,
     });
@@ -625,8 +625,8 @@ class MetaPerTask extends React.Component {
       ];
 
     this.setState({
-      instructScreen: false,
-      taskScreen: true,
+      //    instructScreen: false,
+      //    taskScreen: true,
       taskSection: "choiceFeedback",
       respFbTime: respFbTime,
     });
@@ -646,8 +646,8 @@ class MetaPerTask extends React.Component {
     var initialValue = utils.randomInt(70, 80);
 
     this.setState({
-      instructScreen: false,
-      taskScreen: true,
+      //      instructScreen: false,
+      //      taskScreen: true,
       taskSection: "confidence",
       confInitial: initialValue,
     });
@@ -656,6 +656,10 @@ class MetaPerTask extends React.Component {
   }
 
   renderTaskSave() {
+    document.removeEventListener("keydown", this._handleConfRespKey);
+
+    console.log("trialNumInBlock Save: " + this.state.trialNumInBlock);
+
     var userID = this.state.userID;
 
     let saveString = {
@@ -712,31 +716,42 @@ class MetaPerTask extends React.Component {
     //        console.log("Cant post?");
     //      }
 
-    console.log("In save: " + this.state.trialNumInBlock);
-    console.log("In save: " + this.state.trialNumPerBlock);
-    console.log("In save: " + this.state.trialNumInBlock);
-    console.log("In save: " + this.state.trialNumTotal);
+    console.log("trialNum: " + this.state.trialNum);
+    console.log("trialNumPerBlock: " + this.state.trialNumPerBlock);
+    console.log("trialNumInBlock: " + this.state.trialNumInBlock);
+    console.log("trialNumTotal: " + this.state.trialNumTotal);
 
-    if (
-      this.state.trialNumInBlock === this.state.trialNumPerBlock &&
-      this.state.trialNum !== this.state.trialNumTotal
-    ) {
+    if (this.state.trialNumInBlock === this.state.trialNumPerBlock) {
       //and not the last trial, because that will be sent to trialReset to end the task
-
-      console.log("REST TIME");
-      setTimeout(
-        function () {
-          this.restBlock();
-        }.bind(this),
-        10
-      );
-    } else {
+      console.log("TIME FOR A BREAK");
+      if (this.state.trialNum !== this.state.trialNumTotal) {
+        console.log("REST TIME");
+        setTimeout(
+          function () {
+            this.restBlock();
+          }.bind(this),
+          10
+        );
+      } else if (this.state.trialNum === this.state.trialNumTotal) {
+        // have reached the end of the task
+        console.log("END TASK");
+        setTimeout(
+          function () {
+            this.taskEnd();
+          }.bind(this),
+          10
+        );
+      }
+    } else if (this.state.trialNumInBlock !== this.state.trialNumPerBlock) {
+      console.log("CONTINUE TIME");
       setTimeout(
         function () {
           this.trialReset();
         }.bind(this),
         10
       );
+    } else {
+      console.log("ERROR I HAVENT ACCOUNTED FOR");
     }
   }
 
@@ -746,6 +761,16 @@ class MetaPerTask extends React.Component {
       instructNum: 3,
       taskScreen: false,
       taskSection: "break",
+    });
+  }
+
+  redirectToNextTask() {
+    this.props.navigate("/Questionnaires", {
+      state: {
+        userID: this.state.userID,
+        date: this.state.date,
+        startTime: this.state.startTime,
+      },
     });
   }
 
@@ -764,8 +789,8 @@ class MetaPerTask extends React.Component {
         document.addEventListener("keydown", this._handleInstructKey);
         document.addEventListener("keydown", this._handleBeginKey);
         text = <div> {this.instructText(this.state.instructNum)}</div>;
-        console.log("THIS SHOULD BE INSTRUCTION BLOCK");
-        console.log(this.state.instructNum);
+        //  console.log("THIS SHOULD BE INSTRUCTION BLOCK");
+        //    console.log(this.state.instructNum);
       } else if (
         this.state.instructScreen === false &&
         this.state.taskScreen === true &&

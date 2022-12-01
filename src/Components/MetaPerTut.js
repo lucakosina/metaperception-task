@@ -64,7 +64,7 @@ class MetaPerTut extends React.Component {
 
       //trial parameters
       trialNumTotal: trialNumTotal,
-      pracPos: pracStimPos,
+      stimPosList: pracStimPos,
       respKeyCode: [87, 79], // for left and right choice keys, currently it is W and O
 
       //trial by trial paramters
@@ -72,10 +72,11 @@ class MetaPerTut extends React.Component {
       trialTime: 0,
       fixTime: 0,
       stimTime: 0,
+      stimPos: 0,
       dotDiffLeft: 0,
       dotDiffRight: 0,
       dotDiffStim1: 0,
-      dotDiffStim2: 120,
+      dotDiffStim2: 0,
       responseKey: 0,
       respTime: 0,
       respFbTime: 0,
@@ -941,7 +942,7 @@ class MetaPerTut extends React.Component {
   // FOUR COMPONENTS OF THE TASK, Fixation, Stimulus/Response, Feedback and Confidence
   trialReset() {
     var trialNum = this.state.trialNum + 1; //trialNum is 0, so it starts from 1
-    var stimPos = this.state.pracPos[trialNum - 1]; //shuffle the order for the dotDiffLeft
+    var stimPos = this.state.stimPosList[trialNum - 1]; //shuffle the order for the dotDiffLeft
 
     // run staircase
     var s2 = staircase.staircase(
@@ -1143,8 +1144,8 @@ class MetaPerTut extends React.Component {
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
-      trialNum: this.state.trialNum,
       trialTime: this.state.trialTime,
+      trialNum: this.state.trialNum,
       fixTime: this.state.fixTime,
       stimTime: this.state.stimTime,
       dotDiffLeft: this.state.dotDiffLeft,
@@ -1170,18 +1171,18 @@ class MetaPerTut extends React.Component {
       count: this.state.count,
     };
 
-    //    try {
-    //      fetch(`${DATABASE_URL}/tut_data/` + userID, {
-    //          method: "POST",
-    //          headers: {
-    //            Accept: "application/json",
-    //            "Content-Type": "application/json",
-    //          },
-    //          body: JSON.stringify(saveString),
-    //        });
-    //      } catch (e) {
-    //        console.log("Cant post?");
-    //      }
+    // try {
+    //   fetch(`${DATABASE_URL}/tutorial_data/` + userID, {
+    //     method: "POST",
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(saveString),
+    //   });
+    // } catch (e) {
+    //   console.log("Cant post?");
+    // }
 
     setTimeout(
       function () {
@@ -1236,6 +1237,8 @@ class MetaPerTut extends React.Component {
         userID: this.state.userID,
         date: this.state.date,
         startTime: this.state.startTime,
+        dotStair1: this.state.dotStair1,
+        dotStair2: this.state.dotStair2,
       },
     });
 
