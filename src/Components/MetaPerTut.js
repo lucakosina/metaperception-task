@@ -9,10 +9,8 @@ import style from "./style/taskStyle.module.css";
 import * as utils from "./utils.js";
 import * as staircase from "./staircase.js";
 import withRouter from "./withRouter.js";
-import * as ConfSlider from "./DrawConfSlider.js";
 import * as ConfSliderEx from "./DrawConfSliderExample.js";
 import astrodude from "./img/astronaut.png";
-import { Stage, Layer, Rect, Text } from "react-konva";
 
 //import { DATABASE_URL } from "./config";
 
@@ -33,9 +31,14 @@ class MetaPerTut extends React.Component {
   constructor(props) {
     super(props);
 
-    const userID = this.props.state.userID;
-    const date = this.props.state.date;
-    const startTime = this.props.state.startTime;
+    //when deug
+    const userID = 100;
+    const date = 100;
+    const startTime = 100;
+
+    // const userID = this.props.state.userID;
+    // const date = this.props.state.date;
+    // const startTime = this.props.state.startTime;
 
     var trialNumTotal = 4; //26
 
@@ -1193,7 +1196,6 @@ class MetaPerTut extends React.Component {
   }
 
   renderQuizSave() {
-    var userID = this.state.userID;
     var userID = this.state.userID;
 
     let saveString = {

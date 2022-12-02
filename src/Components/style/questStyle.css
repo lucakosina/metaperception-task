@@ -1,8 +1,8 @@
 .placeMiddle {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: auto;
   margin-bottom: 0px;
-  padding-top: 50px;
+  padding-top: 20px;
   /* justify-content: center; */
   height: 100vh;
   color: black;
@@ -11,7 +11,7 @@
 }
 
 .sv_q_description {
-  padding-top: 20px;
+  padding-top: 10px;
   color: black;
 }
 
@@ -35,7 +35,7 @@ table thead {
   /* head takes the height it requires,
     and it's not scaled when table is resized */
   flex: 0 0 auto;
-  width: calc(100% - 0.9em);
+  width: calc(100% - 1em);
 }
 
 table tbody {
@@ -69,7 +69,7 @@ tr:nth-child(even) {
 
 th:nth-child(1),
 td:nth-child(1) {
-  width: 250px;
+  width: 500px;
   font-size: 17px;
 }
 

@@ -8,10 +8,9 @@ import * as utils from "./utils.js";
 import * as staircase from "./staircase.js";
 import withRouter from "./withRouter.js";
 import * as ConfSlider from "./DrawConfSlider.js";
+import * as ConfSliderGlobal from "./DrawConfSliderGlobal.js";
 
 //import { DATABASE_URL } from "./config";
-
-// Still have yet to code the pre and post task confidence!
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,9 +21,14 @@ class MetaPerTask extends React.Component {
   constructor(props) {
     super(props);
 
-    const userID = this.props.state.userID;
-    const date = this.props.state.date;
-    const startTime = this.props.state.startTime;
+    //when deug
+    const userID = 100;
+    const date = 100;
+    const startTime = 100;
+    //
+    // const userID = this.props.state.userID;
+    // const date = this.props.state.date;
+    // const startTime = this.props.state.startTime;
 
     var trialNumTotal = 12; //26
     var trialNumPerBlock = 3;
@@ -69,7 +73,7 @@ class MetaPerTask extends React.Component {
       dotDiffLeft: 0,
       dotDiffRight: 0,
       dotDiffStim1: 0,
-      dotDiffStim2: 120,
+      dotDiffStim2: 0,
       responseKey: 0,
       respTime: 0,
       respFbTime: 0,
@@ -92,21 +96,13 @@ class MetaPerTask extends React.Component {
       dotStairRight: 0,
       count: 0,
 
-      dotRadius: 5,
-
-      // staircase parameters
-      responseMatrix: [true, true],
-      reversals: 0,
-      stairDir: ["up", "up"],
-      dotStair1: 4.65, //in log space; this is about 104 dots which is 70 dots shown for the first one
-      dotStair2: 0,
-      dotStairLeft: 0,
-      dotStairRight: 0,
-      count: 0,
+      //quiz
+      quizState: "pre",
 
       // screen parameters
       instructScreen: true,
       instructNum: 1,
+      quizScreen: false,
       taskScreen: false,
       taskSection: null,
       debug: false,
@@ -130,7 +126,7 @@ class MetaPerTask extends React.Component {
     this.handleResp = this.handleResp.bind(this);
     this.handleConfResp = this.handleConfResp.bind(this);
     this.instructText = this.instructText.bind(this);
-
+    this.quizText = this.quizText.bind(this);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
@@ -157,7 +153,7 @@ class MetaPerTask extends React.Component {
       console.log("BEGIN");
       setTimeout(
         function () {
-          this.taskBegin();
+          this.quizBegin();
         }.bind(this),
         0
       );
@@ -179,9 +175,36 @@ class MetaPerTask extends React.Component {
         10
       );
     } else if (whichButton === 3 && curInstructNum === 4) {
+      this.setState({
+        quizState: "post",
+      });
+
+      setTimeout(
+        function () {
+          this.quizBegin();
+        }.bind(this),
+        10
+      );
+    } else if (whichButton === 3 && curInstructNum === 5) {
       setTimeout(
         function () {
           this.redirectToNextTask();
+        }.bind(this),
+        0
+      );
+    }
+  }
+
+  handleGlobalConf(keyPressed) {
+    var whichButton = keyPressed;
+    if (
+      whichButton === 3 &&
+      this.state.quizScreen === true &&
+      this.state.confMove == true
+    ) {
+      setTimeout(
+        function () {
+          this.renderQuizSave();
         }.bind(this),
         0
       );
@@ -280,6 +303,20 @@ class MetaPerTask extends React.Component {
         //    this is spacebar
         keyPressed = 3;
         this.handleBegin(keyPressed);
+        break;
+      default:
+    }
+  };
+
+  // handle key keyPressed
+  _handleGlobalConfKey = (event) => {
+    var keyPressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is spacebar
+        keyPressed = 3;
+        this.handleGlobalConf(keyPressed);
         break;
       default:
     }
@@ -415,10 +452,24 @@ class MetaPerTask extends React.Component {
     let instruct_text4 = (
       <div>
         <span>
-          Amazing! You have completed sorting through all of the battery cards!
+          Amazing!
           <br />
           <br />
-          Our spaceship power is back to a good level.
+          You have completed sorting through all of the battery cards!
+          <br />
+          <br />
+          <center>
+            Press the [<strong>SPACEBAR</strong>] to continue.
+          </center>
+        </span>
+      </div>
+    );
+
+    let instruct_text5 = (
+      <div>
+        <span>
+          Whew! Our spaceship power is now back to a good level, thanks to the
+          high charge battery cards that you have selected.
           <br />
           <br />
           For a job well done, you have earned £2 bonus.
@@ -440,8 +491,94 @@ class MetaPerTask extends React.Component {
         return <div>{instruct_text3}</div>;
       case 4:
         return <div>{instruct_text4}</div>;
+      case 5:
+        return <div>{instruct_text5}</div>;
       default:
     }
+  }
+
+  quizText(quizState) {
+    let quiz_text1 = (
+      <div>
+        <center>
+          Before we begin, how well do you think you will be able to select all
+          of the battery cards correctly?
+        </center>
+        <br />
+        <br />
+        <br />
+        <br />
+        <center>
+          <ConfSliderGlobal.ConfSliderGlobal
+            callBackValue={this.handleCallbackConf.bind(this)}
+            initialValue={this.state.confInitial}
+          />
+        </center>
+        <br />
+        <br />
+        <br />
+        <br />
+        <center>
+          Press [SPACEBAR] to start sorting the battery cards.
+          <br />
+          <br />
+          You will not allowed to move on unless you have adjusted the scale.
+        </center>
+      </div>
+    );
+
+    let quiz_text2 = (
+      <div>
+        <center>
+          After going through all the battery cards, how well did you think you
+          selected all the higher charge battery cards correctly?
+        </center>
+        <br />
+        <br />
+        <br />
+        <br />
+        <center>
+          <ConfSliderGlobal.ConfSliderGlobal
+            callBackValue={this.handleCallbackConf.bind(this)}
+            initialValue={this.state.confInitial}
+          />
+        </center>
+        <br />
+        <br />
+        <br />
+        <br />
+        <center>
+          Press [SPACEBAR] to continue.
+          <br />
+          <br />
+          You will not allowed to move on unless you have adjusted the scale.
+        </center>
+      </div>
+    );
+
+    switch (quizState) {
+      case "pre":
+        return <div>{quiz_text1}</div>;
+      case "post":
+        return <div>{quiz_text2}</div>;
+      default:
+    }
+  }
+
+  quizBegin() {
+    document.removeEventListener("keydown", this._handleInstructKey);
+    document.removeEventListener("keydown", this._handleBeginKey);
+    document.addEventListener("keydown", this._handleGlobalConfKey);
+    var initialValue = utils.randomInt(70, 80);
+
+    this.setState({
+      instructScreen: false,
+      quizScreen: true,
+      taskScreen: false,
+      confInitial: initialValue,
+      confLevel: null,
+      confMove: null,
+    });
   }
 
   taskBegin() {
@@ -458,12 +595,10 @@ class MetaPerTask extends React.Component {
   }
 
   taskEnd() {
-    // remove access to left/right/space keys for the instructions
-    //  document.removeEventListener("keyup", this._handleRespKey);
-    // change state to make sure the screen is changed for the task
     this.setState({
       instructScreen: true,
       taskScreen: false,
+      quizScreen: false,
       instructNum: 4,
       taskSection: null,
     });
@@ -523,6 +658,7 @@ class MetaPerTask extends React.Component {
     this.setState({
       instructScreen: false,
       taskScreen: true,
+      quizScreen: false,
       trialNum: trialNum,
       trialNumInBlock: trialNumInBlock,
       taskSection: "iti",
@@ -538,6 +674,7 @@ class MetaPerTask extends React.Component {
       correct: null,
       stimPos: stimPos,
       reversals: reversals,
+      stairDir: stairDir,
       responseMatrix: responseMatrix,
       //Calculate the for the paramters for the stim
       dotDiffStim1: Math.round(Math.exp(dotStair1)),
@@ -693,18 +830,10 @@ class MetaPerTask extends React.Component {
       dotStairLeft: this.state.dotStairLeft,
       dotStairRight: this.state.dotStairRight,
       count: this.state.count,
-
-      //quiz paramters
-      quizTry: this.state.quizTry,
-      quizTime: this.state.quizTime,
-      quizNumTotal: this.state.quizNumTotal,
-      quizNum: this.state.quizNum,
-      quizCor: this.state.quizCor,
-      quizCorTotal: this.state.quizCorTotal,
     };
 
     //    try {
-    //      fetch(`${DATABASE_URL}/tut_data/` + userID, {
+    //      fetch(`${DATABASE_URL}/task_data/` + userID, {
     //          method: "POST",
     //          headers: {
     //            Accept: "application/json",
@@ -755,6 +884,53 @@ class MetaPerTask extends React.Component {
     }
   }
 
+  renderQuizSave() {
+    document.removeEventListener("keydown", this._handleGlobalConfKey);
+    var userID = this.state.userID;
+
+    let saveString = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      quizState: this.state.quizState,
+      confInitial: this.state.confInitial,
+      confLevel: this.state.confLevel,
+    };
+
+    //    try {
+    //      fetch(`${DATABASE_URL}/prepostconf_data/` + userID, {
+    //          method: "POST",
+    //          headers: {
+    //            Accept: "application/json",
+    //            "Content-Type": "application/json",
+    //          },
+    //          body: JSON.stringify(saveString),
+    //        });
+    //      } catch (e) {
+    //        console.log("Cant post?");
+    //      }
+
+    if (this.state.quizState === "pre") {
+      // begin the task
+      console.log("BEGIN");
+      setTimeout(
+        function () {
+          this.taskBegin();
+        }.bind(this),
+        10
+      );
+    } else if (this.state.quizState === "post") {
+      //return to instructions
+      this.setState({
+        instructScreen: true,
+        taskScreen: false,
+        quizScreen: false,
+        instructNum: 5,
+        taskSection: null,
+      });
+    }
+  }
+
   restBlock() {
     this.setState({
       instructScreen: true,
@@ -784,7 +960,8 @@ class MetaPerTask extends React.Component {
     if (this.state.debug === false) {
       if (
         this.state.instructScreen === true &&
-        this.state.taskScreen === false
+        this.state.taskScreen === false &&
+        this.state.quizScreen === false
       ) {
         document.addEventListener("keydown", this._handleInstructKey);
         document.addEventListener("keydown", this._handleBeginKey);
@@ -793,12 +970,22 @@ class MetaPerTask extends React.Component {
         //    console.log(this.state.instructNum);
       } else if (
         this.state.instructScreen === false &&
+        this.state.taskScreen === false &&
+        this.state.quizScreen === true
+      ) {
+        text = <div> {this.quizText(this.state.quizState)}</div>;
+        //  console.log("THIS SHOULD BE INSTRUCTION BLOCK");
+        //    console.log(this.state.instructNum);
+      } else if (
+        this.state.instructScreen === false &&
+        this.state.quizScreen === false &&
         this.state.taskScreen === true &&
         this.state.taskSection === "iti"
       ) {
         text = <div className={style.boxStyle}></div>;
       } else if (
         this.state.instructScreen === false &&
+        this.state.quizScreen === false &&
         this.state.taskScreen === true &&
         this.state.taskSection === "fixation"
       ) {
@@ -809,6 +996,7 @@ class MetaPerTask extends React.Component {
         );
       } else if (
         this.state.instructScreen === false &&
+        this.state.quizScreen === false &&
         this.state.taskScreen === true &&
         this.state.taskSection === "stimulus"
       ) {
@@ -823,6 +1011,7 @@ class MetaPerTask extends React.Component {
         );
       } else if (
         this.state.instructScreen === false &&
+        this.state.quizScreen === false &&
         this.state.taskScreen === true &&
         this.state.taskSection === "choice"
       ) {
@@ -833,6 +1022,7 @@ class MetaPerTask extends React.Component {
         );
       } else if (
         this.state.instructScreen === false &&
+        this.state.quizScreen === false &&
         this.state.taskScreen === true &&
         this.state.taskSection === "choiceFeedback"
       ) {
@@ -843,6 +1033,7 @@ class MetaPerTask extends React.Component {
         );
       } else if (
         this.state.instructScreen === false &&
+        this.state.quizScreen === false &&
         this.state.taskScreen === true &&
         this.state.taskSection === "confidence"
       ) {
