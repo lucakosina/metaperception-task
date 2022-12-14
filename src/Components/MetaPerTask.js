@@ -941,7 +941,7 @@ class MetaPerTask extends React.Component {
   }
 
   redirectToNextTask() {
-    this.props.navigate("/Questionnaires", {
+    this.props.navigate("/Bonus", {
       state: {
         userID: this.state.userID,
         date: this.state.date,
