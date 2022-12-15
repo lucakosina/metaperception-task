@@ -24,15 +24,15 @@ const marks = [
   },
   {
     value: 2,
-    label: " ",
+    label: "Not very likely",
   },
   {
     value: 3,
-    label: "Somewhat",
+    label: "Somewhat likely",
   },
   {
     value: 4,
-    label: " ",
+    label: "Very likely",
   },
   {
     value: 5,

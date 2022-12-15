@@ -112,7 +112,7 @@ class MetaPerTask extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////
 
     /* prevents page from going down when space bar is hit .*/
-    window.addEventListener("keydown", function (e) {
+    window.addEventListener("keyup", function (e) {
       if (e.keyCode === 32 && e.target === document.body) {
         e.preventDefault();
       }
@@ -200,7 +200,7 @@ class MetaPerTask extends React.Component {
     if (
       whichButton === 3 &&
       this.state.quizScreen === true &&
-      this.state.confMove == true
+      this.state.confMove === true
     ) {
       setTimeout(
         function () {
@@ -566,9 +566,9 @@ class MetaPerTask extends React.Component {
   }
 
   quizBegin() {
-    document.removeEventListener("keydown", this._handleInstructKey);
-    document.removeEventListener("keydown", this._handleBeginKey);
-    document.addEventListener("keydown", this._handleGlobalConfKey);
+    document.removeEventListener("keyup", this._handleInstructKey);
+    document.removeEventListener("keyup", this._handleBeginKey);
+    document.addEventListener("keyup", this._handleGlobalConfKey);
     var initialValue = utils.randomInt(70, 80);
 
     this.setState({
@@ -583,8 +583,8 @@ class MetaPerTask extends React.Component {
 
   taskBegin() {
     // remove access to left/right/space keys for the instructions
-    document.removeEventListener("keydown", this._handleInstructKey);
-    document.removeEventListener("keydown", this._handleBeginKey);
+    document.removeEventListener("keyup", this._handleInstructKey);
+    document.removeEventListener("keyup", this._handleBeginKey);
     // push to render fixation for the first trial
     setTimeout(
       function () {
@@ -735,7 +735,7 @@ class MetaPerTask extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderChoice() {
-    document.addEventListener("keydown", this._handleRespKey);
+    document.addEventListener("keyup", this._handleRespKey);
     var stimTime =
       Math.round(performance.now()) -
       [this.state.trialTime + this.state.fixTime];
@@ -750,7 +750,7 @@ class MetaPerTask extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderChoiceFb() {
-    document.removeEventListener("keydown", this._handleRespKey);
+    document.removeEventListener("keyup", this._handleRespKey);
 
     var respFbTime =
       Math.round(performance.now()) -
@@ -778,7 +778,7 @@ class MetaPerTask extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderConfScale() {
-    document.addEventListener("keydown", this._handleConfRespKey);
+    document.addEventListener("keyup", this._handleConfRespKey);
 
     var initialValue = utils.randomInt(70, 80);
 
@@ -793,7 +793,7 @@ class MetaPerTask extends React.Component {
   }
 
   renderTaskSave() {
-    document.removeEventListener("keydown", this._handleConfRespKey);
+    document.removeEventListener("keyup", this._handleConfRespKey);
 
     console.log("trialNumInBlock Save: " + this.state.trialNumInBlock);
 
@@ -885,7 +885,7 @@ class MetaPerTask extends React.Component {
   }
 
   renderQuizSave() {
-    document.removeEventListener("keydown", this._handleGlobalConfKey);
+    document.removeEventListener("keyup", this._handleGlobalConfKey);
     var userID = this.state.userID;
 
     let saveString = {
@@ -963,8 +963,8 @@ class MetaPerTask extends React.Component {
         this.state.taskScreen === false &&
         this.state.quizScreen === false
       ) {
-        document.addEventListener("keydown", this._handleInstructKey);
-        document.addEventListener("keydown", this._handleBeginKey);
+        document.addEventListener("keyup", this._handleInstructKey);
+        document.addEventListener("keyup", this._handleBeginKey);
         text = <div> {this.instructText(this.state.instructNum)}</div>;
         //  console.log("THIS SHOULD BE INSTRUCTION BLOCK");
         //    console.log(this.state.instructNum);

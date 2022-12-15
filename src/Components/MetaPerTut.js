@@ -122,7 +122,7 @@ class MetaPerTut extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////
 
     /* prevents page from going down when space bar is hit .*/
-    window.addEventListener("keydown", function (e) {
+    window.addEventListener("keyup", function (e) {
       if (e.keyCode === 32 && e.target === document.body) {
         e.preventDefault();
       }
@@ -256,7 +256,7 @@ class MetaPerTut extends React.Component {
   handleNextResp(keyPressed, timePressed) {
     var whichButton = keyPressed;
     if (whichButton === 3) {
-      document.removeEventListener("keydown", this._handleNextRespKey);
+      document.removeEventListener("keyup", this._handleNextRespKey);
       setTimeout(
         function () {
           this.renderTutorSave();
@@ -863,8 +863,8 @@ class MetaPerTut extends React.Component {
 
   tutorBegin() {
     // remove access to left/right/space keys for the instructions
-    document.removeEventListener("keydown", this._handleInstructKey);
-    document.removeEventListener("keydown", this._handleBeginKey);
+    document.removeEventListener("keyup", this._handleInstructKey);
+    document.removeEventListener("keyup", this._handleBeginKey);
     // push to render fixation for the first trial
     setTimeout(
       function () {
@@ -888,9 +888,9 @@ class MetaPerTut extends React.Component {
 
   quizBegin() {
     // remove access to left/right/space keys for the instructions
-    document.removeEventListener("keydown", this._handleInstructKey);
-    document.removeEventListener("keydown", this._handleBeginKey);
-    document.addEventListener("keydown", this._handleQuizKey);
+    document.removeEventListener("keyup", this._handleInstructKey);
+    document.removeEventListener("keyup", this._handleBeginKey);
+    document.addEventListener("keyup", this._handleQuizKey);
 
     // If I want to shuffle quiz answers?
 
@@ -914,7 +914,7 @@ class MetaPerTut extends React.Component {
         quizNum: quizNum + 1,
       });
     } else if (quizNum === this.state.quizNumTotal) {
-      document.removeEventListener("keydown", this._handleQuizKey);
+      document.removeEventListener("keyup", this._handleQuizKey);
       //end quiz, head back to instructions
 
       //if full marks
@@ -1077,7 +1077,7 @@ class MetaPerTut extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderChoice() {
-    document.addEventListener("keydown", this._handleRespKey);
+    document.addEventListener("keyup", this._handleRespKey);
     var stimTime =
       Math.round(performance.now()) -
       [this.state.trialTime + this.state.fixTime];
@@ -1092,7 +1092,7 @@ class MetaPerTut extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderChoiceFb() {
-    document.removeEventListener("keydown", this._handleRespKey);
+    document.removeEventListener("keyup", this._handleRespKey);
 
     var respFbTime =
       Math.round(performance.now()) -
@@ -1120,7 +1120,7 @@ class MetaPerTut extends React.Component {
 
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderCorFb() {
-    document.addEventListener("keydown", this._handleNextRespKey);
+    document.addEventListener("keyup", this._handleNextRespKey);
 
     var rewFbTime =
       Math.round(performance.now()) -
@@ -1259,8 +1259,8 @@ class MetaPerTut extends React.Component {
         this.state.instructScreen === true &&
         this.state.taskScreen === false
       ) {
-        document.addEventListener("keydown", this._handleInstructKey);
-        document.addEventListener("keydown", this._handleBeginKey);
+        document.addEventListener("keyup", this._handleInstructKey);
+        document.addEventListener("keyup", this._handleBeginKey);
         text = <div> {this.instructText(this.state.instructNum)}</div>;
         console.log("THIS SHOULD BE INSTRUCTION BLOCK");
         console.log(this.state.instructNum);

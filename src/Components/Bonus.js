@@ -41,9 +41,12 @@ class Bonus extends React.Component {
       userID: userID,
       date: date,
       startTime: startTime,
+      section: "insight",
       astrodude: astrodude,
       ratingInitial: 3,
-      feedbackL: [],
+      ratingValue: null,
+      feedback: [],
+
       // screen parameters
       instructScreen: true,
       instructNum: 1,
@@ -55,7 +58,7 @@ class Bonus extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////
 
     /* prevents page from going down when space bar is hit .*/
-    window.addEventListener("keydown", function (e) {
+    window.addEventListener("keyup", function (e) {
       if (e.keyCode === 32 && e.target === document.body) {
         e.preventDefault();
       }
@@ -79,10 +82,16 @@ class Bonus extends React.Component {
   // This handles instruction screen within the component USING KEYBOARD
   handleInstruct(keyPressed) {
     var curInstructNum = this.state.instructNum;
+    var ratingValue = this.state.ratingValue;
     var whichButton = keyPressed;
 
-    if (whichButton === 3 && curInstructNum === 1) {
-      this.setState({ instructNum: curInstructNum + 1 });
+    if (whichButton === 3 && curInstructNum === 1 && ratingValue !== null) {
+      setTimeout(
+        function () {
+          this.renderRatingSave();
+        }.bind(this),
+        0
+      );
     } else if (whichButton === 3 && curInstructNum === 2) {
       setTimeout(
         function () {
@@ -108,7 +117,7 @@ class Bonus extends React.Component {
   };
 
   handleCallbackConf(callBackValue) {
-    this.setState({ confValue: callBackValue });
+    this.setState({ ratingValue: callBackValue });
   }
 
   handleSubmit(event) {
@@ -118,6 +127,9 @@ class Bonus extends React.Component {
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
+      section: this.state.section,
+      ratingValue: null,
+      totalBonus: null,
       feedback: this.state.feedback,
     };
 
@@ -138,6 +150,46 @@ class Bonus extends React.Component {
     event.preventDefault();
   }
 
+  renderRatingSave() {
+    var userID = this.state.userID;
+
+    let saveString = {
+      userID: this.state.userID,
+      date: this.state.date,
+      startTime: this.state.startTime,
+      section: this.state.section,
+      ratingValue: this.state.ratingValue,
+      totalBonus: this.state.totalBonus,
+      feedback: null,
+    };
+
+    // try {
+    //   fetch(`${DATABASE_URL}/feedback/` + userID, {
+    //     method: "POST",
+    //     headers: {
+    //       Accept: "application/json",
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(saveString),
+    //   });
+    // } catch (e) {
+    //   console.log("Cant post?");
+    // }
+
+    setTimeout(
+      function () {
+        this.nextPg();
+      }.bind(this),
+      0
+    );
+  }
+
+  nextPg() {
+    this.setState({
+      instructNum: this.state.instructNum + 1,
+      section: "feedback",
+    });
+  }
   // To ask them for the valence rating of the noises
   // before we start the task
   instructText(instructNum) {
@@ -212,6 +264,7 @@ class Bonus extends React.Component {
   }
 
   redirectToNextTask() {
+    document.removeEventListener("keyup", this._handleInstructKey);
     this.props.navigate("/Questionnaires", {
       state: {
         userID: this.state.userID,
@@ -232,7 +285,7 @@ class Bonus extends React.Component {
     let text;
     if (this.state.debug === false) {
       if (this.state.instructScreen === true) {
-        document.addEventListener("keydown", this._handleInstructKey);
+        document.addEventListener("keyup", this._handleInstructKey);
         text = <div> {this.instructText(this.state.instructNum)}</div>;
       }
     } else if (this.state.debug === true) {
