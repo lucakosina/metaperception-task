@@ -1,7 +1,7 @@
 import React from "react";
 import * as Consent from "survey-react";
 import "../../node_modules/survey-react/survey.css";
-import "./style/startStyle.css";
+import "./style/surveyStyle.css";
 import withRouter from "./withRouter";
 
 class StartPage extends React.Component {
@@ -280,8 +280,10 @@ class StartPage extends React.Component {
 
     if (this.state.consentComplete === 0) {
       return (
-        <div className="placeMiddle">
-          <div className="boldCenter">INFORMATION FOR THE PARTICIPANT</div>
+        <div className="textBox">
+          <center>
+            <strong>INFORMATION FOR THE PARTICIPANT</strong>
+          </center>
           <br />
           Please read this information page carefully. If you are happy to
           proceed, please check the boxes on the second page of this form to

@@ -19,11 +19,9 @@ import astrodude from "./img/astronaut.png";
 // THIS CODES THE TUTORIAL SESSION + QUIZ FOR THE TASK
 // Session includes:
 // 1) Introduction to cover story
-// 2) Quiz on instructions
-// 3) Practice on left/right box with feedback
-// 4) Instructions to confidence rating
-// 5) Quiz on confidence rating
-// 6) Move to task proper
+// 2) Practice on left/right box with feedback
+// 3) Instructions to confidence rating
+// 4) Quiz on instructions
 
 class MetaPerTut extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////

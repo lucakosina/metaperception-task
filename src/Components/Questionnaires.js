@@ -3,7 +3,9 @@ import withRouter from "./withRouter.js";
 import * as Quest from "survey-react";
 import "survey-react/survey.css";
 import style from "./style/taskStyle.module.css";
+import "./style/surveyStyle.css";
 import * as utils from "./utils.js";
+
 // quests
 import { aes } from "./quest/aes.js";
 import { audit } from "./quest/audit.js";
@@ -22,10 +24,6 @@ import { icar1 } from "./quest/icar1.js";
 import { icar2 } from "./quest/icar2.js";
 
 //import { DATABASE_URL } from "./config";
-
-import "./style/questStyle.css";
-
-//also need to add self esteem questionnaire
 
 class Questionnaires extends React.Component {
   constructor(props) {
@@ -352,7 +350,7 @@ class Questionnaires extends React.Component {
         };
 
         text = (
-          <div className="placeMiddle">
+          <div className="textBox">
             <Quest.Survey
               json={json}
               css={myCss}

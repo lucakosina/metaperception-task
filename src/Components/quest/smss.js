@@ -199,11 +199,6 @@ export const smss = [
         text:
           "Do you often feel like doing the opposite of what other people suggest even though you know they are right?",
       },
-      {
-        value: "SMSS_43",
-        text:
-          "Do you often feel like doing the opposite of what other people suggest even though you know they are right?",
-      },
     ],
   },
 ];

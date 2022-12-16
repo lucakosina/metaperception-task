@@ -1,4 +1,5 @@
-// Full consent form version change json2 to json
+// Full consent form version
+
 export const json = {
   title: null,
   pages: [
