@@ -10,7 +10,7 @@ import withRouter from "./withRouter.js";
 import * as ConfSlider from "./DrawConfSlider.js";
 import * as ConfSliderGlobal from "./DrawConfSliderGlobal.js";
 
-//import { DATABASE_URL } from "./config";
+import { DATABASE_URL } from "./config";
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +23,8 @@ class MetaPerTask extends React.Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props);
+
+    var sectionTime = Math.round(performance.now());
 
     //when deug
     const userID = 100;
@@ -50,6 +52,8 @@ class MetaPerTask extends React.Component {
       userID: userID,
       date: date,
       startTime: startTime,
+      section: "task",
+      sectionTime: sectionTime,
 
       // trial timings in ms
       fixTimeLag: 1000, //1000
@@ -123,7 +127,7 @@ class MetaPerTask extends React.Component {
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
-
+    this.handleDebugKey = this.handleDebugKey.bind(this);
     this.handleInstruct = this.handleInstruct.bind(this);
     this.handleBegin = this.handleBegin.bind(this);
     this.handleResp = this.handleResp.bind(this);
@@ -133,6 +137,33 @@ class MetaPerTask extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
+
+  handleDebugKey(pressed) {
+    var whichButton = pressed;
+
+    if (whichButton === 10) {
+      document.removeEventListener("keyup", this._handleDebugKey);
+      setTimeout(
+        function () {
+          this.redirectToTarget();
+        }.bind(this),
+        0
+      );
+    }
+  }
+
+  _handleDebugKey = (event) => {
+    var pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is SPACEBAR
+        pressed = 10;
+        this.handleDebugKey(pressed);
+        break;
+      default:
+    }
+  };
 
   // This handles instruction screen within the component USING KEYBOARD
   handleInstruct(keyPressed) {
@@ -755,20 +786,10 @@ class MetaPerTask extends React.Component {
   renderChoiceFb() {
     document.removeEventListener("keyup", this._handleRespKey);
 
-    var respFbTime =
-      Math.round(performance.now()) -
-      [
-        this.state.trialTime +
-          this.state.fixTime +
-          this.state.stimTime +
-          this.state.respTime,
-      ];
-
     this.setState({
       //    instructScreen: false,
       //    taskScreen: true,
       taskSection: "choiceFeedback",
-      respFbTime: respFbTime,
     });
 
     setTimeout(
@@ -785,11 +806,21 @@ class MetaPerTask extends React.Component {
 
     var initialValue = utils.randomInt(70, 80);
 
+    var respFbTime =
+      Math.round(performance.now()) -
+      [
+        this.state.trialTime +
+          this.state.fixTime +
+          this.state.stimTime +
+          this.state.respTime,
+      ];
+
     this.setState({
       //      instructScreen: false,
       //      taskScreen: true,
       taskSection: "confidence",
       confInitial: initialValue,
+      respFbTime: respFbTime,
     });
 
     // it will deploy the next trial with spacebar keypress
@@ -806,6 +837,8 @@ class MetaPerTask extends React.Component {
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
+      section: this.state.section,
+      sectionTime: this.state.sectionTime,
       trialNum: this.state.trialNum,
       blockNum: this.state.blockNum,
       trialNumInBlock: this.state.trialNumInBlock,
@@ -835,18 +868,18 @@ class MetaPerTask extends React.Component {
       count: this.state.count,
     };
 
-    //    try {
-    //      fetch(`${DATABASE_URL}/task_data/` + userID, {
-    //          method: "POST",
-    //          headers: {
-    //            Accept: "application/json",
-    //            "Content-Type": "application/json",
-    //          },
-    //          body: JSON.stringify(saveString),
-    //        });
-    //      } catch (e) {
-    //        console.log("Cant post?");
-    //      }
+    try {
+      fetch(`${DATABASE_URL}/task_data/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(saveString),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
 
     console.log("trialNum: " + this.state.trialNum);
     console.log("trialNumPerBlock: " + this.state.trialNumPerBlock);
@@ -895,23 +928,25 @@ class MetaPerTask extends React.Component {
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
+      section: this.state.section,
+      sectionTime: this.state.sectionTime,
       quizState: this.state.quizState,
       confInitial: this.state.confInitial,
       confLevel: this.state.confLevel,
     };
 
-    //    try {
-    //      fetch(`${DATABASE_URL}/prepostconf_data/` + userID, {
-    //          method: "POST",
-    //          headers: {
-    //            Accept: "application/json",
-    //            "Content-Type": "application/json",
-    //          },
-    //          body: JSON.stringify(saveString),
-    //        });
-    //      } catch (e) {
-    //        console.log("Cant post?");
-    //      }
+    try {
+      fetch(`${DATABASE_URL}/prepost_conf/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(saveString),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
 
     if (this.state.quizState === "pre") {
       // begin the task
@@ -1071,6 +1106,7 @@ class MetaPerTask extends React.Component {
         );
       }
     } else if (this.state.debug === true) {
+      document.addEventListener("keyup", this._handleDebugKey);
       text = (
         <div>
           <p>

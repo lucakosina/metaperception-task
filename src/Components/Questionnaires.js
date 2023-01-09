@@ -23,7 +23,7 @@ import { demo } from "./quest/demo.js";
 import { icar1 } from "./quest/icar1.js";
 import { icar2 } from "./quest/icar2.js";
 
-//import { DATABASE_URL } from "./config";
+import { DATABASE_URL } from "./config";
 
 class Questionnaires extends React.Component {
   constructor(props) {
@@ -38,7 +38,8 @@ class Questionnaires extends React.Component {
     const date = 100;
     const startTime = 100;
 
-    var currentTime = Math.round(performance.now());
+    var sectionTime = Math.round(performance.now());
+
     var quizLabel = [
       "AES",
       "AUDIT",
@@ -74,10 +75,12 @@ class Questionnaires extends React.Component {
       userID: userID,
       date: date,
       startTime: startTime,
+      section: "psych",
+      sectionTime: sectionTime,
       resultAsString: {},
 
-      qnStart: currentTime,
-      qnTime: currentTime,
+      qnStart: sectionTime,
+      qnTime: sectionTime,
       qnTotal: 11,
       quizLabel: quizLabel,
       allQuizText: allQuizText,
@@ -124,17 +127,17 @@ class Questionnaires extends React.Component {
     survey.setValue("qnTimeEnd", qnEnd);
 
     var resultAsString = JSON.stringify(survey.data);
-    //
-    // console.log("resultAsString", resultAsString);
 
-    //    fetch(`${DATABASE_URL}/psych_quiz/` + userID, {
-    //      method: "POST",
-    //      headers: {
-    //        Accept: "application/json",
-    //        "Content-Type": "application/json",
-    //      },
-    //      body: resultAsString,
-    //    });
+    console.log("resultAsString", resultAsString);
+
+    fetch(`${DATABASE_URL}/psych_quiz/` + userID, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: resultAsString,
+    });
 
     this.setState({
       resultAsString: resultAsString,

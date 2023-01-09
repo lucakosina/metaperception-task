@@ -20,6 +20,8 @@ class Bonus extends React.Component {
   constructor(props) {
     super(props);
 
+    var sectionTime = Math.round(performance.now());
+
     //when deug
     const userID = 100;
     const date = 100;
@@ -42,6 +44,7 @@ class Bonus extends React.Component {
       date: date,
       startTime: startTime,
       section: "insight",
+      sectionTime: sectionTime,
       astrodude: astrodude,
       ratingInitial: 3,
       ratingValue: null,
@@ -128,6 +131,7 @@ class Bonus extends React.Component {
       date: this.state.date,
       startTime: this.state.startTime,
       section: this.state.section,
+      sectionTime: this.state.sectionTime,
       ratingValue: null,
       totalBonus: null,
       feedback: this.state.feedback,
@@ -158,6 +162,7 @@ class Bonus extends React.Component {
       date: this.state.date,
       startTime: this.state.startTime,
       section: this.state.section,
+      sectionTime: this.state.sectionTime,
       ratingValue: this.state.ratingValue,
       totalBonus: this.state.totalBonus,
       feedback: null,

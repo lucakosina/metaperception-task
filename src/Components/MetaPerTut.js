@@ -12,7 +12,7 @@ import withRouter from "./withRouter.js";
 import * as ConfSliderEx from "./DrawConfSliderExample.js";
 import astrodude from "./img/astronaut.png";
 
-//import { DATABASE_URL } from "./config";
+import { DATABASE_URL } from "./config";
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@ class MetaPerTut extends React.Component {
   // CONSTRUCTOR
   constructor(props) {
     super(props);
+
+    var sectionTime = Math.round(performance.now());
 
     //when deug
     const userID = 100;
@@ -56,12 +58,16 @@ class MetaPerTut extends React.Component {
       startTime: startTime,
       astrodude: astrodude,
 
+      //section paramters
+      sectionTime: sectionTime,
+      section: "tutorial",
+
       // trial timings in ms
       fixTimeLag: 1000, //1000
       fbTimeLag: 500, //500
       stimTimeLag: 700, //300
       respFbTimeLag: 700, //
-      corFbTimeLag: 1000, // right or wrong
+      corFbTimeLag: 1000, // right or wrong feedback
 
       //trial parameters
       trialNumTotal: trialNumTotal,
@@ -104,6 +110,7 @@ class MetaPerTut extends React.Component {
       quizTry: 1,
       quizNumTotal: 4,
       quizNum: 0,
+      quizPressed: null,
       quizCor: null,
       quizCorTotal: null,
       quizAns: [2, 1, 2, 3],
@@ -129,6 +136,7 @@ class MetaPerTut extends React.Component {
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
+    this.handleDebugKey = this.handleDebugKey.bind(this);
     this.handleInstruct = this.handleInstruct.bind(this);
     this.handleBegin = this.handleBegin.bind(this);
     this.handleResp = this.handleResp.bind(this);
@@ -136,9 +144,40 @@ class MetaPerTut extends React.Component {
     this.handleQuizResp = this.handleQuizResp.bind(this);
     this.instructText = this.instructText.bind(this);
     this.quizText = this.quizText.bind(this);
+
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  /// KEYBOARD HANDLES ////
+
+  handleDebugKey(pressed) {
+    var whichButton = pressed;
+
+    if (whichButton === 10) {
+      document.removeEventListener("keyup", this._handleDebugKey);
+      setTimeout(
+        function () {
+          this.redirectToTarget();
+        }.bind(this),
+        0
+      );
+    }
+  }
+
+  _handleDebugKey = (event) => {
+    var pressed;
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is SPACEBAR
+        pressed = 10;
+        this.handleDebugKey(pressed);
+        break;
+      default:
+    }
+  };
 
   // This handles instruction screen within the component USING KEYBOARD
   handleInstruct(keyPressed) {
@@ -200,7 +239,6 @@ class MetaPerTut extends React.Component {
   }
 
   handleResp(keyPressed, timePressed) {
-    //Check first whether it is a valid press
     var respTime =
       timePressed -
       (this.state.trialTime + this.state.fixTime + this.state.stimTime);
@@ -217,6 +255,7 @@ class MetaPerTut extends React.Component {
 
     var correct;
     var response;
+    // correct and response is the same thing, response is just in boolean for the responseMat
     if (this.state.dotDiffLeft > this.state.dotDiffRight && choice === "left") {
       response = true;
       correct = 1;
@@ -234,7 +273,6 @@ class MetaPerTut extends React.Component {
     console.log("response: " + response);
 
     var responseMatrix = this.state.responseMatrix.concat(response);
-
     this.setState({
       responseKey: keyPressed,
       choice: choice,
@@ -267,6 +305,9 @@ class MetaPerTut extends React.Component {
   handleQuizResp(keyPressed, timePressed) {
     var quizNum = this.state.quizNum;
     var whichButton = keyPressed;
+
+    var quizTime = timePressed - this.state.trialTime;
+
     var quizCorTotal = this.state.quizCorTotal;
     var quizCor;
 
@@ -275,19 +316,23 @@ class MetaPerTut extends React.Component {
       quizCorTotal = quizCorTotal + 1;
       quizCor = 1;
       this.setState({
+        quizPressed: whichButton,
         quizCor: quizCor,
         quizCorTotal: quizCorTotal,
-        quizTime: timePressed,
+        quizTime: quizTime,
       });
     } else {
+      //if was incorrect
       quizCor = 0;
       this.setState({
+        quizPressed: whichButton,
         quizCor: quizCor,
-        quizTime: timePressed,
+        quizTime: quizTime,
       });
     }
 
     console.log("Keypress: " + whichButton);
+    console.log("QuizTime: " + quizTime);
     console.log("QuizNum: " + quizNum);
     console.log("QuizCor: " + quizCor);
     console.log("QuizCorTotal: " + quizCorTotal);
@@ -363,6 +408,7 @@ class MetaPerTut extends React.Component {
   _handleNextRespKey = (event) => {
     var keyPressed;
     var timePressed;
+
     switch (event.keyCode) {
       case 32:
         //    this is spacebar
@@ -407,6 +453,9 @@ class MetaPerTut extends React.Component {
       default:
     }
   };
+
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  /// INSTRUCTION TEXT ////
 
   // To ask them for the valence rating of the noises
   // before we start the task
@@ -775,8 +824,10 @@ class MetaPerTut extends React.Component {
     }
   }
 
-  // To ask them for the valence rating of the noises
-  // before we start the task
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  /// QUIZ TEXT ////
+  // Do I need to randomise this?
+
   quizText(quizNum) {
     let quiz_text1 = (
       <div>
@@ -859,10 +910,14 @@ class MetaPerTut extends React.Component {
     }
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////
+  /// TASK TOGGLES ////
+
   tutorBegin() {
     // remove access to left/right/space keys for the instructions
     document.removeEventListener("keyup", this._handleInstructKey);
     document.removeEventListener("keyup", this._handleBeginKey);
+
     // push to render fixation for the first trial
     setTimeout(
       function () {
@@ -873,8 +928,6 @@ class MetaPerTut extends React.Component {
   }
 
   tutorEnd() {
-    // remove access to left/right/space keys for the instructions
-    //  document.removeEventListener("keyup", this._handleRespKey);
     // change state to make sure the screen is changed for the task
     this.setState({
       instructScreen: true,
@@ -896,20 +949,23 @@ class MetaPerTut extends React.Component {
       instructScreen: false,
       taskScreen: true,
       taskSection: "quiz",
+      quizPressed: null,
       quizNum: 1,
       quizCorTotal: 0,
       quizCor: null,
     });
   }
 
-  quizreset() {
+  quizReset() {
     var quizNum = this.state.quizNum;
     var quizCorTotal = this.state.quizCorTotal;
+    var trialTime = Math.round(performance.now());
 
     if (quizNum < this.state.quizNumTotal) {
       //go to next quiz qn
       this.setState({
         quizNum: quizNum + 1,
+        trialTime: trialTime,
       });
     } else if (quizNum === this.state.quizNumTotal) {
       document.removeEventListener("keyup", this._handleQuizKey);
@@ -1145,8 +1201,10 @@ class MetaPerTut extends React.Component {
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
-      trialTime: this.state.trialTime,
+      section: this.state.section,
+      sectionTime: this.state.sectionTime,
       trialNum: this.state.trialNum,
+      trialTime: this.state.trialTime,
       fixTime: this.state.fixTime,
       stimTime: this.state.stimTime,
       dotDiffLeft: this.state.dotDiffLeft,
@@ -1156,6 +1214,7 @@ class MetaPerTut extends React.Component {
       responseKey: this.state.responseKey,
       respTime: this.state.respTime,
       respFbTime: this.state.respFbTime,
+      rewFbTime: this.state.rewFbTime,
       choice: this.state.choice,
       confLevel: this.state.confLevel,
       confTime: this.state.confTime,
@@ -1172,18 +1231,18 @@ class MetaPerTut extends React.Component {
       count: this.state.count,
     };
 
-    // try {
-    //   fetch(`${DATABASE_URL}/tutorial_data/` + userID, {
-    //     method: "POST",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(saveString),
-    //   });
-    // } catch (e) {
-    //   console.log("Cant post?");
-    // }
+    try {
+      fetch(`${DATABASE_URL}/tutorial_data/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(saveString),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
 
     setTimeout(
       function () {
@@ -1200,32 +1259,35 @@ class MetaPerTut extends React.Component {
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
-
+      section: this.state.section,
+      sectionTime: this.state.sectionTime,
       //quiz paramters
       quizTry: this.state.quizTry,
-      quizTime: this.state.quizTime,
       quizNumTotal: this.state.quizNumTotal,
       quizNum: this.state.quizNum,
+      trialTime: this.state.trialTime,
+      quizPressed: this.state.quizPressed,
+      quizTime: this.state.quizTime,
       quizCor: this.state.quizCor,
       quizCorTotal: this.state.quizCorTotal,
     };
 
-    //    try {
-    //      fetch(`${DATABASE_URL}/quiz_data/` + userID, {
-    //          method: "POST",
-    //          headers: {
-    //            Accept: "application/json",
-    //            "Content-Type": "application/json",
-    //          },
-    //          body: JSON.stringify(saveString),
-    //        });
-    //      } catch (e) {
-    //        console.log("Cant post?");
-    //      }
+    try {
+      fetch(`${DATABASE_URL}/quiz_test/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(saveString),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
 
     setTimeout(
       function () {
-        this.quizreset();
+        this.quizReset();
       }.bind(this),
       10
     );
@@ -1340,6 +1402,7 @@ class MetaPerTut extends React.Component {
         );
       }
     } else if (this.state.debug === true) {
+      document.addEventListener("keyup", this._handleDebugKey);
       text = (
         <div>
           <p>
