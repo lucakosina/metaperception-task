@@ -7,14 +7,18 @@ import * as utils from "./utils.js";
 var squareWidth = 250; //250
 var boxDist = 200; //distance between the boxes
 var bufferFix = 400;
-var bufferFixWin = 0;
 
-// left box
-var leftBoxStartX = window.innerWidth / 2 - squareWidth / 2 - boxDist;
+var bufferFixWidWin = 50;
+var bufferFixHeiWin = 150;
+
+//left box
+var leftBoxStartX =
+  (window.innerWidth - bufferFixWidWin) / 2 - squareWidth / 2 - boxDist;
 var leftBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 
 //right box
-var rightBoxStartX = window.innerWidth / 2 - squareWidth / 2 + boxDist;
+var rightBoxStartX =
+  (window.innerWidth - bufferFixWidWin) / 2 - squareWidth / 2 + boxDist;
 var rightBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 
 export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
@@ -58,7 +62,10 @@ export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
   const [dotsRightShow, setDotsRightShow] = React.useState(rightDotShownCoor);
 
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight - bufferFixWin}>
+    <Stage
+      width={window.innerWidth - bufferFixWidWin}
+      height={window.innerHeight - bufferFixHeiWin}
+    >
       <Layer>
         <Rect
           x={leftBoxStartX}

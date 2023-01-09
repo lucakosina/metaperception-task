@@ -4,14 +4,17 @@ import { Stage, Layer, Rect } from "react-konva";
 var boxDist = 200; //distance between the boxes
 var squareWidth = 250;
 var bufferFix = 400;
-var bufferFixWin = 0;
+var bufferFixWidWin = 50;
+var bufferFixHeiWin = 150;
 
 //left box
-var leftBoxStartX = window.innerWidth / 2 - squareWidth / 2 - boxDist;
+var leftBoxStartX =
+  (window.innerWidth - bufferFixWidWin) / 2 - squareWidth / 2 - boxDist;
 var leftBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 
 //right box
-var rightBoxStartX = window.innerWidth / 2 - squareWidth / 2 + boxDist;
+var rightBoxStartX =
+  (window.innerWidth - bufferFixWidWin) / 2 - squareWidth / 2 + boxDist;
 var rightBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 
 export const DrawChoice = ({ choice }) => {
@@ -41,7 +44,10 @@ export const DrawChoice = ({ choice }) => {
   const [rightBoxState, setRightBoxState] = React.useState(rightChoice);
 
   return (
-    <Stage width={window.innerWidth} height={window.innerHeight - bufferFixWin}>
+    <Stage
+      width={window.innerWidth - bufferFixWidWin}
+      height={window.innerHeight - bufferFixHeiWin}
+    >
       <Layer>
         <Rect
           x={leftBoxStartX}

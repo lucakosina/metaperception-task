@@ -1,17 +1,19 @@
 import React from "react";
 import { Stage, Layer, Rect, Text } from "react-konva";
-import style from "./style/taskStyle.module.css";
 
 var boxDist = 200; //distance between the boxes
 var squareWidth = 250;
 var bufferFix = 400;
-var bufferFixWin = 0;
+var bufferFixWidWin = 50;
+var bufferFixHeiWin = 150;
 //left box
-var leftBoxStartX = window.innerWidth / 2 - squareWidth / 2 - boxDist;
+var leftBoxStartX =
+  (window.innerWidth - bufferFixWidWin) / 2 - squareWidth / 2 - boxDist;
 var leftBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 
 //right box
-var rightBoxStartX = window.innerWidth / 2 - squareWidth / 2 + boxDist;
+var rightBoxStartX =
+  (window.innerWidth - bufferFixWidWin) / 2 - squareWidth / 2 + boxDist;
 var rightBoxStartY = (window.innerHeight - bufferFix) / 2 - squareWidth / 2;
 
 class DrawBox extends React.Component {
@@ -31,8 +33,8 @@ class DrawBox extends React.Component {
     text = (
       <div>
         <Stage
-          width={window.innerWidth}
-          height={window.innerHeight - bufferFixWin}
+          width={window.innerWidth - bufferFixWidWin}
+          height={window.innerHeight - bufferFixHeiWin}
         >
           <Layer>
             <Rect
