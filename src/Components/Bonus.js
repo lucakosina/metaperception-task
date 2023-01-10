@@ -1,11 +1,10 @@
 import React from "react";
 import style from "./style/taskStyle.module.css";
-import * as utils from "./utils.js";
 import withRouter from "./withRouter.js";
 import * as InsightSlider from "./DrawInsightSlider.js";
 import astrodude from "./img/astronaut.png";
 
-//import { DATABASE_URL } from "./config";
+import { DATABASE_URL } from "./config";
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -23,13 +22,13 @@ class Bonus extends React.Component {
     var sectionTime = Math.round(performance.now());
 
     //when deug
-    const userID = 100;
-    const date = 100;
-    const startTime = 100;
+    //  const userID = 100;
+    //  const date = 100;
+    //  const startTime = 100;
 
-    // const userID = this.props.state.userID;
-    // const date = this.props.state.date;
-    // const startTime = this.props.state.startTime;
+    const userID = this.props.state.userID;
+    const date = this.props.state.date;
+    const startTime = this.props.state.startTime;
 
     // var initialValue = utils.randomInt(6, 8);
 
@@ -88,6 +87,9 @@ class Bonus extends React.Component {
     var ratingValue = this.state.ratingValue;
     var whichButton = keyPressed;
 
+    console.log(curInstructNum);
+    console.log(ratingValue);
+
     if (whichButton === 3 && curInstructNum === 1 && ratingValue !== null) {
       setTimeout(
         function () {
@@ -137,18 +139,18 @@ class Bonus extends React.Component {
       feedback: this.state.feedback,
     };
 
-    //  try {
-    //   fetch(`${DATABASE_URL}/feedback/` + userID, {
-    //     method: "POST",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //    },
-    //    body: JSON.stringify(quizbehaviour),
-    //  });
-    // } catch (e) {
-    //    console.log("Cant post?");
-    // }
+    try {
+      fetch(`${DATABASE_URL}/feedback/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(feedback),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
 
     alert("Thanks for your feedback!");
     event.preventDefault();
@@ -168,18 +170,18 @@ class Bonus extends React.Component {
       feedback: null,
     };
 
-    // try {
-    //   fetch(`${DATABASE_URL}/feedback/` + userID, {
-    //     method: "POST",
-    //     headers: {
-    //       Accept: "application/json",
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(saveString),
-    //   });
-    // } catch (e) {
-    //   console.log("Cant post?");
-    // }
+    try {
+      fetch(`${DATABASE_URL}/feedback/` + userID, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(saveString),
+      });
+    } catch (e) {
+      console.log("Cant post?");
+    }
 
     setTimeout(
       function () {

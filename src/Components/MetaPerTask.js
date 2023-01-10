@@ -27,15 +27,17 @@ class MetaPerTask extends React.Component {
     var sectionTime = Math.round(performance.now());
 
     //when deug
-    const userID = 100;
-    const date = 100;
-    const startTime = 100;
+    //  const userID = 100;
+    //  const date = 100;
+    //  const startTime = 100;
     //
-    // const userID = this.props.state.userID;
-    // const date = this.props.state.date;
-    // const startTime = this.props.state.startTime;
+    const userID = this.props.state.userID;
+    const date = this.props.state.date;
+    const startTime = this.props.state.startTime;
+    const dotStair1 = this.props.state.dotStair1;
+    const dotStair2 = this.props.state.dotStair2;
 
-    var trialNumTotal = 12; //26
+    var trialNumTotal = 25; //150
     var trialNumPerBlock = 3;
     var blockNumTotal = Math.round(trialNumTotal / trialNumPerBlock);
 
@@ -87,6 +89,7 @@ class MetaPerTask extends React.Component {
       choice: null,
       confLevel: null,
       confTime: 0,
+      confInitial: null,
       confMove: null, //can only move to next trial if conf was toggled
       correct: null,
 
@@ -97,8 +100,8 @@ class MetaPerTask extends React.Component {
       responseMatrix: [true, true],
       reversals: 0,
       stairDir: ["up", "up"],
-      dotStair1: 4.65, //in log space; this is about 104 dots which is 70 dots shown for the first one
-      dotStair2: 0,
+      dotStair1: dotStair1, //in log space; this is about 104 dots which is 70 dots shown for the first one
+      dotStair2: dotStair2,
       dotStairLeft: 0,
       dotStairRight: 0,
       count: 0,
@@ -183,13 +186,16 @@ class MetaPerTask extends React.Component {
     var curInstructNum = this.state.instructNum;
     var whichButton = keyPressed;
     if (whichButton === 3 && curInstructNum === 2) {
-      // begin the task
-      console.log("BEGIN");
+      this.setState({
+        quizState: "pre",
+      });
+
+      console.log("pre-conf begin");
       setTimeout(
         function () {
           this.quizBegin();
         }.bind(this),
-        0
+        10
       );
     } else if (whichButton === 3 && curInstructNum === 3) {
       // continue after a block break
@@ -553,7 +559,8 @@ class MetaPerTask extends React.Component {
         <br />
         <br />
         <center>
-          Press [SPACEBAR] to start sorting the battery cards.
+          Press [SPACEBAR] to submit your answer and start sorting the battery
+          cards.
           <br />
           <br />
           You will not allowed to move on unless you have adjusted the scale.
@@ -605,13 +612,17 @@ class MetaPerTask extends React.Component {
     document.addEventListener("keyup", this._handleGlobalConfKey);
     var initialValue = utils.randomInt(70, 80);
 
+    console.log("Begining quiz");
+    console.log("initialValue: " + initialValue);
+
     this.setState({
-      instructScreen: false,
-      quizScreen: true,
-      taskScreen: false,
       confInitial: initialValue,
       confLevel: null,
       confMove: null,
+      quizScreen: true,
+      instructScreen: false,
+      taskScreen: false,
+      taskSection: "rating",
     });
   }
 
@@ -979,6 +990,8 @@ class MetaPerTask extends React.Component {
   }
 
   redirectToNextTask() {
+    document.removeEventListener("keyup", this._handleInstructKey);
+    document.removeEventListener("keyup", this._handleBeginKey);
     this.props.navigate("/Bonus", {
       state: {
         userID: this.state.userID,
@@ -990,6 +1003,7 @@ class MetaPerTask extends React.Component {
 
   componentDidMount() {
     window.scrollTo(0, 0);
+    document.body.style.overflow = "hidden";
   }
 
   ///////////////////////////////////////////////////////////////
@@ -1004,16 +1018,15 @@ class MetaPerTask extends React.Component {
         document.addEventListener("keyup", this._handleInstructKey);
         document.addEventListener("keyup", this._handleBeginKey);
         text = <div> {this.instructText(this.state.instructNum)}</div>;
-        //  console.log("THIS SHOULD BE INSTRUCTION BLOCK");
-        //    console.log(this.state.instructNum);
+        console.log("Page: " + this.state.instructNum);
       } else if (
         this.state.instructScreen === false &&
         this.state.taskScreen === false &&
-        this.state.quizScreen === true
+        this.state.quizScreen === true &&
+        this.state.taskSection === "rating"
       ) {
         text = <div> {this.quizText(this.state.quizState)}</div>;
-        //  console.log("THIS SHOULD BE INSTRUCTION BLOCK");
-        //    console.log(this.state.instructNum);
+        console.log("Quiz state: " + this.state.quizState);
       } else if (
         this.state.instructScreen === false &&
         this.state.quizScreen === false &&
@@ -1104,6 +1117,9 @@ class MetaPerTask extends React.Component {
             </center>
           </div>
         );
+      } else {
+        console.log("ERROR CAN'T FIND THE RIGHT PAGE");
+        return null;
       }
     } else if (this.state.debug === true) {
       document.addEventListener("keyup", this._handleDebugKey);

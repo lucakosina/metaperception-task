@@ -4,7 +4,7 @@ export const aes = [
     name: "AES",
     isAllRowRequired: true,
     title:
-      "For each question, select the answer that best describes your thoughts, feelings, and actions during the past 4 weeks",
+      "For each question, select the answer that best describes your thoughts, feelings, and actions during the past 4 weeks.",
     columns: [
       { value: 1, text: "Not at all characteristic" },
       { value: 2, text: "Slightly characteristic" },

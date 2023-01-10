@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 
@@ -7,6 +6,7 @@ import MetaPerTut from "./Components/MetaPerTut";
 import MetaPerTask from "./Components/MetaPerTask";
 import Bonus from "./Components/Bonus";
 import Questionnaires from "./Components/Questionnaires";
+import EndPage from "./Components/EndPage";
 
 function App() {
   return (
@@ -16,6 +16,7 @@ function App() {
       <Route path="MetaPerTask" element={<MetaPerTask />} />
       <Route path="Bonus" element={<Bonus />} />
       <Route path="Questionnaires" element={<Questionnaires />} />
+      <Route path="End" element={<EndPage />} />
     </Routes>
   );
 }

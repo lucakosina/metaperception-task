@@ -4,7 +4,7 @@ export const sds = [
     name: "SDS",
     isAllRowRequired: true,
     title:
-      "Please read the following statements and then select the option that best describes how often you FELT OR BEHAVED this way during the PAST SEVERAL DAYS. (Please make sure to scroll down within the questionnaire box.)",
+      "Please read the following statements and then select the option that best describes how often you FELT OR BEHAVED this way during the PAST SEVERAL DAYS.",
     columns: [
       { value: 1, text: "A little of the time" },
       { value: 2, text: "Some of the time" },

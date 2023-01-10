@@ -4,7 +4,7 @@ export const staiy2 = [
     name: "STAIY2",
     isAllRowRequired: true,
     title:
-      "Read each statement and then indicate how you GENERALLY feel. There is no right or wrong answer. Do not spend too much time on any one statement but give the answer which seems to describe how you GENERALLY feel. (Please make sure to scroll down within the questionnaire box.)",
+      "Read each statement and then indicate how you GENERALLY feel. There is no right or wrong answer. Do not spend too much time on any one statement but give the answer which seems to describe how you GENERALLY feel.",
     columns: [
       { value: 1, text: "Almost Never" },
       { value: 2, text: "Sometimes" },

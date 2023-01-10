@@ -4,8 +4,8 @@ import { Stage, Layer, Rect } from "react-konva";
 var boxDist = 200; //distance between the boxes
 var squareWidth = 250;
 var bufferFix = 400;
-var bufferFixWidWin = 50;
-var bufferFixHeiWin = 150;
+var bufferFixWidWin = 0;
+var bufferFixHeiWin = 0;
 
 //left box
 var leftBoxStartX =
@@ -40,8 +40,8 @@ export const DrawChoice = ({ choice }) => {
     rightColour = "white";
   }
 
-  const [leftBoxState, setLeftBoxState] = React.useState(leftChoice);
-  const [rightBoxState, setRightBoxState] = React.useState(rightChoice);
+  const [leftBoxState] = React.useState(leftChoice);
+  const [rightBoxState] = React.useState(rightChoice);
 
   return (
     <Stage

@@ -2,14 +2,13 @@ export const lsas = [
   {
     type: "matrixdropdown",
     name: "LSAS",
-    isAllRowRequired: true,
-    isAllColumnRequired: true,
     title:
       "For each question, select the answer that best describes your thoughts, feelings, and actions.",
     columns: [
       {
         name: "fear",
         title: "Fear",
+        isRequired: true,
         choices: [
           { value: 0, text: "None" },
           { value: 1, text: "Mild" },
@@ -21,6 +20,7 @@ export const lsas = [
       {
         name: "avoidance",
         title: "Avoidance",
+        isRequired: true,
         choices: [
           { value: 0, text: "Never" },
           { value: 1, text: "Occassionally" },

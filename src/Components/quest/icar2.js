@@ -3,7 +3,7 @@ export const icar2 = [
     type: "html",
     name: "info",
     html:
-      "<table><body></br></br></br></br><img src='./img/icar/mx45_q.jpg' width='230px'/></br></br></br> </td><img src='./img/icar/mx45_a.jpg' width='460px'/></body></table>",
+      "<table><body></br></br></br></br><img src='/icar/mx45_q.png' width='230px'/></br></br></br> </td><img src='/icar/mx45_a.png' width='460px'/></body></table>",
   },
   {
     type: "radiogroup",
@@ -24,7 +24,7 @@ export const icar2 = [
     type: "html",
     name: "info",
     html:
-      "<table><body></br></br></br></br><img src='./img/icar/mx46_q.jpg' width='230px'/></br></br></br> </td><img src='./img/icar/mx46_a.jpg' width='460px'/></body></table>",
+      "<table><body></br></br></br></br><img src='/icar/mx46_q.png' width='230px'/></br></br></br> </td><img src='/icar/mx46_a.png' width='460px'/></body></table>",
   },
   {
     type: "radiogroup",
@@ -45,7 +45,7 @@ export const icar2 = [
     type: "html",
     name: "info",
     html:
-      "<table><body></br></br></br></br><img src='./img/icar/mx47_q.jpg' width='230px'/></br></br></br> </td><img src='./img/icar/mx47_a.jpg' width='460px'/></body></table>",
+      "<table><body></br></br></br></br><img src='/icar/mx47_q.png' width='230px'/></br></br></br> </td><img src='/icar/mx47_a.png' width='460px'/></body></table>",
   },
   {
     type: "radiogroup",
@@ -66,7 +66,7 @@ export const icar2 = [
     type: "html",
     name: "info",
     html:
-      "<table><body></br></br></br></br><img src='./img/icar/mx55_q.jpg' width='230px'/></br></br></br> </td><img src='./img/icar/mx55_a.jpg' width='460px'/></body></table>",
+      "<table><body></br></br></br></br><img src='/icar/mx55_q.png' width='230px'/></br></br></br> </td><img src='/icar/mx55_a.png' width='460px'/></body></table>",
   },
   {
     type: "radiogroup",
@@ -87,7 +87,7 @@ export const icar2 = [
     type: "html",
     name: "info",
     html:
-      "<table><body></br></br></br></br><img src='./img/icar/rsd3_q.jpg' width='550px'/></body></table>",
+      "<table><body></br></br></br></br><img src='/icar/rsd3_q.png' width='550px'/></body></table>",
   },
   {
     type: "radiogroup",
@@ -111,7 +111,7 @@ export const icar2 = [
     type: "html",
     name: "info",
     html:
-      "<table><body></br></br></br></br><img src='./img/icar/rsd4_q.jpg' width='550px'/></body></table>",
+      "<table><body></br></br></br></br><img src='/icar/rsd4_q.png' width='550px'/></body></table>",
   },
   {
     type: "radiogroup",
@@ -135,7 +135,7 @@ export const icar2 = [
     type: "html",
     name: "info",
     html:
-      "<table><body></br></br></br></br><img src='./img/icar/rsd6_q.jpg' width='550px'/></body></table>",
+      "<table><body></br></br></br></br><img src='/icar/rsd6_q.png' width='550px'/></body></table>",
   },
   {
     type: "radiogroup",
@@ -159,7 +159,7 @@ export const icar2 = [
     type: "html",
     name: "info",
     html:
-      "<table><body></br></br></br></br><img src='./img/icar/rsd8_q.jpg' width='550px'/></body></table>",
+      "<table><body></br></br></br></br><img src='/icar/rsd8_q.png' width='550px'/></body></table>",
   },
   {
     type: "radiogroup",

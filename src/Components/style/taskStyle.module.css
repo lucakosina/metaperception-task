@@ -43,6 +43,14 @@
   text-align: center;
 }
 
+.link:hover {
+  cursor: pointer;
+}
+
+li {
+  margin: 10px 0;
+}
+
 textarea {
   color: #f8f8f8;
   width: 100%;
@@ -103,5 +111,5 @@ body {
   padding: 0;
   height: 100%;
   width: 100%;
-  overflow: auto;
+  overflow: hidden;
 }

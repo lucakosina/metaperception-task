@@ -77,6 +77,10 @@ export const smss = [
         text: "Do you frequently have difficulty in starting to do things?",
       },
       {
+        value: "CHECK_2",
+        text: "Select 'Yes' to show you are paying attention to this question.",
+      },
+      {
         value: "SMSS_15",
         text: "Are you a person whose mood goes up and down easily?",
       },
@@ -127,7 +131,7 @@ export const smss = [
       },
       {
         value: "SMSS_26",
-        text: "Do you find the bright lights of a city exciting to look at?",
+        text: "Do you love having your back massaged?",
       },
       {
         value: "SMSS_27",

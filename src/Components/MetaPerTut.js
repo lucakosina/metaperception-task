@@ -32,13 +32,13 @@ class MetaPerTut extends React.Component {
     var sectionTime = Math.round(performance.now());
 
     //when deug
-    const userID = 100;
-    const date = 100;
-    const startTime = 100;
+    //  const userID = 100;
+    //  const date = 100;
+    //  const startTime = 100;
 
-    // const userID = this.props.state.userID;
-    // const date = this.props.state.date;
-    // const startTime = this.props.state.startTime;
+    const userID = this.props.state.userID;
+    const date = this.props.state.date;
+    const startTime = this.props.state.startTime;
 
     var trialNumTotal = 4; //26
 
@@ -643,7 +643,7 @@ class MetaPerTut extends React.Component {
           </center>
           <br />
           <center>
-            [<strong>→</strong>]
+            [<strong>←</strong>]
           </center>
         </span>
       </div>
@@ -741,7 +741,7 @@ class MetaPerTut extends React.Component {
         <center>
           <ConfSliderEx.ConfSliderEx1
             callBackValue={this.handleCallbackConf.bind(this)}
-            initialValue={74}
+            initialValue={75}
           />
         </center>
         <br />
@@ -1294,6 +1294,8 @@ class MetaPerTut extends React.Component {
   }
 
   redirectToNextTask() {
+    document.removeEventListener("keyup", this._handleInstructKey);
+    document.removeEventListener("keyup", this._handleBeginKey);
     this.props.navigate("/MetaPerTask", {
       state: {
         userID: this.state.userID,
@@ -1309,6 +1311,7 @@ class MetaPerTut extends React.Component {
 
   componentDidMount() {
     window.scrollTo(0, 0);
+    document.body.style.overflow = "hidden";
   }
 
   ///////////////////////////////////////////////////////////////

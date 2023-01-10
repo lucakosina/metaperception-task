@@ -8,8 +8,8 @@ var squareWidth = 250; //250
 var boxDist = 200; //distance between the boxes
 var bufferFix = 400;
 
-var bufferFixWidWin = 50;
-var bufferFixHeiWin = 150;
+var bufferFixWidWin = 0;
+var bufferFixHeiWin = 0;
 
 //left box
 var leftBoxStartX =
@@ -58,8 +58,8 @@ export const DrawDots = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
   var leftDotShownCoor = utils.genDots(leftDotCorrXShown, leftDotCorrYShown);
   var rightDotShownCoor = utils.genDots(rightDotCorrXShown, rightDotCorrYShown);
 
-  const [dotsLeftShow, setDotsLeftShow] = React.useState(leftDotShownCoor);
-  const [dotsRightShow, setDotsRightShow] = React.useState(rightDotShownCoor);
+  const [dotsLeftShow] = React.useState(leftDotShownCoor);
+  const [dotsRightShow] = React.useState(rightDotShownCoor);
 
   return (
     <Stage

@@ -22,8 +22,8 @@ class StartPage extends React.Component {
     var timeString = currentDate.toTimeString();
 
     // ID number - either set or get from url
-    // var prolific_id = Math.floor(100000 + Math.random() * 900000);
-    var prolific_id = 120000; //for testing
+    var prolific_id = Math.floor(100000 + Math.random() * 900000);
+    //var prolific_id = 120000; //for testing
 
     //let url = this.props.location.search;
     //let params = queryString.parse(url);
@@ -45,6 +45,7 @@ class StartPage extends React.Component {
 
   componentDidMount() {
     window.scrollTo(0, 0);
+    document.body.style.overflow = "auto";
   }
 
   redirectToTarget() {

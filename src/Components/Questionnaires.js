@@ -87,6 +87,7 @@ class Questionnaires extends React.Component {
       demo: demo,
       icar1: icar1,
       icar2: icar2,
+      lsas: lsas,
       qnText1: [],
       qnText2: [],
       qnText3: [],
@@ -142,8 +143,13 @@ class Questionnaires extends React.Component {
     this.setState({
       resultAsString: resultAsString,
     });
-    // console.log("userID: " + userID);
-    // console.log("Survey results: " + JSON.stringify(survey.data));
+
+    setTimeout(
+      function () {
+        this.redirectToNextTask();
+      }.bind(this),
+      10
+    );
   }
 
   startQuest() {
@@ -250,8 +256,13 @@ class Questionnaires extends React.Component {
     }
   };
 
-  useEffect() {
+  //  useEffect() {
+  //    window.scrollTo(0, 0);
+  //  }
+
+  componentDidMount() {
     window.scrollTo(0, 0);
+    document.body.style.overflow = "auto";
   }
 
   render() {
@@ -261,7 +272,7 @@ class Questionnaires extends React.Component {
         this.state.instructScreen === true &&
         this.state.questScreen === false
       ) {
-        this.useEffect();
+        //      this.useEffect();
         document.addEventListener("keyup", this._handleBeginKey);
         //intructions
         text = (
@@ -353,7 +364,7 @@ class Questionnaires extends React.Component {
         };
 
         text = (
-          <div className="textBox">
+          <div className="textBox2">
             <Quest.Survey
               json={json}
               css={myCss}

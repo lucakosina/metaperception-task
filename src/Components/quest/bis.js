@@ -4,7 +4,7 @@ export const bis11 = [
     name: "BIS11",
     isAllRowRequired: true,
     title:
-      "People differ in the ways they act and think in different situations. This is a test to measure some of the ways in which you act and think. Read each statement and select the answer that DESCRIBES YOU BEST. Do not spend too much time on any statement. Answer quickly and honestly. (Please make sure to scroll down within the questionnaire box.)",
+      "People differ in the ways they act and think in different situations. This is a quiz to measure some of the ways in which you act and think. Read each statement and select the answer that DESCRIBES YOU BEST. Do not spend too much time on any statement. Answer quickly and honestly.",
     columns: [
       { value: 1, text: "Do not agree at all" },
       { value: 2, text: "Agree slightly" },
