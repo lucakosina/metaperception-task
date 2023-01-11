@@ -54,7 +54,7 @@ export function ConfSliderGlobal({ callBackValue, initialValue }) {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    console.log(newValue);
+    //  console.log(newValue);
     callBackValue(newValue);
   };
 

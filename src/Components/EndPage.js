@@ -210,6 +210,7 @@ class EndPage extends React.Component {
           You have finished the study!
           <br />
           <br />
+          <br />
           <center>
             Press the [SPACEBAR] to submit study completion on Proflic. Click
             'OK' on the pop-up.

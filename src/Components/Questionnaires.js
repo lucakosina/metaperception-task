@@ -49,7 +49,7 @@ class Questionnaires extends React.Component {
       "OCIR",
       "SDS",
       "SSMS",
-      "STAIY2",
+      "STAI_Y2",
       "RSE",
       "GSE",
     ];
@@ -124,6 +124,8 @@ class Questionnaires extends React.Component {
     survey.setValue("userID", userID);
     survey.setValue("date", this.state.date);
     survey.setValue("startTime", this.state.startTime);
+    survey.setValue("section", this.state.section);
+    survey.setValue("sectionTime", this.state.sectionTime);
     survey.setValue("qnTimeStart", this.state.qnStart);
     survey.setValue("qnTimeEnd", qnEnd);
 

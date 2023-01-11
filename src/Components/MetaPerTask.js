@@ -36,7 +36,7 @@ class MetaPerTask extends React.Component {
     const startTime = this.props.state.startTime;
     const dotStair = this.props.state.dotStair;
 
-    var trialNumTotal = 30; //150
+    var trialNumTotal = 60; //150
     var blockNumTotal = 3;
     var trialNumPerBlock = Math.round(trialNumTotal / blockNumTotal);
 
@@ -87,7 +87,7 @@ class MetaPerTask extends React.Component {
       confLevel: null,
       confTime: 0,
       confInitial: null,
-      confMove: null, //can only move to next trial if conf was toggled
+      //    confMove: null, //can only move to next trial if conf was toggled
       correct: null,
 
       //dot paramters
@@ -235,7 +235,7 @@ class MetaPerTask extends React.Component {
     if (
       whichButton === 3 &&
       this.state.quizScreen === true &&
-      this.state.confMove === true
+      this.state.confLevel !== null
     ) {
       setTimeout(
         function () {
@@ -300,9 +300,10 @@ class MetaPerTask extends React.Component {
 
   handleConfResp(keyPressed, timePressed) {
     var whichButton = keyPressed;
-    if (whichButton === 3 && this.state.confMove === true) {
+    if (whichButton === 3 && this.state.confLevel !== null) {
+      console.log("conf level: " + this.state.confLevel);
       var confTime =
-        Math.round(performance.now()) -
+        timePressed -
         [
           this.state.trialTime +
             this.state.fixTime +
@@ -313,14 +314,13 @@ class MetaPerTask extends React.Component {
 
       this.setState({
         confTime: confTime,
-        confLevel: this.state.confLevel,
       });
 
       setTimeout(
         function () {
           this.renderTaskSave();
         }.bind(this),
-        0
+        10
       );
     }
   }
@@ -418,9 +418,9 @@ class MetaPerTask extends React.Component {
     this.setState({ confLevel: callBackValue });
     //  console.log("Confidence is: " + callBackValue);
 
-    if (this.state.confLevel !== null) {
-      this.setState({ confMove: true });
-    }
+    //  if (this.state.confLevel !== null) {
+    //    this.setState({ confMove: true });
+    //}
   }
 
   // To ask them for the valence rating of the noises
@@ -628,7 +628,7 @@ class MetaPerTask extends React.Component {
     this.setState({
       confInitial: initialValue,
       confLevel: null,
-      confMove: null,
+      //  confMove: null,
       quizScreen: true,
       instructScreen: false,
       taskScreen: false,
@@ -724,7 +724,7 @@ class MetaPerTask extends React.Component {
       respFbTime: 0,
       confLevel: null,
       confTime: 0,
-      confMove: false,
+      //  confMove: false,
       choice: null,
       correct: null,
       stimPos: stimPos,
