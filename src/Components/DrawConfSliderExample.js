@@ -36,7 +36,7 @@ const marks = [
   },
   {
     value: 90,
-    label: "80%",
+    label: "90%",
   },
   {
     value: 100,

@@ -40,7 +40,7 @@ class MetaPerTut extends React.Component {
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
 
-    var trialNumTotal = 4; //26
+    var trialNumTotal = 10; //26
 
     //the stim position
     var pracStimPos = Array(Math.round(trialNumTotal / 2))
@@ -65,9 +65,8 @@ class MetaPerTut extends React.Component {
       // trial timings in ms
       fixTimeLag: 1000, //1000
       fbTimeLag: 500, //500
-      stimTimeLag: 700, //300
+      stimTimeLag: 500, //300
       respFbTimeLag: 700, //
-      corFbTimeLag: 1000, // right or wrong feedback
 
       //trial parameters
       trialNumTotal: trialNumTotal,
@@ -87,6 +86,7 @@ class MetaPerTut extends React.Component {
       responseKey: 0,
       respTime: 0,
       respFbTime: 0,
+      rewFbTime: 0,
       choice: null,
       confLevel: null,
       confTime: 0,
@@ -100,11 +100,10 @@ class MetaPerTut extends React.Component {
       responseMatrix: [true, true],
       reversals: 0,
       stairDir: ["up", "up"],
-      dotStair1: 4.65, //in log space; this is about 104 dots which is 70 dots shown for the first one
-      dotStair2: 0,
+      dotStair: 4.65, //in log space; this is about 104 dots which is 70 dots shown for the first one
+
       dotStairLeft: 0,
       dotStairRight: 0,
-      count: 0,
 
       //quiz paramters
       quizTry: 1,
@@ -265,6 +264,10 @@ class MetaPerTut extends React.Component {
     ) {
       response = true;
       correct = 1;
+    } else if (this.state.dotDiffLeft === this.state.dotDiffRight) {
+      // in the odd case where the dot diff is the same...
+      response = true;
+      correct = 1;
     } else {
       response = false;
       correct = 0;
@@ -292,6 +295,20 @@ class MetaPerTut extends React.Component {
   handleNextResp(keyPressed, timePressed) {
     var whichButton = keyPressed;
     if (whichButton === 3) {
+      var rewFbTime =
+        Math.round(performance.now()) -
+        [
+          this.state.trialTime +
+            this.state.fixTime +
+            this.state.stimTime +
+            this.state.respTime +
+            this.state.respFbTime,
+        ];
+
+      this.setState({
+        rewFbTime: rewFbTime,
+      });
+
       document.removeEventListener("keyup", this._handleNextRespKey);
       setTimeout(
         function () {
@@ -1003,17 +1020,17 @@ class MetaPerTut extends React.Component {
 
     // run staircase
     var s2 = staircase.staircase(
-      this.state.dotStair1,
+      this.state.dotStair,
       this.state.responseMatrix,
       this.state.stairDir,
       trialNum
     );
 
-    var dotStair1 = s2.diff;
+    var dotStair = s2.diff;
     var stairDir = s2.direction;
     var responseMatrix = s2.stepcount;
 
-    console.log("dotsStair: " + dotStair1);
+    console.log("dotsStair: " + dotStair);
     console.log("stairDir: " + stairDir);
     console.log("responseMat: " + responseMatrix);
 
@@ -1031,13 +1048,13 @@ class MetaPerTut extends React.Component {
     var dotStairRight;
 
     if (stimPos === 1) {
-      dotStairLeft = dotStair1;
+      dotStairLeft = dotStair;
       dotStairRight = 0;
       dotDiffLeft = Math.round(Math.exp(dotStairLeft));
       dotDiffRight = dotStairRight; //should be 0
     } else {
       dotStairLeft = 0;
-      dotStairRight = dotStair1;
+      dotStairRight = dotStair;
       dotDiffLeft = dotStairLeft; //should be 0
       dotDiffRight = Math.round(Math.exp(dotStairRight));
     }
@@ -1051,8 +1068,9 @@ class MetaPerTut extends React.Component {
       fixTime: 0,
       stimTime: 0,
       responseKey: 0,
-      reactionTime: 0,
-      fbTime: 0,
+      respTime: 0,
+      respFbTime: 0,
+      rewFbTime: 0,
       confLevel: null,
       confTime: 0,
       confMove: false,
@@ -1062,8 +1080,10 @@ class MetaPerTut extends React.Component {
       reversals: reversals,
       responseMatrix: responseMatrix,
       //Calculate the for the paramters for the stim
-      dotDiffStim1: Math.round(Math.exp(dotStair1)),
+      dotDiffStim1: Math.round(Math.exp(dotStair)),
       dotDiffStim2: 0,
+      dotStair: dotStair,
+
       dotStairLeft: dotStairLeft,
       dotStairRight: dotStairRight,
       dotDiffLeft: dotDiffLeft,
@@ -1148,20 +1168,10 @@ class MetaPerTut extends React.Component {
   renderChoiceFb() {
     document.removeEventListener("keyup", this._handleRespKey);
 
-    var respFbTime =
-      Math.round(performance.now()) -
-      [
-        this.state.trialTime +
-          this.state.fixTime +
-          this.state.stimTime +
-          this.state.respTime,
-      ];
-
     this.setState({
       instructScreen: false,
       taskScreen: true,
       taskSection: "choiceFeedback",
-      respFbTime: respFbTime,
     });
 
     setTimeout(
@@ -1176,21 +1186,20 @@ class MetaPerTut extends React.Component {
   renderCorFb() {
     document.addEventListener("keyup", this._handleNextRespKey);
 
-    var rewFbTime =
+    var respFbTime =
       Math.round(performance.now()) -
       [
         this.state.trialTime +
           this.state.fixTime +
           this.state.stimTime +
-          this.state.respTime +
-          this.state.respFbTime,
+          this.state.respTime,
       ];
 
     this.setState({
       instructScreen: false,
       taskScreen: true,
       taskSection: "corFeedback",
-      rewFbTime: rewFbTime,
+      respFbTime: respFbTime,
     });
   }
 
@@ -1224,11 +1233,10 @@ class MetaPerTut extends React.Component {
       responseMatrix: this.state.responseMatrix,
       reversals: this.state.reversals,
       stairDir: this.state.stairDir,
-      dotStair1: this.state.dotStair1,
-      dotStair2: this.state.dotStair2,
+      dotStair: this.state.dotStair,
+
       dotStairLeft: this.state.dotStairLeft,
       dotStairRight: this.state.dotStairRight,
-      count: this.state.count,
     };
 
     try {
@@ -1301,8 +1309,7 @@ class MetaPerTut extends React.Component {
         userID: this.state.userID,
         date: this.state.date,
         startTime: this.state.startTime,
-        dotStair1: this.state.dotStair1,
-        dotStair2: this.state.dotStair2,
+        dotStair: this.state.dotStair,
       },
     });
 

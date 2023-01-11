@@ -34,12 +34,11 @@ class MetaPerTask extends React.Component {
     const userID = this.props.state.userID;
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
-    const dotStair1 = this.props.state.dotStair1;
-    const dotStair2 = this.props.state.dotStair2;
+    const dotStair = this.props.state.dotStair;
 
-    var trialNumTotal = 25; //150
-    var trialNumPerBlock = 3;
-    var blockNumTotal = Math.round(trialNumTotal / trialNumPerBlock);
+    var trialNumTotal = 30; //150
+    var blockNumTotal = 3;
+    var trialNumPerBlock = Math.round(trialNumTotal / blockNumTotal);
 
     //the stim position
     var stimPos = Array(Math.round(trialNumTotal / 2))
@@ -59,10 +58,8 @@ class MetaPerTask extends React.Component {
 
       // trial timings in ms
       fixTimeLag: 1000, //1000
-      fbTimeLag: 500, //500
-      stimTimeLag: 500, //300
-      respFbTimeLag: 1000,
-      itiTimeLag: 500, //500
+      stimTimeLag: 300, //300
+      respFbTimeLag: 700,
 
       //trial parameters
       trialNumTotal: trialNumTotal,
@@ -100,11 +97,9 @@ class MetaPerTask extends React.Component {
       responseMatrix: [true, true],
       reversals: 0,
       stairDir: ["up", "up"],
-      dotStair1: dotStair1, //in log space; this is about 104 dots which is 70 dots shown for the first one
-      dotStair2: dotStair2,
+      dotStair: dotStair, //in log space; this is about 104 dots which is 70 dots shown for the first one
       dotStairLeft: 0,
       dotStairRight: 0,
-      count: 0,
 
       //quiz
       quizState: "pre",
@@ -306,6 +301,21 @@ class MetaPerTask extends React.Component {
   handleConfResp(keyPressed, timePressed) {
     var whichButton = keyPressed;
     if (whichButton === 3 && this.state.confMove === true) {
+      var confTime =
+        Math.round(performance.now()) -
+        [
+          this.state.trialTime +
+            this.state.fixTime +
+            this.state.stimTime +
+            this.state.respTime +
+            this.state.respFbTime,
+        ];
+
+      this.setState({
+        confTime: confTime,
+        confLevel: this.state.confLevel,
+      });
+
       setTimeout(
         function () {
           this.renderTaskSave();
@@ -391,7 +401,7 @@ class MetaPerTask extends React.Component {
     var keyPressed;
     var timePressed;
 
-    console.log("Confidence: " + this.state.confValue);
+    console.log("Confidence: " + this.state.confLevel);
 
     switch (event.keyCode) {
       case 32:
@@ -405,10 +415,10 @@ class MetaPerTask extends React.Component {
   };
 
   handleCallbackConf(callBackValue) {
-    this.setState({ confValue: callBackValue });
+    this.setState({ confLevel: callBackValue });
     //  console.log("Confidence is: " + callBackValue);
 
-    if (this.state.confValue !== null) {
+    if (this.state.confLevel !== null) {
       this.setState({ confMove: true });
     }
   }
@@ -660,17 +670,17 @@ class MetaPerTask extends React.Component {
     console.log("NEW TRIAL");
     // run staircase
     var s2 = staircase.staircase(
-      this.state.dotStair1,
+      this.state.dotStair,
       this.state.responseMatrix,
       this.state.stairDir,
       trialNum
     );
 
-    var dotStair1 = s2.diff;
+    var dotStair = s2.diff;
     var stairDir = s2.direction;
     var responseMatrix = s2.stepcount;
 
-    //  console.log("dotsStair: " + dotStair1);
+    //  console.log("dotsStair: " + dotStair);
     //  console.log("stairDir: " + stairDir);
     //  console.log("responseMat: " + responseMatrix);
 
@@ -688,13 +698,13 @@ class MetaPerTask extends React.Component {
     var dotStairRight;
 
     if (stimPos === 1) {
-      dotStairLeft = dotStair1;
+      dotStairLeft = dotStair;
       dotStairRight = 0;
       dotDiffLeft = Math.round(Math.exp(dotStairLeft));
       dotDiffRight = dotStairRight; //should be 0
     } else {
       dotStairLeft = 0;
-      dotStairRight = dotStair1;
+      dotStairRight = dotStair;
       dotDiffLeft = dotStairLeft; //should be 0
       dotDiffRight = Math.round(Math.exp(dotStairRight));
     }
@@ -710,8 +720,8 @@ class MetaPerTask extends React.Component {
       fixTime: 0,
       stimTime: 0,
       responseKey: 0,
-      reactionTime: 0,
-      fbTime: 0,
+      respTime: 0,
+      respFbTime: 0,
       confLevel: null,
       confTime: 0,
       confMove: false,
@@ -722,8 +732,10 @@ class MetaPerTask extends React.Component {
       stairDir: stairDir,
       responseMatrix: responseMatrix,
       //Calculate the for the paramters for the stim
-      dotDiffStim1: Math.round(Math.exp(dotStair1)),
+      dotDiffStim1: Math.round(Math.exp(dotStair)),
       dotDiffStim2: 0,
+      dotStair: dotStair,
+
       dotStairLeft: dotStairLeft,
       dotStairRight: dotStairRight,
       dotDiffLeft: dotDiffLeft,
@@ -872,11 +884,10 @@ class MetaPerTask extends React.Component {
       responseMatrix: this.state.responseMatrix,
       reversals: this.state.reversals,
       stairDir: this.state.stairDir,
-      dotStair1: this.state.dotStair1,
-      dotStair2: this.state.dotStair2,
+      dotStair: this.state.dotStair,
+
       dotStairLeft: this.state.dotStairLeft,
       dotStairRight: this.state.dotStairRight,
-      count: this.state.count,
     };
 
     try {

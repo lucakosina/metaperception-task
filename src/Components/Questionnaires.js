@@ -29,14 +29,14 @@ class Questionnaires extends React.Component {
   constructor(props) {
     super(props);
 
-    //  const userID = this.props.state.userID;
-    //  const date = this.props.state.date;
-    //  const startTime = this.props.state.startTime;
+    const userID = this.props.state.userID;
+    const date = this.props.state.date;
+    const startTime = this.props.state.startTime;
 
     //when deug
-    const userID = 100;
-    const date = 100;
-    const startTime = 100;
+    //  const userID = 100;
+    //  const date = 100;
+    //  const startTime = 100;
 
     var sectionTime = Math.round(performance.now());
 
@@ -87,7 +87,7 @@ class Questionnaires extends React.Component {
       demo: demo,
       icar1: icar1,
       icar2: icar2,
-      lsas: lsas,
+
       qnText1: [],
       qnText2: [],
       qnText3: [],
@@ -192,7 +192,7 @@ class Questionnaires extends React.Component {
   redirectToNextTask() {
     document.removeEventListener("keyup", this._handleInstructKey);
     document.removeEventListener("keyup", this._handleDebugKey);
-    this.props.navigate("/EndPage", {
+    this.props.navigate("/End", {
       state: {
         userID: this.state.userID,
         date: this.state.date,

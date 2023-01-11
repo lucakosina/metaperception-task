@@ -9,7 +9,7 @@ export const rse = [
       { value: 1, text: "Strongly Disagree" },
       { value: 2, text: "Disagree" },
       { value: 3, text: "Agree" },
-      { value: 4, text: "Strong Agree" },
+      { value: 4, text: "Strongly Agree" },
     ],
     rows: [
       { value: "RSE_1", text: "On the whole, I am satisfied with myself." },
@@ -22,12 +22,12 @@ export const rse = [
         value: "RSE_4",
         text: "I am able to do things as well as most other people.",
       },
-      { value: "RSE_5", text: "I feel I do not have have to be proud of." },
+      { value: "RSE_5", text: "I feel I do not have much to be proud of." },
       { value: "RSE_6", text: "I certainly feel useless at times." },
       {
         value: "RSE_7",
         text:
-          "I feel that I'm a person of wort, at least on an equal plane with others.",
+          "I feel that I'm a person of worth, at least on an equal plane with others.",
       },
       {
         value: "RSE_8",

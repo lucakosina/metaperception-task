@@ -42,7 +42,7 @@ export const json = {
           type: "html",
           name: "info",
           html:
-            "<p>Adults aged between <strong>18 to 55 years old</strong>, are <strong>fluent in English</strong>, and have <strong>normal or corrected-to-normal vision</strong>. Participants should also have <strong>NO auditory/ear conditions</strong>, including: <ul><li>Personal history of or current Tinnitus</li><li>Personal history of or current hearing sensitivity (e.g. Hyperacusis)</li><li>Personal history of or current hearing loss</li><li>Personal history of or current use of hearing aid</li><li>Current ear infections/inflammation</li></ul>If you take part in this study, you confirm that you meet the eligibity criteria.</p>",
+            "<p>Adults aged between <strong>18 to 55 years old</strong>, are <strong>fluent in English</strong>, and have <strong>normal or corrected-to-normal vision</strong>. If you take part in this study, you confirm that you meet the eligibity criteria.</p>",
         },
 
         {
@@ -55,7 +55,7 @@ export const json = {
           type: "html",
           name: "info",
           html:
-            "<p>You will play one or more online computer tasks, which will last around approximately <strong>1 hour</strong>. <br/><br/>You will receive brief, unpleasant noises during some parts of the computer task(s). Before the start of the computer task, the volume of the noises will be adjusted to a level that is loud but that you are able to tolerate comfortably. This is in order to find a level that is appropriate for the experiment. We will not play any unpleasant noises that are more intense than you are comfortable with. <br/><br/>You will also be asked some questions about yourself, your feelings, background, attitudes and behaviour in your everyday life. <br/><br/>You will receive <strong>8.25 GBP</strong> for helping us.<br/>Plus, depending on your performance you can earn an <strong>additional bonus</strong> of up to <strong>2 GBP</strong>. <br/><br/>Remember, you are free to withdraw at any time without giving a reason.</p>",
+            "<p>You will play one or more online computer tasks, which will last around approximately <strong>1 hour</strong>. <br/><br/>You will also be asked some questions about yourself, your feelings, background, attitudes and behaviour in your everyday life. <br/><br/>You will receive <strong>8.25 GBP</strong> for helping us.<br/>Plus, depending on your performance you can earn an <strong>additional bonus</strong> of up to <strong>2 GBP</strong>. <br/><br/>Remember, you are free to withdraw at any time without giving a reason.</p>",
         },
 
         {

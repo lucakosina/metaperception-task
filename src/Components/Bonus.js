@@ -97,14 +97,16 @@ class Bonus extends React.Component {
         }.bind(this),
         0
       );
-    } else if (whichButton === 3 && curInstructNum === 2) {
-      setTimeout(
-        function () {
-          this.redirectToNextTask();
-        }.bind(this),
-        0
-      );
     }
+
+    // else if (whichButton === 3 && curInstructNum === 2) {
+    //   setTimeout(
+    //     function () {
+    //       this.redirectToNextTask();
+    //     }.bind(this),
+    //     0
+    //   );
+    // }
   }
 
   // handle key keyPressed
@@ -256,11 +258,17 @@ class Bonus extends React.Component {
             </form>
           </center>
           <br /> <br />
-          <center>Press the [SPACEBAR] to continue.</center>
+          <center>
+            Press the button below to continue.
+            <br />
+            <br />
+            <button onClick={this.redirectToNextTask.bind(this)}>Next</button>
+          </center>
         </span>
       </div>
     );
 
+    // have to use button to go to next page, because pressing spacebar when typing feedback will make it go forward prematurely
     switch (instructNum) {
       case 1:
         return <div>{instruct_text1}</div>;

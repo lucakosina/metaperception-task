@@ -93,7 +93,7 @@ export const audit = [
     name: "AUDIT_7",
     isRequired: true,
     title:
-      "How often during the last year have you needed a first drink in the morning to get yourself going after a heavy drinking session?",
+      "How often during the last year have you had a feeling of guilt or remorse after drinking?",
     choices: [
       { value: 0, text: "Never" },
       { value: 1, text: "Less than monthly" },
