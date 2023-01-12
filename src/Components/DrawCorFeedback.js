@@ -62,8 +62,8 @@ export const DrawFeedback = ({ choice, correct }) => {
     rightText = "";
   }
 
-  const [leftBoxState, setLeftBoxState] = React.useState(leftChoice);
-  const [rightBoxState, setRightBoxState] = React.useState(rightChoice);
+  const [leftBoxState] = React.useState(leftChoice);
+  const [rightBoxState] = React.useState(rightChoice);
 
   return (
     <Stage

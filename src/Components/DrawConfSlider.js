@@ -44,11 +44,6 @@ const marks = [
   },
 ];
 
-function valuetext(value: number) {
-  //  console.log(value);
-  return value;
-}
-
 export function ConfSlider({ callBackValue, initialValue }) {
   const [value, setValue] = React.useState(initialValue);
 

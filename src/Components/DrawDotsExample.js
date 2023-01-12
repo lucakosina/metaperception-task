@@ -6,8 +6,6 @@ import * as utils from "./utils.js";
 //create black stimulus box
 var squareWidth = 250; //250
 var boxDist = 200; //distance between the boxes
-var bufferFix = 400;
-var bufferFixWin = 0;
 
 // left box
 var boxStartX = 0;
@@ -29,7 +27,7 @@ export const DrawDotsEx1 = ({ dotRadius, dotDiff }) => {
   var dotCorrYShown = dotPosY.slice(0, dotShown - 1);
 
   var dotShownCoor = utils.genDots(dotCorrXShown, dotCorrYShown);
-  const [dotsShow, setDotsShow] = React.useState(dotShownCoor);
+  const [dotsShow] = React.useState(dotShownCoor);
 
   return (
     <Stage x={0} y={0} width={250} height={250}>
@@ -106,8 +104,8 @@ export const DrawDotsEx2 = ({ dotRadius, dotDiffLeft, dotDiffRight }) => {
   var leftDotShownCoor = utils.genDots(leftDotCorrXShown, leftDotCorrYShown);
   var rightDotShownCoor = utils.genDots(rightDotCorrXShown, rightDotCorrYShown);
 
-  const [dotsLeftShow, setDotsLeftShow] = React.useState(leftDotShownCoor);
-  const [dotsRightShow, setDotsRightShow] = React.useState(rightDotShownCoor);
+  const [dotsLeftShow] = React.useState(leftDotShownCoor);
+  const [dotsRightShow] = React.useState(rightDotShownCoor);
 
   return (
     <Stage x={0} y={0} width={600} height={250}>
