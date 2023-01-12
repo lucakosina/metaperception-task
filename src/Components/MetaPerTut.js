@@ -40,7 +40,7 @@ class MetaPerTut extends React.Component {
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
 
-    var trialNumTotal = 16; //26
+    var trialNumTotal = 10; //26
 
     //the stim position
     var pracStimPos = Array(Math.round(trialNumTotal / 2))

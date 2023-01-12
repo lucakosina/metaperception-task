@@ -36,7 +36,7 @@ class MetaPerTask extends React.Component {
     const startTime = this.props.state.startTime;
     const dotStair = this.props.state.dotStair;
 
-    var trialNumTotal = 60; //150
+    var trialNumTotal = 30; //150
     var blockNumTotal = 3;
     var trialNumPerBlock = Math.round(trialNumTotal / blockNumTotal);
 
@@ -89,6 +89,8 @@ class MetaPerTask extends React.Component {
       confInitial: null,
       //    confMove: null, //can only move to next trial if conf was toggled
       correct: null,
+      correctMat: [], //put correct in vector, to cal perf %
+      correctPer: 0,
 
       //dot paramters
       dotRadius: 5,
@@ -279,8 +281,10 @@ class MetaPerTask extends React.Component {
     }
 
     console.log("response: " + response);
-
+    var correctMat = this.state.correctMat.concat(correct);
     var responseMatrix = this.state.responseMatrix.concat(response);
+    var correctPer =
+      Math.round((utils.getAvg(correctMat) + Number.EPSILON) * 100) / 100; //2 dec pl
 
     this.setState({
       responseKey: keyPressed,
@@ -288,6 +292,8 @@ class MetaPerTask extends React.Component {
       respTime: respTime,
       correct: correct,
       responseMatrix: responseMatrix,
+      correctMat: correctMat,
+      correctPer: correctPer,
     });
 
     setTimeout(
@@ -522,9 +528,6 @@ class MetaPerTask extends React.Component {
           high charge battery cards that you have selected.
           <br />
           <br />
-          For a job well done, you have earned £2 bonus.
-          <br />
-          <br />
           <center>
             Press the [<strong>SPACEBAR</strong>] to continue.
           </center>
@@ -727,6 +730,7 @@ class MetaPerTask extends React.Component {
       //  confMove: false,
       choice: null,
       correct: null,
+      correctPer: null,
       stimPos: stimPos,
       reversals: reversals,
       stairDir: stairDir,
@@ -879,6 +883,8 @@ class MetaPerTask extends React.Component {
       confLevel: this.state.confLevel,
       confTime: this.state.confTime,
       correct: this.state.correct,
+      correctMat: this.state.correctMat,
+      correctPer: this.state.correctPer,
 
       // staircase parameters
       responseMatrix: this.state.responseMatrix,
@@ -1008,6 +1014,7 @@ class MetaPerTask extends React.Component {
         userID: this.state.userID,
         date: this.state.date,
         startTime: this.state.startTime,
+        correctPer: this.state.correctPer,
       },
     });
   }

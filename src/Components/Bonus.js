@@ -29,10 +29,9 @@ class Bonus extends React.Component {
     const userID = this.props.state.userID;
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
+    const correctPer = this.props.state.correctPer;
 
-    // var initialValue = utils.randomInt(6, 8);
-
-    var totalBonus = 1.3;
+    var totalBonus = Math.round((2 * correctPer + Number.EPSILON) * 100) / 100; // 2 dec pl
 
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,7 +233,7 @@ class Bonus extends React.Component {
     let instruct_text2 = (
       <div>
         <span>
-          From the two tasks, you earned a bonus of £{this.state.totalBonus}.
+          From the task, you earned a bonus of £{this.state.totalBonus}.
           <br />
           <br />
           We would love to hear any comments you have about the tasks you have
