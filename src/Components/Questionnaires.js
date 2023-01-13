@@ -16,7 +16,7 @@ import { lsas } from "./quest/lsas.js";
 import { ocir } from "./quest/ocir.js";
 import { rse } from "./quest/rse.js";
 import { sds } from "./quest/sds.js";
-import { smss } from "./quest/smss.js";
+import { ssms } from "./quest/ssms.js";
 import { staiy2 } from "./quest/staiy2.js";
 
 import { demo } from "./quest/demo.js";
@@ -29,14 +29,14 @@ class Questionnaires extends React.Component {
   constructor(props) {
     super(props);
 
-    const userID = this.props.state.userID;
-    const date = this.props.state.date;
-    const startTime = this.props.state.startTime;
+    //  const userID = this.props.state.userID;
+    //  const date = this.props.state.date;
+    //  const startTime = this.props.state.startTime;
 
     //when deug
-    //  const userID = 100;
-    //  const date = 100;
-    //  const startTime = 100;
+    const userID = 100;
+    const date = 100;
+    const startTime = 100;
 
     var sectionTime = Math.round(performance.now());
 
@@ -49,7 +49,7 @@ class Questionnaires extends React.Component {
       "OCIR",
       "SDS",
       "SSMS",
-      "STAI_Y2",
+      "STAIY2",
       "RSE",
       "GSE",
     ];
@@ -61,7 +61,7 @@ class Questionnaires extends React.Component {
       lsas,
       ocir,
       sds,
-      smss,
+      ssms,
       staiy2,
       rse,
       gse,
@@ -173,9 +173,9 @@ class Questionnaires extends React.Component {
       quizText = "intro";
     } else if (page === 1) {
       quizText = "demo";
-    } else if (page === 12) {
-      quizText = "IQ_text";
     } else if (page === 13) {
+      quizText = "IQ_text";
+    } else if (page === 14) {
       quizText = "IQ_image";
     } else {
       quizText = this.state.quizLabel[page - 2];

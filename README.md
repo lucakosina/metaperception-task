@@ -12,5 +12,6 @@ A dots discrimination task with confidence ratings. Participants have to choose 
 
 - Requires node.js
 - Clone repo to local folder
+- Edit package.json `"start": "node server.js"` to `"start": "react-scripts start"` for localhost deployment
 - In command line, cd to local repo folder and execute `npm i` to install dependencies
 - `npm start` to launch app on localhost

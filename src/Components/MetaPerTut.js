@@ -92,6 +92,8 @@ class MetaPerTut extends React.Component {
       confTime: 0,
       confMove: null, //can only move to next trial if conf was toggled
       correct: null,
+      correctMat: [], //put correct in vector, to cal perf %
+      correctPer: 0,
 
       //dot paramters
       dotRadius: 5,
@@ -274,14 +276,19 @@ class MetaPerTut extends React.Component {
     }
 
     console.log("response: " + response);
-
+    var correctMat = this.state.correctMat.concat(correct);
     var responseMatrix = this.state.responseMatrix.concat(response);
+    var correctPer =
+      Math.round((utils.getAvg(correctMat) + Number.EPSILON) * 100) / 100; //2 dec pl
+
     this.setState({
       responseKey: keyPressed,
       choice: choice,
       respTime: respTime,
       correct: correct,
       responseMatrix: responseMatrix,
+      correctMat: correctMat,
+      correctPer: correctPer,
     });
 
     setTimeout(
@@ -1076,6 +1083,7 @@ class MetaPerTut extends React.Component {
       confMove: false,
       choice: null,
       correct: null,
+      correctPer: null,
       stimPos: stimPos,
       reversals: reversals,
       responseMatrix: responseMatrix,
@@ -1228,6 +1236,8 @@ class MetaPerTut extends React.Component {
       confLevel: this.state.confLevel,
       confTime: this.state.confTime,
       correct: this.state.correct,
+      correctMat: this.state.correctMat,
+      correctPer: this.state.correctPer,
 
       // staircase parameters
       responseMatrix: this.state.responseMatrix,
