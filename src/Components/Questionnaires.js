@@ -29,14 +29,14 @@ class Questionnaires extends React.Component {
   constructor(props) {
     super(props);
 
-    //  const userID = this.props.state.userID;
-    //  const date = this.props.state.date;
-    //  const startTime = this.props.state.startTime;
+    const userID = this.props.state.userID;
+    const date = this.props.state.date;
+    const startTime = this.props.state.startTime;
 
     //when deug
-    const userID = 100;
-    const date = 100;
-    const startTime = 100;
+    //  const userID = 100;
+    //  const date = 100;
+    //  const startTime = 100;
 
     var sectionTime = Math.round(performance.now());
 
