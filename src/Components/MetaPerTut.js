@@ -1087,6 +1087,7 @@ class MetaPerTut extends React.Component {
       stimPos: stimPos,
       reversals: reversals,
       responseMatrix: responseMatrix,
+      stairDir: stairDir,
       //Calculate the for the paramters for the stim
       dotDiffStim1: Math.round(Math.exp(dotStair)),
       dotDiffStim2: 0,
