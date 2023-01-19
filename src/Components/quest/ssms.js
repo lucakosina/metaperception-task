@@ -198,8 +198,12 @@ export const ssms = [
         value: "SSMS_41",
         text: "Do you ever have the urge to break or smash things?",
       },
-      {
+          {
         value: "SSMS_42",
+        text: "Have you ever felt the urge to injure yourself?",
+      },
+      {
+        value: "SSMS_43",
         text:
           "Do you often feel like doing the opposite of what other people suggest even though you know they are right?",
       },
