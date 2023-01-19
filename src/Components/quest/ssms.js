@@ -6,8 +6,8 @@ export const ssms = [
     title:
       "For each question, select the answer that best describes your thoughts, feelings, and actions.",
     columns: [
-      { value: 1, text: "No" },
-      { value: 2, text: "Yes" },
+      { value: 0, text: "No" },
+      { value: 1, text: "Yes" },
     ],
     rows: [
       {
