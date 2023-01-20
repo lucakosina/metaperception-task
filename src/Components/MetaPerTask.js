@@ -873,6 +873,7 @@ class MetaPerTask extends React.Component {
       trialTime: this.state.trialTime,
       fixTime: this.state.fixTime,
       stimTime: this.state.stimTime,
+      stimPos:this.state.stimPos,
       dotDiffLeft: this.state.dotDiffLeft,
       dotDiffRight: this.state.dotDiffRight,
       dotDiffStim1: this.state.dotDiffStim1,
