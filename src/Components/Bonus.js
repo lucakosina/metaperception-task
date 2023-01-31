@@ -262,7 +262,7 @@ class Bonus extends React.Component {
             <form onSubmit={this.handleSubmit}>
               <label>
                 <textarea
-                  placeholder=" Were the task instructions clear? Did you encounter any problems?"
+                  placeholder=" Were the task instructions clear? Did you encounter any problems? Did you prefer to use the mouse or the keyboard to rate your confidence?"
                   value={this.state.feedback}
                   onChange={this.handleChange}
                 />
