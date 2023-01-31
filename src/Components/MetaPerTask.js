@@ -36,7 +36,7 @@ class MetaPerTask extends React.Component {
     const startTime = this.props.state.startTime;
     const dotStair = this.props.state.dotStair;
 
-    var trialNumTotal = 30; //150
+    var trialNumTotal = 150; //150
     var blockNumTotal = 3;
     var trialNumPerBlock = Math.round(trialNumTotal / blockNumTotal);
 
