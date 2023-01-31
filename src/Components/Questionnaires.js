@@ -67,7 +67,7 @@ class Questionnaires extends React.Component {
       gse,
     ];
 
-    var allIQText = [icar1, icar2];
+    //var allIQText = [icar1, icar2];
 
     //  console.log(allIQText);
 

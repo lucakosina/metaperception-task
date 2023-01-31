@@ -12,13 +12,19 @@ class Home extends React.Component {
     //var prolific_id = Math.floor(100000 + Math.random() * 900000);
     //var prolific_id = 120000; //for testing
 
-    let url = this.props.location.search;
-    let params = queryString.parse(url);
-    const prolific_id =
-      params["PROLIFIC_PID"] === undefined
-        ? "undefined"
-        : params["PROLIFIC_PID"];
-    console.log(prolific_id);
+    const queryParams = new URLSearchParams(window.location.search);
+    const prolific_id = queryParams.get("PROLIFIC_PID");
+
+    console.log("ID: " + prolific_id); //pizza
+
+    //  let url = this.props.location.search;
+    //  console.log(url);
+    //  let params = queryString.parse(url);
+    //  const prolific_id =
+    //    params["PROLIFIC_PID"] === undefined
+    //      ? "undefined"
+    //      : params["PROLIFIC_PID"];
+    //  console.log(prolific_id);
 
     // Set state
     this.state = {
