@@ -81,15 +81,21 @@ class Bonus extends React.Component {
   }
 
   // This handles instruction screen within the component USING KEYBOARD
-  handleInstruct(keyPressed) {
+  handleInstruct(keyPressed, timePressed) {
     var curInstructNum = this.state.instructNum;
     var ratingValue = this.state.ratingValue;
     var whichButton = keyPressed;
 
-    console.log(curInstructNum);
-    console.log(ratingValue);
+    //  console.log(curInstructNum);
+    //  console.log(ratingValue);
 
     if (whichButton === 3 && curInstructNum === 1 && ratingValue !== null) {
+      var ratingTime = timePressed - this.state.sectionTime;
+
+      this.setState({
+        ratingTime: ratingTime,
+      });
+
       setTimeout(
         function () {
           this.renderRatingSave();
@@ -111,12 +117,14 @@ class Bonus extends React.Component {
   // handle key keyPressed
   _handleInstructKey = (event) => {
     var keyPressed;
+    var timePressed;
 
     switch (event.keyCode) {
       case 32:
         //    this is spacebar
         keyPressed = 3;
-        this.handleInstruct(keyPressed);
+        timePressed = Math.round(performance.now());
+        this.handleInstruct(keyPressed, timePressed);
         break;
       default:
     }
@@ -135,6 +143,7 @@ class Bonus extends React.Component {
       startTime: this.state.startTime,
       section: this.state.section,
       sectionTime: this.state.sectionTime,
+      ratingTime: null,
       ratingValue: null,
       totalBonus: null,
       feedback: this.state.feedback,
@@ -166,6 +175,7 @@ class Bonus extends React.Component {
       startTime: this.state.startTime,
       section: this.state.section,
       sectionTime: this.state.sectionTime,
+      ratingTime: this.state.ratingTime,
       ratingValue: this.state.ratingValue,
       totalBonus: this.state.totalBonus,
       feedback: null,
@@ -200,14 +210,20 @@ class Bonus extends React.Component {
   }
   // To ask them for the valence rating of the noises
   // before we start the task
+
+  // This question is meant to be the insight qn when I have two tasks: How much did you feel that your confidence in the first task influenced
+  // your confidence on the second task?
+
+  //I change it here to reflect on their first vs end global rating
+  //lso need to change the slider x axis ticks if change back
   instructText(instructNum) {
     let instruct_text1 = (
       <div>
         Well done on completing both tasks!
         <br />
         <br />
-        How much did you feel that your confidence in the first task influenced
-        your confidence on the second task?
+        How much did you feel that your confidence changed after you performed
+        the task?
         <br />
         <br />
         <br />
@@ -287,7 +303,7 @@ class Bonus extends React.Component {
       },
     });
 
-    console.log("UserID is: " + this.state.userID);
+    //    console.log("UserID: " + this.state.userID);
   }
 
   componentDidMount() {

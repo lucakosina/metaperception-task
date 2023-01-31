@@ -259,7 +259,7 @@ class EndPage extends React.Component {
     if (this.state.instructScreen === true) {
       document.addEventListener("keyup", this._handleInstructKey);
       text = <div> {this.instructText(this.state.instructNum)}</div>;
-      console.log(this.state.instructNum);
+      //  console.log(this.state.instructNum);
     } else {
       return null;
     }

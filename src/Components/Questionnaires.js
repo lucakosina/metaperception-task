@@ -69,7 +69,7 @@ class Questionnaires extends React.Component {
 
     var allIQText = [icar1, icar2];
 
-    console.log(allIQText);
+    //  console.log(allIQText);
 
     this.state = {
       userID: userID,
@@ -131,7 +131,7 @@ class Questionnaires extends React.Component {
 
     var resultAsString = JSON.stringify(survey.data);
 
-    console.log("resultAsString", resultAsString);
+    //  console.log("resultAsString", resultAsString);
 
     fetch(`${DATABASE_URL}/psych_quiz/` + userID, {
       method: "POST",

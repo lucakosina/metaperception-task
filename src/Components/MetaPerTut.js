@@ -22,6 +22,7 @@ import { DATABASE_URL } from "./config";
 // 2) Practice on left/right box with feedback
 // 3) Instructions to confidence rating
 // 4) Quiz on instructions
+// 5) If quiz fail once, bring to instructions on confidence, if fail twice, bring to the start of instructions
 
 class MetaPerTut extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,13 +66,14 @@ class MetaPerTut extends React.Component {
       // trial timings in ms
       fixTimeLag: 1000, //1000
       fbTimeLag: 500, //500
-      stimTimeLag: 500, //300
+      stimTimeLag: 300, //300
       respFbTimeLag: 700, //
 
       //trial parameters
       trialNumTotal: trialNumTotal,
       stimPosList: pracStimPos,
       respKeyCode: [87, 79], // for left and right choice keys, currently it is W and O
+      tutorialTry: 1,
 
       //trial by trial paramters
       trialNum: 0,
@@ -251,7 +253,7 @@ class MetaPerTut extends React.Component {
       choice = "right";
     } else {
       choice = null;
-      console.log("No response made!");
+      //  console.log("No response made!");
     }
 
     var correct;
@@ -275,7 +277,7 @@ class MetaPerTut extends React.Component {
       correct = 0;
     }
 
-    console.log("response: " + response);
+    //  console.log("response: " + response);
     var correctMat = this.state.correctMat.concat(correct);
     var responseMatrix = this.state.responseMatrix.concat(response);
     var correctPer =
@@ -355,13 +357,13 @@ class MetaPerTut extends React.Component {
       });
     }
 
-    console.log("Keypress: " + whichButton);
-    console.log("QuizTime: " + quizTime);
-    console.log("QuizNum: " + quizNum);
-    console.log("QuizCor: " + quizCor);
-    console.log("QuizCorTotal: " + quizCorTotal);
-    console.log("QuizAns: " + this.state.quizAns);
-    console.log("quizNumTotal: " + this.state.quizNumTotal);
+    //  console.log("Keypress: " + whichButton);
+    //  console.log("QuizTime: " + quizTime);
+    //  console.log("QuizNum: " + quizNum);
+    //  console.log("QuizCor: " + quizCor);
+    //  console.log("QuizCorTotal: " + quizCorTotal);
+    //  console.log("QuizAns: " + this.state.quizAns);
+    //  console.log("quizNumTotal: " + this.state.quizNumTotal);
 
     setTimeout(
       function () {
@@ -484,25 +486,49 @@ class MetaPerTut extends React.Component {
   // To ask them for the valence rating of the noises
   // before we start the task
   instructText(instructNum) {
-    let quizFeedback1;
-    let quizFeedback2;
+    let text;
+    let text2;
 
-    if (this.state.quizTry > 1) {
-      quizFeedback1 =
-        "You scored " +
-        this.state.quizCorTotal +
-        "/4 correctly. Please read the instructions carefully.";
-      quizFeedback2 =
-        "Your task is to choose the battery card with the higher charge level, i.e., more number of white dots.";
-    } else {
-      quizFeedback1 = "Well done!";
-      quizFeedback2 =
-        "You saw that choosing the battery card with the higher charge level, i.e., more number of white dots was the correct answer.";
+    //If fail quiz once, this brings me to instruct before confidence
+    if (this.state.quizTry === 2) {
+      text2 = (
+        <span>
+          You scored {this.state.quizCorTotal}/{this.state.quizNumTotal} on the
+          quiz. Please read the instructions carefully.
+          <br />
+          <br />
+          Your task is to choose the battery card with the{" "}
+          <strong>higher charge level, i.e., more number of white dots</strong>.
+        </span>
+      );
+    }
+    //If fail quiz more than once, this brings me to the beginning of the instruct
+    else if (this.state.quizTry > 1) {
+      text = (
+        <span>
+          You scored {this.state.quizCorTotal}/{this.state.quizNumTotal} on the
+          quiz. We will restart the tutorial. Please read the instructions
+          carefully.
+          <br />
+          <br />
+        </span>
+      );
+
+      text2 = (
+        <span>
+          Well done!
+          <br />
+          <br />
+          You saw that choosing the battery card with the higher charge level,
+          i.e., more number of white dots was the correct answer.
+        </span>
+      );
     }
 
     let instruct_text1 = (
       <div>
         <span>
+          {text}
           Welcome to spaceship, engineer!
           <br /> <br />
           The ship has been running low on power, and we are glad you are here
@@ -676,10 +702,7 @@ class MetaPerTut extends React.Component {
     let instruct_text6 = (
       <div>
         <span>
-          {quizFeedback1}
-          <br />
-          <br />
-          {quizFeedback2}
+          {text2}
           <br />
           <br />
           During the main task, you will also have to indicate your{" "}
@@ -772,9 +795,13 @@ class MetaPerTut extends React.Component {
         <br />
         <br />
         <br />
-        You can use the slider by clicking any point along the scale, or
-        dragging the circle indicator along the scale. You can try it out for
-        yourself above.
+        You can use the slider by <strong>clicking any point</strong> along the
+        scale, or <strong>dragging the circle indicator</strong> along the
+        scale.
+        <br />
+        <br />
+        Alternatively, you can press [<strong>TAB</strong>] and use the{" "}
+        <strong>arrow</strong> keys to move the circle indicator.
         <br />
         <br />
         During the main task, once you have selected your rating, you will have
@@ -811,7 +838,8 @@ class MetaPerTut extends React.Component {
 
     let instruct_text10 = (
       <div>
-        Amazing! You scored 4/4 for the quiz.
+        Amazing! You scored {this.state.quizCorTotal}/{this.state.quizNumTotal}{" "}
+        for the quiz.
         <br />
         <br />
         You are ready to start the main task.
@@ -941,8 +969,15 @@ class MetaPerTut extends React.Component {
     // remove access to left/right/space keys for the instructions
     document.removeEventListener("keyup", this._handleInstructKey);
     document.removeEventListener("keyup", this._handleBeginKey);
-
-    // push to render fixation for the first trial
+    //reset tutorial if need to do again
+    this.setState({
+      trialNum: 0,
+      responseMatrix: [true, true],
+      reversals: 0,
+      stairDir: ["up", "up"],
+      dotStair: 4.65, //in log space; this is about 104 dots which is 70 dots shown for the first one});
+      // push to render fixation for the first trial
+    });
     setTimeout(
       function () {
         this.trialReset();
@@ -994,26 +1029,41 @@ class MetaPerTut extends React.Component {
     } else if (quizNum === this.state.quizNumTotal) {
       document.removeEventListener("keyup", this._handleQuizKey);
       //end quiz, head back to instructions
-
+      var quizTry = this.state.quizTry;
+      var tutorialTry = this.tutorialTry;
       //if full marks
       if (quizCorTotal === this.state.quizNumTotal) {
-        console.log("PASS QUIZ");
+        //  console.log("PASS QUIZ");
         this.setState({
           instructScreen: true,
           taskScreen: false,
           instructNum: 10,
           taskSection: "instruct",
         });
-      } else {
+      } else if (quizCorTotal !== this.state.quizNumTotal && quizTry < 2) {
         //if they got one wrong
-        console.log("fAIL QUIZ");
-        var quizTry = this.state.quizTry + 1;
+        //  console.log("FAIL QUIZ");
+        quizTry = quizTry + 1;
+
         this.setState({
           instructScreen: true,
           taskScreen: false,
           instructNum: 6,
           taskSection: "instruct",
           quizTry: quizTry,
+        });
+      } else {
+        //if they got more than one wrong
+        tutorialTry = tutorialTry + 1;
+        //  console.log("FAIL QUIZ");
+        quizTry = quizTry + 1;
+        this.setState({
+          instructScreen: true,
+          taskScreen: false,
+          instructNum: 1,
+          taskSection: "instruct",
+          quizTry: quizTry,
+          tutorialTry: tutorialTry,
         });
       }
     }
@@ -1037,9 +1087,9 @@ class MetaPerTut extends React.Component {
     var stairDir = s2.direction;
     var responseMatrix = s2.stepcount;
 
-    console.log("dotsStair: " + dotStair);
-    console.log("stairDir: " + stairDir);
-    console.log("responseMat: " + responseMatrix);
+    //  console.log("dotsStair: " + dotStair);
+    //  console.log("stairDir: " + stairDir);
+    //  console.log("responseMat: " + responseMatrix);
 
     var reversals;
     if (s2.reversal) {
@@ -1099,8 +1149,8 @@ class MetaPerTut extends React.Component {
       dotDiffRight: dotDiffRight,
     });
 
-    console.log(this.state.trialNum);
-    console.log(this.state.trialNumTotal);
+    //  console.log(this.state.trialNum);
+    //  console.log(this.state.trialNumTotal);
 
     if (trialNum < this.state.trialNumTotal + 1) {
       setTimeout(
@@ -1221,6 +1271,7 @@ class MetaPerTut extends React.Component {
       startTime: this.state.startTime,
       section: this.state.section,
       sectionTime: this.state.sectionTime,
+      tutorialTry: this.state.tutorialTry,
       trialNum: this.state.trialNum,
       trialTime: this.state.trialTime,
       fixTime: this.state.fixTime,
@@ -1325,7 +1376,7 @@ class MetaPerTut extends React.Component {
       },
     });
 
-    console.log("UserID is: " + this.state.userID);
+    //  console.log("UserID: " + this.state.userID);
   }
 
   componentDidMount() {
@@ -1447,5 +1498,7 @@ class MetaPerTut extends React.Component {
     );
   }
 }
+
+//      If I want to disable mouse events to force them to use the keyboard <div style={{ pointerEvents: "none" }}>
 
 export default withRouter(MetaPerTut);

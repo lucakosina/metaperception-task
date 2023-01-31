@@ -3,7 +3,7 @@ import { Stage, Layer, Rect } from "react-konva";
 
 var bufferFix = 400;
 var bufferFixWidWin = 0;
-var bufferFixHeiWin = 0;
+var bufferFixHeiWin = 200;
 
 class DrawFix extends React.Component {
   constructor(props) {

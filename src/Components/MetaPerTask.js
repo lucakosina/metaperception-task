@@ -85,6 +85,7 @@ class MetaPerTask extends React.Component {
       respFbTime: 0,
       choice: null,
       confLevel: null,
+      confTimeInitial: null, //this is for the global conf time
       confTime: 0,
       confInitial: null,
       //    confMove: null, //can only move to next trial if conf was toggled
@@ -187,7 +188,7 @@ class MetaPerTask extends React.Component {
         quizState: "pre",
       });
 
-      console.log("pre-conf begin");
+      //  console.log("pre-conf begin");
       setTimeout(
         function () {
           this.quizBegin();
@@ -232,13 +233,19 @@ class MetaPerTask extends React.Component {
     }
   }
 
-  handleGlobalConf(keyPressed) {
+  handleGlobalConf(keyPressed, timePressed) {
     var whichButton = keyPressed;
     if (
       whichButton === 3 &&
       this.state.quizScreen === true &&
       this.state.confLevel !== null
     ) {
+      var confTime = timePressed - this.state.confTimeInitial;
+
+      this.setState({
+        confTime: confTime,
+      });
+
       setTimeout(
         function () {
           this.renderQuizSave();
@@ -261,7 +268,7 @@ class MetaPerTask extends React.Component {
       choice = "right";
     } else {
       choice = null;
-      console.log("No response made!");
+      //  console.log("No response made!");
     }
 
     var correct;
@@ -280,7 +287,7 @@ class MetaPerTask extends React.Component {
       correct = 0;
     }
 
-    console.log("response: " + response);
+    //  console.log("response: " + response);
     var correctMat = this.state.correctMat.concat(correct);
     var responseMatrix = this.state.responseMatrix.concat(response);
     var correctPer =
@@ -307,7 +314,7 @@ class MetaPerTask extends React.Component {
   handleConfResp(keyPressed, timePressed) {
     var whichButton = keyPressed;
     if (whichButton === 3 && this.state.confLevel !== null) {
-      console.log("conf level: " + this.state.confLevel);
+      //  console.log("conf level: " + this.state.confLevel);
       var confTime =
         timePressed -
         [
@@ -367,12 +374,14 @@ class MetaPerTask extends React.Component {
   // handle key keyPressed
   _handleGlobalConfKey = (event) => {
     var keyPressed;
+    var timePressed;
 
     switch (event.keyCode) {
       case 32:
         //    this is spacebar
         keyPressed = 3;
-        this.handleGlobalConf(keyPressed);
+        timePressed = Math.round(performance.now());
+        this.handleGlobalConf(keyPressed, timePressed);
         break;
       default:
     }
@@ -407,7 +416,7 @@ class MetaPerTask extends React.Component {
     var keyPressed;
     var timePressed;
 
-    console.log("Confidence: " + this.state.confLevel);
+    //    console.log("Confidence: " + this.state.confLevel);
 
     switch (event.keyCode) {
       case 32:
@@ -572,6 +581,10 @@ class MetaPerTask extends React.Component {
         <br />
         <br />
         <center>
+          Click or drag the indicator anywhere on the scale, or press [TAB] and
+          use the arrow keys.
+          <br />
+          <br />
           Press [SPACEBAR] to submit your answer and start sorting the battery
           cards.
           <br />
@@ -624,13 +637,16 @@ class MetaPerTask extends React.Component {
     document.removeEventListener("keyup", this._handleBeginKey);
     document.addEventListener("keyup", this._handleGlobalConfKey);
     var initialValue = utils.randomInt(70, 80);
+    var confTimeInitial = Math.round(performance.now());
 
-    console.log("Begining quiz");
-    console.log("initialValue: " + initialValue);
+    //  console.log("Begining quiz");
+    //  console.log("initialValue: " + initialValue);
 
     this.setState({
       confInitial: initialValue,
       confLevel: null,
+      confTimeInitial: confTimeInitial,
+      confTime: null,
       //  confMove: null,
       quizScreen: true,
       instructScreen: false,
@@ -670,7 +686,7 @@ class MetaPerTask extends React.Component {
 
     var stimPos = this.state.stimPosList[trialNum - 1]; //shuffle the order for the dotDiffLeft
 
-    console.log("NEW TRIAL");
+    //  console.log("NEW TRIAL");
     // run staircase
     var s2 = staircase.staircase(
       this.state.dotStair,
@@ -756,10 +772,10 @@ class MetaPerTask extends React.Component {
   }
 
   renderFix() {
-    console.log("trialNumInBlock Fix: " + this.state.trialNumInBlock);
+    //console.log("trialNumInBlock Fix: " + this.state.trialNumInBlock);
 
     var trialTime = Math.round(performance.now());
-    console.log("render fix");
+    //  console.log("render fix");
     //Show fixation
     this.setState({
       //  instructScreen: false,
@@ -779,7 +795,7 @@ class MetaPerTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   renderStim() {
     var fixTime = Math.round(performance.now()) - this.state.trialTime;
-    console.log("render stim");
+    //  console.log("render stim");
     this.setState({
       //    instructScreen: false,
       //    taskScreen: true,
@@ -857,7 +873,7 @@ class MetaPerTask extends React.Component {
   renderTaskSave() {
     document.removeEventListener("keyup", this._handleConfRespKey);
 
-    console.log("trialNumInBlock Save: " + this.state.trialNumInBlock);
+    //  console.log("trialNumInBlock Save: " + this.state.trialNumInBlock);
 
     var userID = this.state.userID;
 
@@ -873,7 +889,7 @@ class MetaPerTask extends React.Component {
       trialTime: this.state.trialTime,
       fixTime: this.state.fixTime,
       stimTime: this.state.stimTime,
-      stimPos:this.state.stimPos,
+      stimPos: this.state.stimPos,
       dotDiffLeft: this.state.dotDiffLeft,
       dotDiffRight: this.state.dotDiffRight,
       dotDiffStim1: this.state.dotDiffStim1,
@@ -912,16 +928,16 @@ class MetaPerTask extends React.Component {
       console.log("Cant post?");
     }
 
-    console.log("trialNum: " + this.state.trialNum);
-    console.log("trialNumPerBlock: " + this.state.trialNumPerBlock);
-    console.log("trialNumInBlock: " + this.state.trialNumInBlock);
-    console.log("trialNumTotal: " + this.state.trialNumTotal);
+    //  console.log("trialNum: " + this.state.trialNum);
+    //  console.log("trialNumPerBlock: " + this.state.trialNumPerBlock);
+    //  console.log("trialNumInBlock: " + this.state.trialNumInBlock);
+    //  console.log("trialNumTotal: " + this.state.trialNumTotal);
 
     if (this.state.trialNumInBlock === this.state.trialNumPerBlock) {
       //and not the last trial, because that will be sent to trialReset to end the task
-      console.log("TIME FOR A BREAK");
+      //  console.log("TIME FOR A BREAK");
       if (this.state.trialNum !== this.state.trialNumTotal) {
-        console.log("REST TIME");
+        //      console.log("REST TIME");
         setTimeout(
           function () {
             this.restBlock();
@@ -930,7 +946,7 @@ class MetaPerTask extends React.Component {
         );
       } else if (this.state.trialNum === this.state.trialNumTotal) {
         // have reached the end of the task
-        console.log("END TASK");
+        //    console.log("END TASK");
         setTimeout(
           function () {
             this.taskEnd();
@@ -939,7 +955,7 @@ class MetaPerTask extends React.Component {
         );
       }
     } else if (this.state.trialNumInBlock !== this.state.trialNumPerBlock) {
-      console.log("CONTINUE TIME");
+      //  console.log("CONTINUE TIME");
       setTimeout(
         function () {
           this.trialReset();
@@ -962,6 +978,8 @@ class MetaPerTask extends React.Component {
       section: this.state.section,
       sectionTime: this.state.sectionTime,
       quizState: this.state.quizState,
+      confTimeInitial: this.state.confTimeInitial,
+      confTime: this.state.confTime,
       confInitial: this.state.confInitial,
       confLevel: this.state.confLevel,
     };
@@ -981,7 +999,7 @@ class MetaPerTask extends React.Component {
 
     if (this.state.quizState === "pre") {
       // begin the task
-      console.log("BEGIN");
+      //  console.log("BEGIN");
       setTimeout(
         function () {
           this.taskBegin();
@@ -1039,7 +1057,7 @@ class MetaPerTask extends React.Component {
         document.addEventListener("keyup", this._handleInstructKey);
         document.addEventListener("keyup", this._handleBeginKey);
         text = <div> {this.instructText(this.state.instructNum)}</div>;
-        console.log("Page: " + this.state.instructNum);
+        //    console.log("Page: " + this.state.instructNum);
       } else if (
         this.state.instructScreen === false &&
         this.state.taskScreen === false &&
@@ -1047,7 +1065,7 @@ class MetaPerTask extends React.Component {
         this.state.taskSection === "rating"
       ) {
         text = <div> {this.quizText(this.state.quizState)}</div>;
-        console.log("Quiz state: " + this.state.quizState);
+        //    console.log("Quiz state: " + this.state.quizState);
       } else if (
         this.state.instructScreen === false &&
         this.state.quizScreen === false &&

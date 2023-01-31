@@ -9,7 +9,7 @@ var boxDist = 200; //distance between the boxes
 var bufferFix = 400;
 
 var bufferFixWidWin = 0;
-var bufferFixHeiWin = 0;
+var bufferFixHeiWin = 200;
 
 //left box
 var leftBoxStartX =

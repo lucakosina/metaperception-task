@@ -5,7 +5,7 @@
   height: auto;
   margin: 50px;
   color: white;
-  font-size: 18px;
+  font-size: 20px;
   font-family: "Courier New", monospace;
 }
 
@@ -14,13 +14,13 @@
 }
 
 .confTextLeft {
-  font-size: 14px;
+  font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
   float: left;
 }
 
 .confTextRight {
-  font-size: 14px;
+  font-size: 16px;
   font-family: Arial, Helvetica, sans-serif;
   float: right;
 }

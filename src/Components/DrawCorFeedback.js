@@ -4,8 +4,8 @@ import { Stage, Layer, Rect, Text } from "react-konva";
 var boxDist = 200; //distance between the boxes
 var squareWidth = 250;
 var bufferFix = 400;
-var bufferFixWidWin = 50;
-var bufferFixHeiWin = 150;
+var bufferFixWidWin = 0; //50
+var bufferFixHeiWin = 200; //150
 
 //left box
 var leftBoxStartX =
@@ -94,7 +94,7 @@ export const DrawFeedback = ({ choice, correct }) => {
           x={leftBoxStartX}
           y={leftBoxStartY - 50}
           text={leftText}
-          fontSize={16}
+          fontSize={18}
           fontFamily="Courier New"
         />
         <Text
@@ -102,16 +102,16 @@ export const DrawFeedback = ({ choice, correct }) => {
           x={rightBoxStartX}
           y={rightBoxStartY - 50}
           text={rightText}
-          fontSize={16}
+          fontSize={18}
           fontFamily="Courier New"
         />
 
         <Text
           fill="white"
-          x={window.innerWidth / 2 - 150}
-          y={window.innerHeight / 2}
+          x={window.innerWidth / 2 - boxDist / 4 - squareWidth / 2}
+          y={window.innerHeight / 2 - squareWidth / 8}
           text="Press the [SPACEBAR] to continue"
-          fontSize={16}
+          fontSize={18}
           fontFamily="Courier New"
         />
       </Layer>

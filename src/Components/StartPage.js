@@ -21,8 +21,10 @@ class StartPage extends React.Component {
     var dateString = date + "-" + (month + 1) + "-" + year;
     var timeString = currentDate.toTimeString();
 
+    const userID = this.props.state.userID;
+
     // ID number - either set or get from url
-    var prolific_id = Math.floor(100000 + Math.random() * 900000);
+    //  var prolific_id = Math.floor(100000 + Math.random() * 900000);
     //var prolific_id = 120000; //for testing
 
     //let url = this.props.location.search;
@@ -33,12 +35,19 @@ class StartPage extends React.Component {
 
     // Set state
     this.state = {
-      userID: prolific_id,
+      userID: userID,
       date: dateString,
       dateTime: dateTime,
       startTime: timeString,
       consentComplete: 0,
     };
+
+    /* prevents page from going down when space bar is hit .*/
+    window.addEventListener("keyup", function (e) {
+      if (e.keyCode === 32 && e.target === document.body) {
+        e.preventDefault();
+      }
+    });
 
     this.redirectToTarget = this.redirectToTarget.bind(this);
   }
@@ -61,8 +70,6 @@ class StartPage extends React.Component {
         startTime: this.state.startTime,
       },
     });
-
-    console.log("UserID is: " + this.state.userID);
   }
 
   render() {

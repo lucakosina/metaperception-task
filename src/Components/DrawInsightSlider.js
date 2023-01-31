@@ -16,6 +16,13 @@ const theme = createTheme({
   },
 });
 
+//labels
+//1 - not at allowed
+//2 - not very likely
+//3 - somewhat likely
+//4 - very likely
+//5 - definitely
+
 const marks = [
   {
     value: 1,
@@ -23,19 +30,19 @@ const marks = [
   },
   {
     value: 2,
-    label: "Not very likely",
+    label: "Not much",
   },
   {
     value: 3,
-    label: "Somewhat likely",
+    label: "Somewhat",
   },
   {
     value: 4,
-    label: "Very likely",
+    label: "Quite a bit",
   },
   {
     value: 5,
-    label: "Definitely",
+    label: "A lot",
   },
 ];
 
