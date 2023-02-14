@@ -4,7 +4,7 @@ export const ocir = [
     name: "OCIR",
     isAllRowRequired: true,
     title:
-      "Please indicate what best describes HOW MUCH each experience has DISTRESSED or BOTHERED you during the PAST MONTH. (Please make sure to scroll down within the questionnaire box.)",
+      "Please indicate what best describes HOW MUCH each experience has DISTRESSED or BOTHERED you during the PAST MONTH.",
     columns: [
       { value: 0, text: "Not at all" },
       { value: 1, text: "A little" },
