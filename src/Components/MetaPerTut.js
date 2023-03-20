@@ -822,8 +822,8 @@ class MetaPerTut extends React.Component {
         <br />
         <br />
         Note: You will have to get <strong>all</strong> quiz questions correct.
-        If not, you be sent back to the instructions and will have to retake the
-        quiz!
+        If not, you will be sent back to the instructions and will have to
+        retake the quiz!
         <br />
         <br />
         <center>

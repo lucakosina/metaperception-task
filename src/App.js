@@ -1,7 +1,7 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 
-import Home from "./Components/Home";
+import Home from "./Components/ScreenFullCheck";
 import StartPage from "./Components/StartPage";
 import MetaPerTut from "./Components/MetaPerTut";
 import MetaPerTask from "./Components/MetaPerTask";
@@ -13,7 +13,7 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/StartPage" element={<StartPage />} />
+      <Route path="StartPage" element={<StartPage />} />
       <Route path="MetaPerTut" element={<MetaPerTut />} />
       <Route path="MetaPerTask" element={<MetaPerTask />} />
       <Route path="Bonus" element={<Bonus />} />
