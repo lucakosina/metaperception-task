@@ -1336,9 +1336,10 @@ class MetaPerTut extends React.Component {
       quizTry: this.state.quizTry,
       quizNumTotal: this.state.quizNumTotal,
       quizNum: this.state.quizNum,
-      trialTime: this.state.trialTime,
-      quizPressed: this.state.quizPressed,
-      quizTime: this.state.quizTime,
+      quizTime: this.state.trialTime,
+      quizResp: this.state.quizPressed,
+      quizRT: this.state.quizTime,
+      quizAns: this.state.quizAns,
       quizCor: this.state.quizCor,
       quizCorTotal: this.state.quizCorTotal,
     };
