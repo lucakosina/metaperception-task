@@ -490,7 +490,7 @@ class MetaPerTut extends React.Component {
     let text2;
 
     //If fail quiz once, this brings me to instruct before confidence
-    if (this.state.quizTry === 2) {
+    if (this.state.quizTry > 1 && this.state.quizTry <= 3) {
       text2 = (
         <span>
           You scored {this.state.quizCorTotal}/{this.state.quizNumTotal} on the
@@ -503,7 +503,7 @@ class MetaPerTut extends React.Component {
       );
     }
     //If fail quiz more than once, this brings me to the beginning of the instruct
-    else if (this.state.quizTry > 1) {
+    else if (this.state.quizTry >= 4) {
       text = (
         <span>
           You scored {this.state.quizCorTotal}/{this.state.quizNumTotal} on the
@@ -826,6 +826,10 @@ class MetaPerTut extends React.Component {
         retake the quiz!
         <br />
         <br />
+        If you fail too many times, you will be brought to the beginning of the
+        entire tutorial.
+        <br />
+        <br />
         <center>
           Press [<strong>SPACEBAR</strong>] to begin the quiz.
         </center>
@@ -1030,7 +1034,7 @@ class MetaPerTut extends React.Component {
       document.removeEventListener("keyup", this._handleQuizKey);
       //end quiz, head back to instructions
       var quizTry = this.state.quizTry;
-      var tutorialTry = this.tutorialTry;
+      var tutorialTry = this.state.tutorialTry;
       //if full marks
       if (quizCorTotal === this.state.quizNumTotal) {
         //  console.log("PASS QUIZ");
@@ -1040,7 +1044,7 @@ class MetaPerTut extends React.Component {
           instructNum: 10,
           taskSection: "instruct",
         });
-      } else if (quizCorTotal !== this.state.quizNumTotal && quizTry < 2) {
+      } else if (quizCorTotal !== this.state.quizNumTotal && quizTry < 4) {
         //if they got one wrong
         //  console.log("FAIL QUIZ");
         quizTry = quizTry + 1;
