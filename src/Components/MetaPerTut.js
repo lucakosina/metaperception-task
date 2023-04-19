@@ -218,6 +218,14 @@ class MetaPerTut extends React.Component {
     var curInstructNum = this.state.instructNum;
     var whichButton = keyPressed;
     if (whichButton === 3 && curInstructNum === 5) {
+      this.setState({
+        trialNum: 1,
+        correctMat: [], //put correct in vector, to cal perf %
+        responseMatrix: [true, true],
+        reversals: 0,
+        stairDir: ["up", "up"],
+        dotStair: 4.65,
+      });
       setTimeout(
         function () {
           this.tutorBegin();
@@ -490,7 +498,7 @@ class MetaPerTut extends React.Component {
     let text2;
 
     //If fail quiz once, this brings me to instruct before confidence
-    if (this.state.quizTry > 1 && this.state.quizTry <= 3) {
+    if (this.state.quizTry === 2 && this.state.quizTry === 3) {
       text2 = (
         <span>
           You scored {this.state.quizCorTotal}/{this.state.quizNumTotal} on the
