@@ -85,6 +85,10 @@ class Home extends React.Component {
           consent pages.
           <br />
           <br />
+          Please <strong>do not refresh the webpage</strong> at any point in the
+          study. You will not be able to return to the same page.
+          <br />
+          <br />
           Note: If you encounter a technical issue during the study, please take
           a screenshot of the error and send a message with details of the
           current broswer you are using to the researcher on Profilic.
