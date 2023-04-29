@@ -498,7 +498,7 @@ class MetaPerTut extends React.Component {
     let text2;
 
     //If fail quiz once, this brings me to instruct before confidence
-    if (this.state.quizTry === 2 && this.state.quizTry === 3) {
+    if (this.state.quizTry === 2 || this.state.quizTry === 3) {
       text2 = (
         <span>
           You scored {this.state.quizCorTotal}/{this.state.quizNumTotal} on the
@@ -1052,7 +1052,7 @@ class MetaPerTut extends React.Component {
           instructNum: 10,
           taskSection: "instruct",
         });
-      } else if (quizCorTotal !== this.state.quizNumTotal && quizTry < 4) {
+      } else if (quizCorTotal !== this.state.quizNumTotal && quizTry <= 2) {
         //if they got one wrong
         //  console.log("FAIL QUIZ");
         quizTry = quizTry + 1;
@@ -1064,7 +1064,7 @@ class MetaPerTut extends React.Component {
           taskSection: "instruct",
           quizTry: quizTry,
         });
-      } else {
+      } else if (quizCorTotal !== this.state.quizNumTotal && quizTry > 2) {
         //if they got more than one wrong
         tutorialTry = tutorialTry + 1;
         //  console.log("FAIL QUIZ");
