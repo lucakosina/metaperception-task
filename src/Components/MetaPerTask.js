@@ -31,10 +31,16 @@ class MetaPerTask extends React.Component {
     //  const date = 100;
     //  const startTime = 100;
     //
+
+    const prolificID = this.props.state.prolificID;
+    const condition = this.props.state.condition;
     const userID = this.props.state.userID;
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
     const dotStair = this.props.state.dotStair;
+
+    const memCorrectPer = this.props.state.memCorrectPer;
+    const perCorrectPer = this.props.state.perCorrectPer; //if perception task is done, it will be filled, else zero
 
     var trialNumTotal = 150; //150
     var blockNumTotal = 3;
@@ -51,6 +57,8 @@ class MetaPerTask extends React.Component {
     // SET STATES
     this.state = {
       userID: userID,
+      prolificID: prolificID,
+      condition: condition,
       date: date,
       startTime: startTime,
       section: "task",
@@ -114,6 +122,9 @@ class MetaPerTask extends React.Component {
       taskScreen: false,
       taskSection: null,
       debug: false,
+      
+      memCorrectPer: memCorrectPer,
+      perCorrectPer: perCorrectPer,
     };
 
     //////////////////////////////////////////////////////////////////////////////////////////////
@@ -875,9 +886,11 @@ class MetaPerTask extends React.Component {
 
     //  console.log("trialNumInBlock Save: " + this.state.trialNumInBlock);
 
-    var userID = this.state.userID;
+    var prolificID = this.state.prolificID;
 
     let saveString = {
+      prolificID: this.state.prolificID,
+      condition: this.state.condition,
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
@@ -916,7 +929,7 @@ class MetaPerTask extends React.Component {
     };
 
     try {
-      fetch(`${DATABASE_URL}/task_data/` + userID, {
+      fetch(`${DATABASE_URL}/per_task_data/` + prolificID, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -969,9 +982,13 @@ class MetaPerTask extends React.Component {
 
   renderQuizSave() {
     document.removeEventListener("keyup", this._handleGlobalConfKey);
-    var userID = this.state.userID;
+    var prolificID = this.state.prolificID;
+    var task = "perception";
 
     let saveString = {
+      prolificID: this.state.prolificID,
+      condition: this.state.condition,
+      task: task,
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
@@ -985,7 +1002,7 @@ class MetaPerTask extends React.Component {
     };
 
     try {
-      fetch(`${DATABASE_URL}/prepost_conf/` + userID, {
+      fetch(`${DATABASE_URL}/pre_post_conf/` + prolificID, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -1030,12 +1047,19 @@ class MetaPerTask extends React.Component {
   redirectToNextTask() {
     document.removeEventListener("keyup", this._handleInstructKey);
     document.removeEventListener("keyup", this._handleBeginKey);
-    this.props.navigate("/Bonus", {
+
+    var perCorrectPer = this.state.correctPer;
+
+    this.props.navigate("/Bonus?PROLIFIC_PID=" + this.state.prolificID, {
       state: {
+        prolificID: this.state.prolificID,
         userID: this.state.userID,
+        condition: this.state.condition,
         date: this.state.date,
         startTime: this.state.startTime,
         correctPer: this.state.correctPer,
+        perCorrectPer: perCorrectPer,
+        memCorrectPer: this.state.memCorrectPer,
       },
     });
   }

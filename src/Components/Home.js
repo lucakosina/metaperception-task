@@ -28,7 +28,7 @@ class Home extends React.Component {
 
     // Set state
     this.state = {
-      userID: prolific_id,
+      prolificID: prolific_id,
     };
 
     this.redirectToTarget = this.redirectToTarget.bind(this);
@@ -36,13 +36,13 @@ class Home extends React.Component {
 
   redirectToTarget() {
     //On click consent, sent to tutorial page with the props
-    this.props.navigate("/StartPage", {
+    this.props.navigate("/StartPage?PROLIFIC_PID=" + this.state.prolificID, {
       state: {
-        userID: this.state.userID,
+        prolificID: this.state.prolificID,
       },
     });
 
-    console.log("UserID: " + this.state.userID);
+    console.log("prolificID: " + this.state.prolificID);
   }
 
   componentDidMount() {

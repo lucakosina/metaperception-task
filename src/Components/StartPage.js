@@ -21,21 +21,17 @@ class StartPage extends React.Component {
     var dateString = date + "-" + (month + 1) + "-" + year;
     var timeString = currentDate.toTimeString();
 
-    const userID = this.props.state.userID;
+    var userID = Math.floor(100000 + Math.random() * 900000);
+    var condition = 0;
 
-    // ID number - either set or get from url
-    //  var prolific_id = Math.floor(100000 + Math.random() * 900000);
-    //var prolific_id = 120000; //for testing
-
-    //let url = this.props.location.search;
-    //let params = queryString.parse(url);
-    //const prolific_id =
-    //  params["USER_PID"] === undefined ? "undefined" : params["USER_PID"];
-    //console.log(prolific_id);
+    
+    const prolificID = this.props.state.prolificID;
 
     // Set state
     this.state = {
       userID: userID,
+      prolificID: prolificID,
+      condition: condition,
       date: dateString,
       dateTime: dateTime,
       startTime: timeString,
@@ -63,11 +59,15 @@ class StartPage extends React.Component {
     });
 
     //On click consent, sent to tutorial page with the props
-    this.props.navigate("/MetaPerTut", {
+    this.props.navigate("/MetaPerTut?PROLIFIC_PID=" + this.state.prolificID, {
       state: {
+        prolificID: this.state.prolificID,
+        condition:this.state.condition,
         userID: this.state.userID,
         date: this.state.date,
         startTime: this.state.startTime,
+        memCorrectPer: 0,
+        perCorrectPer: 0,
       },
     });
   }

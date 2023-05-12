@@ -26,18 +26,27 @@ class Bonus extends React.Component {
     //  const date = 100;
     //  const startTime = 100;
 
+    const prolificID = this.props.state.prolificID;
+    const condition = this.props.state.condition;
     const userID = this.props.state.userID;
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
     const correctPer = this.props.state.correctPer;
 
-    var totalBonus = Math.round((2 * correctPer + Number.EPSILON) * 100) / 100; // 2 dec pl
+  
+    const memCorrectPer = this.props.state.memCorrectPer;
+    const perCorrectPer = this.props.state.perCorrectPer; //if perception task is done, it will be filled, else zero
 
+    var memBonus = Math.round((2 * memCorrectPer + Number.EPSILON) * 100) / 100; // 2 dec pl
+    var perBonus = Math.round((2 * perCorrectPer + Number.EPSILON) * 100) / 100; // 2 dec pl
+    var totalBonus = memBonus + perBonus; // 2 dec pl
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
     // SET STATES
     this.state = {
       // demo paramters
+      prolificID: prolificID,
+      condition: condition,
       userID: userID,
       date: date,
       startTime: startTime,
@@ -51,6 +60,8 @@ class Bonus extends React.Component {
       // screen parameters
       instructScreen: true,
       instructNum: 1,
+      memBonus: memBonus,
+      perBonus: perBonus,
       totalBonus: totalBonus,
       debug: false,
     };
@@ -135,9 +146,11 @@ class Bonus extends React.Component {
   }
 
   handleSubmit(event) {
-    var userID = this.state.userID;
+    var prolificID = this.state.prolificID;
 
     let feedback = {
+      prolificID: this.state.prolificID,
+      condition: this.state.condition,
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
@@ -145,12 +158,14 @@ class Bonus extends React.Component {
       sectionTime: this.state.sectionTime,
       ratingTime: null,
       ratingValue: null,
+      memBonus: null,
+      perBonus: null,
       totalBonus: null,
       feedback: this.state.feedback,
     };
 
     try {
-      fetch(`${DATABASE_URL}/feedback/` + userID, {
+      fetch(`${DATABASE_URL}/feedback/` + prolificID, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -167,9 +182,11 @@ class Bonus extends React.Component {
   }
 
   renderRatingSave() {
-    var userID = this.state.userID;
+    var prolificID = this.state.prolificID;
 
     let saveString = {
+      prolificID: this.state.prolificID,
+      condition: this.state.condition,
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
@@ -177,12 +194,14 @@ class Bonus extends React.Component {
       sectionTime: this.state.sectionTime,
       ratingTime: this.state.ratingTime,
       ratingValue: this.state.ratingValue,
+      memBonus: this.state.memBonus,
+      perBonus: this.state.perBonus,
       totalBonus: this.state.totalBonus,
       feedback: null,
     };
 
     try {
-      fetch(`${DATABASE_URL}/feedback/` + userID, {
+      fetch(`${DATABASE_URL}/feedback/` + prolificID, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -249,7 +268,7 @@ class Bonus extends React.Component {
     let instruct_text2 = (
       <div>
         <span>
-          From the task, you earned a bonus of £{this.state.totalBonus}.
+          From the task, you earned a bonus of £{this.state.perBonus}.
           <br />
           <br />
           We would love to hear any comments you have about the tasks you have
