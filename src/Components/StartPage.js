@@ -64,15 +64,7 @@ class StartPage extends React.Component {
     });
 
     var condition = this.state.condition;
-    var condUrl;
-
-    if (condition === 1) {
-      //On click consent, sent to perception task
-      condUrl = "/PerTut?PROLIFIC_PID=";
-    } else {
-      //On click consent, sent to memory task
-      condUrl = "/MemPreTut?PROLIFIC_PID=";
-    }
+    var condUrl = "/PerTut?PROLIFIC_PID=";
 
     this.props.navigate(condUrl + this.state.prolificID, {
       state: {
