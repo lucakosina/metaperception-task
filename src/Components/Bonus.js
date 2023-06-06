@@ -103,7 +103,7 @@ class Bonus extends React.Component {
     //  console.log(curInstructNum);
     //  console.log(ratingValue);
 
-    if (whichButton === 3 && curInstructNum < 3 && ratingValue !== null) {
+    if (whichButton === 3 && curInstructNum < 4 && ratingValue !== null) {
       var ratingTime = timePressed - this.state.sectionTime;
 
       this.setState({
@@ -217,15 +217,30 @@ class Bonus extends React.Component {
 
   nextPg() {
     var instructNum = this.state.instructNum;
-    if (instructNum < 3) {
-      //if still got one more question, reset the rating scale...
+    if (instructNum == 1) {
+      //move to page 2
+      this.setState({
+        instructNum: this.state.instructNum + 1,
+        ratingInitial: 4,
+        ratingValue: null,
+        section: "insight2",
+      });
+    } else if (instructNum == 2) {
+      // move to page 3
       this.setState({
         instructNum: this.state.instructNum + 1,
         ratingInitial: 3,
         ratingValue: null,
-        section: "insight2",
+        section: "insight3",
       });
     } else {
+      //move to page 4
+      this.setState({
+        instructNum: this.state.instructNum + 1,
+        ratingInitial: null,
+        ratingValue: null,
+        section: "insight4",
+      });
     }
   }
 
@@ -258,11 +273,37 @@ class Bonus extends React.Component {
       FirstB = this.state.memBonus;
     }
 
-    let instruct_text1 = (
+    let instruct_text0 = (
       <div>
         Well done on completing both tasks!
         <br />
         <br />
+        Did you prefer to complete the first task [{FirstT}] over the second
+        task [{SecondT}]?
+        <br />
+        <br />
+        <br />
+        <br />
+        <center>
+          <InsightSlider.InsightSlider1
+            callBackValue={this.handleCallbackConf.bind(this)}
+            initialValue={this.state.ratingInitial}
+          />
+          <br />
+          <br />
+          <center></center>
+          Press the [SPACEBAR] to continue.
+          <br /> <br />
+          You will need to have moved the slider to continue.
+        </center>
+        <span className={style.astro}>
+          <img src={this.state.astrodude} width={280} alt="astrodude" />
+        </span>
+      </div>
+    );
+
+    let instruct_text1 = (
+      <div>
         How much did you feel that your confidence <strong>changed</strong> from
         completing the first task [{FirstT}] to finishing the second task [
         {SecondT}]?
@@ -271,7 +312,7 @@ class Bonus extends React.Component {
         <br />
         <br />
         <center>
-          <InsightSlider.InsightSlider
+          <InsightSlider.InsightSlider2
             callBackValue={this.handleCallbackConf.bind(this)}
             initialValue={this.state.ratingInitial}
           />
@@ -298,7 +339,7 @@ class Bonus extends React.Component {
         <br />
         <br />
         <center>
-          <InsightSlider.InsightSlider
+          <InsightSlider.InsightSlider3
             callBackValue={this.handleCallbackConf.bind(this)}
             initialValue={this.state.ratingInitial}
           />
@@ -354,10 +395,12 @@ class Bonus extends React.Component {
     // have to use button to go to next page, because pressing spacebar when typing feedback will make it go forward prematurely
     switch (instructNum) {
       case 1:
-        return <div>{instruct_text1}</div>;
+        return <div>{instruct_text0}</div>;
       case 2:
-        return <div>{instruct_text2}</div>;
+        return <div>{instruct_text1}</div>;
       case 3:
+        return <div>{instruct_text2}</div>;
+      case 4:
         return <div>{instruct_text3}</div>;
       default:
     }
