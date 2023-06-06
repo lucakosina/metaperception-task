@@ -217,7 +217,7 @@ class Bonus extends React.Component {
 
   nextPg() {
     var instructNum = this.state.instructNum;
-    if (instructNum == 1) {
+    if (instructNum === 1) {
       //move to page 2
       this.setState({
         instructNum: this.state.instructNum + 1,
@@ -225,7 +225,7 @@ class Bonus extends React.Component {
         ratingValue: null,
         section: "insight2",
       });
-    } else if (instructNum == 2) {
+    } else if (instructNum === 2) {
       // move to page 3
       this.setState({
         instructNum: this.state.instructNum + 1,
