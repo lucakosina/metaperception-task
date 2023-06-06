@@ -2,6 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import style from "./style/perTaskStyle.module.css";
 
 const theme = createTheme({
   palette: {
@@ -75,15 +76,15 @@ export function InsightSlider1({ callBackValue, initialValue }) {
 const marks2 = [
   {
     value: 1,
-    label: "Decreased a lot",
+    label: "↓ a lot",
   },
   {
     value: 2,
-    label: "Decreased somewhat",
+    label: "↓ somewhat",
   },
   {
     value: 3,
-    label: "Decreased a little",
+    label: "↓ a little",
   },
   {
     value: 4,
@@ -91,15 +92,15 @@ const marks2 = [
   },
   {
     value: 5,
-    label: "Increased a little",
+    label: "↑ a little",
   },
   {
     value: 6,
-    label: "Increased somewhat",
+    label: "↑ somewhat",
   },
   {
     value: 7,
-    label: "Increased a lot",
+    label: "↑ a lot",
   },
 ];
 
@@ -130,6 +131,8 @@ export function InsightSlider2({ callBackValue, initialValue }) {
           />
         </ThemeProvider>
       </Box>
+      <span className={style.confTextLeft}>Decreased</span>
+      <span className={style.confTextRight}>Increased</span>
     </Box>
   );
 }
