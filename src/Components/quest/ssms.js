@@ -155,7 +155,7 @@ export const ssms = [
       },
       {
         value: "SSMS_32",
-        text: "Do you prefer watching television to going out with people?",
+        text: "Have you often felt uncomfortable when your friends touch you?",
       },
       {
         value: "SSMS_33",

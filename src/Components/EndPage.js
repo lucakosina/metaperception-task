@@ -78,12 +78,12 @@ class EndPage extends React.Component {
     } else if (whichButton === 2 && curText < 3) {
       this.setState({ instructNum: curText + 1 });
     } else if (whichButton === 3 && curText === 3) {
-      setTimeout(
-        function () {
-          this.redirectToEnd();
-        }.bind(this),
-        0
-      );
+      // setTimeout(
+      //   function () {
+      //     this.redirectToEnd();
+      //   }.bind(this),
+      //   0
+      // );
     }
   }
   // handle key keyPressed
@@ -215,15 +215,11 @@ class EndPage extends React.Component {
           <br />
           <br />
           <br />
-          <center>
-            Press the [SPACEBAR] to submit study completion on Proflic. Click
-            'OK' on the pop-up.
-          </center>
+          Please send a message to us on Proflic that you have completed the
+          task.
           <br />
           <br />
-          If the page fails to be directed to Prolific, please use the
-          compeletion code <strong>XXXXXXXXX</strong> and send a message to us
-          on Proflic.
+          You may close the tab.
         </span>
       </div>
     );
@@ -250,12 +246,12 @@ class EndPage extends React.Component {
     document.body.style.overflow = "hidden";
   }
 
-  redirectToEnd() {
-    alert("You will now be redirected to Prolific's validation page.");
-    document.removeEventListener("keyup", this._handleInstructKey);
-    window.location =
-      "https://app.prolific.co/submissions/complete?cc=C1FUHKFG"; //this will the prolific validation code
-  }
+  // redirectToEnd() {
+  //   alert("You will now be redirected to Prolific's validation page.");
+  //   document.removeEventListener("keyup", this._handleInstructKey);
+  //   window.location =
+  //     "https://app.prolific.co/submissions/complete?cc=C1FUHKFG"; //this will the prolific validation code
+  // }
 
   ///////////////////////////////////////////////////////////////
   render() {
