@@ -131,8 +131,8 @@ export function InsightSlider2({ callBackValue, initialValue }) {
           />
         </ThemeProvider>
       </Box>
-      <span className={style.confTextLeft}>Decreased</span>
-      <span className={style.confTextRight}>Increased</span>
+      <span className={style.confTextLeft}>(Decreased)</span>
+      <span className={style.confTextRight}>(Increased)</span>
     </Box>
   );
 }
