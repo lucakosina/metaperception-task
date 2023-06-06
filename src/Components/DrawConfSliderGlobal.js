@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import style from "./style/taskStyle.module.css";
+import style from "./style/perTaskStyle.module.css";
 
 const theme = createTheme({
   palette: {

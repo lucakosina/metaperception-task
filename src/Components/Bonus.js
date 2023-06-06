@@ -1,5 +1,5 @@
 import React from "react";
-import style from "./style/taskStyle.module.css";
+import style from "./style/memTaskStyle.module.css";
 import withRouter from "./withRouter.js";
 import * as InsightSlider from "./DrawInsightSlider.js";
 import astrodude from "./img/astronaut.png";
@@ -31,15 +31,15 @@ class Bonus extends React.Component {
     const userID = this.props.state.userID;
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
-    const correctPer = this.props.state.correctPer;
 
-  
     const memCorrectPer = this.props.state.memCorrectPer;
     const perCorrectPer = this.props.state.perCorrectPer; //if perception task is done, it will be filled, else zero
 
     var memBonus = Math.round((2 * memCorrectPer + Number.EPSILON) * 100) / 100; // 2 dec pl
     var perBonus = Math.round((2 * perCorrectPer + Number.EPSILON) * 100) / 100; // 2 dec pl
-    var totalBonus = memBonus + perBonus; // 2 dec pl
+    var totalBonus =
+      Math.round((memBonus + perBonus) * 100 + Number.EPSILON) / 100;
+
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
     // SET STATES
@@ -88,7 +88,10 @@ class Bonus extends React.Component {
 
   //for the feedback box
   handleChange(event) {
-    this.setState({ feedback: event.target.value });
+    this.setState({
+      feedback: event.target.value,
+      section: "feedback",
+    });
   }
 
   // This handles instruction screen within the component USING KEYBOARD
@@ -100,7 +103,7 @@ class Bonus extends React.Component {
     //  console.log(curInstructNum);
     //  console.log(ratingValue);
 
-    if (whichButton === 3 && curInstructNum === 1 && ratingValue !== null) {
+    if (whichButton === 3 && curInstructNum < 3 && ratingValue !== null) {
       var ratingTime = timePressed - this.state.sectionTime;
 
       this.setState({
@@ -114,15 +117,6 @@ class Bonus extends React.Component {
         0
       );
     }
-
-    // else if (whichButton === 3 && curInstructNum === 2) {
-    //   setTimeout(
-    //     function () {
-    //       this.redirectToNextTask();
-    //     }.bind(this),
-    //     0
-    //   );
-    // }
   }
 
   // handle key keyPressed
@@ -158,8 +152,8 @@ class Bonus extends React.Component {
       sectionTime: this.state.sectionTime,
       ratingTime: null,
       ratingValue: null,
-      memBonus: null,
       perBonus: null,
+      memBonus: null,
       totalBonus: null,
       feedback: this.state.feedback,
     };
@@ -222,11 +216,19 @@ class Bonus extends React.Component {
   }
 
   nextPg() {
-    this.setState({
-      instructNum: this.state.instructNum + 1,
-      section: "feedback",
-    });
+    var instructNum = this.state.instructNum;
+    if (instructNum < 3) {
+      //if still got one more question, reset the rating scale...
+      this.setState({
+        instructNum: this.state.instructNum + 1,
+        ratingInitial: 3,
+        ratingValue: null,
+        section: "insight2",
+      });
+    } else {
+    }
   }
+
   // To ask them for the valence rating of the noises
   // before we start the task
 
@@ -236,13 +238,34 @@ class Bonus extends React.Component {
   //I change it here to reflect on their first vs end global rating
   //lso need to change the slider x axis ticks if change back
   instructText(instructNum) {
+    var condition = this.state.condition;
+    var FirstT;
+    var SecondT;
+    var FirstB;
+    var SecondB;
+
+    if (condition === 1) {
+      //perform the perception task first
+      FirstT = "comparing battery cards";
+      SecondT = "memorising animals";
+      FirstB = this.state.perBonus;
+      SecondB = this.state.memBonus;
+    } else {
+      //perform the memory task first
+      SecondT = "comparing battery cards";
+      FirstT = "memorising animals";
+      SecondB = this.state.perBonus;
+      FirstB = this.state.memBonus;
+    }
+
     let instruct_text1 = (
       <div>
         Well done on completing both tasks!
         <br />
         <br />
-        How much did you feel that your confidence changed after you performed
-        the task?
+        How much did you feel that your confidence <strong>changed</strong> from
+        completing the first task [{FirstT}] to finishing the second task [
+        {SecondT}]?
         <br />
         <br />
         <br />
@@ -267,10 +290,36 @@ class Bonus extends React.Component {
 
     let instruct_text2 = (
       <div>
+        How much did you feel that your confidence in the first task [{FirstT}]
+        <strong>influenced</strong> your confidence on the second task [
+        {SecondT}]?
+        <br />
+        <br />
+        <br />
+        <br />
+        <center>
+          <InsightSlider.InsightSlider
+            callBackValue={this.handleCallbackConf.bind(this)}
+            initialValue={this.state.ratingInitial}
+          />
+          <br />
+          <br />
+          <center></center>
+          Press the [SPACEBAR] to continue.
+          <br /> <br />
+          You will need to have moved the slider to continue.
+        </center>
+        <span className={style.astro}>
+          <img src={this.state.astrodude} width={280} alt="astrodude" />
+        </span>
+      </div>
+    );
+
+    let instruct_text3 = (
+      <div>
         <span>
-          From the task, you earned a bonus of £{this.state.perBonus}.
-          <br />
-          <br />
+          From the second task [{SecondT}], you earned a bonus of £{SecondB}.
+          <br /> <br />
           We would love to hear any comments you have about the tasks you have
           completed.
           <br /> <br />
@@ -308,19 +357,26 @@ class Bonus extends React.Component {
         return <div>{instruct_text1}</div>;
       case 2:
         return <div>{instruct_text2}</div>;
+      case 3:
+        return <div>{instruct_text3}</div>;
       default:
     }
   }
 
   redirectToNextTask() {
     document.removeEventListener("keyup", this._handleInstructKey);
-    this.props.navigate("/Questionnaires", {
-      state: {
-        userID: this.state.userID,
-        date: this.state.date,
-        startTime: this.state.startTime,
-      },
-    });
+    this.props.navigate(
+      "/Questionnaires?PROLIFIC_PID=" + this.state.prolificID,
+      {
+        state: {
+          prolificID: this.state.prolificID,
+          condition: this.state.condition,
+          userID: this.state.userID,
+          date: this.state.date,
+          startTime: this.state.startTime,
+        },
+      }
+    );
 
     //    console.log("UserID: " + this.state.userID);
   }

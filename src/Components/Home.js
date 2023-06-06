@@ -1,30 +1,18 @@
 import screenfull from "screenfull";
 import React from "react";
 import withRouter from "./withRouter.js";
-import style from "./style/taskStyle.module.css";
-import queryString from "query-string";
+import style from "./style/perTaskStyle.module.css";
+// import queryString from "query-string";
 
 class Home extends React.Component {
   constructor(props) {
     super(props);
 
     // ID number - either set or get from url
-    //var prolific_id = Math.floor(100000 + Math.random() * 900000);
-    //var prolific_id = 120000; //for testing
-
     const queryParams = new URLSearchParams(window.location.search);
     const prolific_id = queryParams.get("PROLIFIC_PID");
 
     console.log("ID: " + prolific_id); //pizza
-
-    //  let url = this.props.location.search;
-    //  console.log(url);
-    //  let params = queryString.parse(url);
-    //  const prolific_id =
-    //    params["PROLIFIC_PID"] === undefined
-    //      ? "undefined"
-    //      : params["PROLIFIC_PID"];
-    //  console.log(prolific_id);
 
     // Set state
     this.state = {

@@ -3,9 +3,9 @@ import DrawFix from "./DrawFix";
 import * as DrawDots from "./DrawDots";
 import DrawBox from "./DrawBox";
 import * as DrawChoice from "./DrawChoice";
-import style from "./style/taskStyle.module.css";
+import style from "./style/perTaskStyle.module.css";
 import * as utils from "./utils.js";
-import * as staircase from "./staircase.js";
+import * as staircase from "./PerStaircase.js";
 import withRouter from "./withRouter.js";
 import * as ConfSlider from "./DrawConfSlider.js";
 import * as ConfSliderGlobal from "./DrawConfSliderGlobal.js";
@@ -18,7 +18,7 @@ import { DATABASE_URL } from "./config";
 // 1) Pre task confidence ratings
 // 2) Task with trial by trial conf ratings
 
-class MetaPerTask extends React.Component {
+class PerTask extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   // CONSTRUCTOR
   constructor(props) {
@@ -42,7 +42,7 @@ class MetaPerTask extends React.Component {
     const memCorrectPer = this.props.state.memCorrectPer;
     const perCorrectPer = this.props.state.perCorrectPer; //if perception task is done, it will be filled, else zero
 
-    var trialNumTotal = 150; //150
+    var trialNumTotal = 9; //150
     var blockNumTotal = 3;
     var trialNumPerBlock = Math.round(trialNumTotal / blockNumTotal);
 
@@ -122,7 +122,6 @@ class MetaPerTask extends React.Component {
       taskScreen: false,
       taskSection: null,
       debug: false,
-      
       memCorrectPer: memCorrectPer,
       perCorrectPer: perCorrectPer,
     };
@@ -1048,18 +1047,28 @@ class MetaPerTask extends React.Component {
     document.removeEventListener("keyup", this._handleInstructKey);
     document.removeEventListener("keyup", this._handleBeginKey);
 
+    var condition = this.state.condition;
     var perCorrectPer = this.state.correctPer;
+    var memCorrectPer = this.state.memCorrectPer;
 
-    this.props.navigate("/Bonus?PROLIFIC_PID=" + this.state.prolificID, {
+    var condUrl;
+    if (condition === 1) {
+      //Sent to memory task for part 2
+      condUrl = "/MemPreTut?PROLIFIC_PID=";
+    } else {
+      //Sent to insight page
+      condUrl = "/Bonus?PROLIFIC_PID=";
+    }
+
+    this.props.navigate(condUrl + this.state.prolificID, {
       state: {
         prolificID: this.state.prolificID,
         userID: this.state.userID,
         condition: this.state.condition,
         date: this.state.date,
         startTime: this.state.startTime,
-        correctPer: this.state.correctPer,
         perCorrectPer: perCorrectPer,
-        memCorrectPer: this.state.memCorrectPer,
+        memCorrectPer: memCorrectPer,
       },
     });
   }
@@ -1209,4 +1218,4 @@ class MetaPerTask extends React.Component {
   }
 }
 
-export default withRouter(MetaPerTask);
+export default withRouter(PerTask);

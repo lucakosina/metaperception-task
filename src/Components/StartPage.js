@@ -4,7 +4,6 @@ import "../../node_modules/survey-react/survey.css";
 import "./style/surveyStyle.css";
 import withRouter from "./withRouter";
 
-//import { json } from "./consent/consent.js"; //short for debugging
 import { json } from "./consent/consentFull.js";
 
 class StartPage extends React.Component {
@@ -21,10 +20,12 @@ class StartPage extends React.Component {
     var dateString = date + "-" + (month + 1) + "-" + year;
     var timeString = currentDate.toTimeString();
 
+    // Random ID number to set conditions for the task order
+    // even numbers will start with the perception task
+    // odd numbers will start with the memory task
     var userID = Math.floor(100000 + Math.random() * 900000);
-    var condition = 0;
+    var condition = 2; // participants will only do this version if the second half had error - if its the perception task
 
-    
     const prolificID = this.props.state.prolificID;
 
     // Set state
@@ -38,19 +39,23 @@ class StartPage extends React.Component {
       consentComplete: 0,
     };
 
-    /* prevents page from going down when space bar is hit .*/
-    window.addEventListener("keyup", function (e) {
-      if (e.keyCode === 32 && e.target === document.body) {
-        e.preventDefault();
-      }
-    });
-
     this.redirectToTarget = this.redirectToTarget.bind(this);
   }
 
   componentDidMount() {
     window.scrollTo(0, 0);
     document.body.style.overflow = "auto";
+
+    this.setState({
+      mounted: 1,
+    });
+  }
+
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state, callback) => {
+      return;
+    };
   }
 
   redirectToTarget() {
@@ -58,14 +63,26 @@ class StartPage extends React.Component {
       consentComplete: 1,
     });
 
-    //On click consent, sent to tutorial page with the props
-    this.props.navigate("/MetaPerTut?PROLIFIC_PID=" + this.state.prolificID, {
+    var condition = this.state.condition;
+    var condUrl;
+
+    if (condition === 1) {
+      //On click consent, sent to perception task
+      condUrl = "/PerTut?PROLIFIC_PID=";
+    } else {
+      //On click consent, sent to memory task
+      condUrl = "/MemPreTut?PROLIFIC_PID=";
+    }
+
+    this.props.navigate(condUrl + this.state.prolificID, {
       state: {
         prolificID: this.state.prolificID,
-        condition:this.state.condition,
         userID: this.state.userID,
+        condition: condition,
         date: this.state.date,
         startTime: this.state.startTime,
+        statePic: this.state.statePic,
+        stateWord: this.state.stateWord,
         memCorrectPer: 0,
         perCorrectPer: 0,
       },

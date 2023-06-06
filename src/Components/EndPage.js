@@ -1,5 +1,5 @@
 import React from "react";
-import style from "./style/taskStyle.module.css";
+import style from "./style/memTaskStyle.module.css";
 import astrodude from "./img/astronaut.png";
 import withRouter from "./withRouter.js";
 
@@ -222,7 +222,7 @@ class EndPage extends React.Component {
           <br />
           <br />
           If the page fails to be directed to Prolific, please use the
-          compeletion code '<strong>C1LOKV0P</strong>' and send a message to us
+          compeletion code <strong>XXXXXXXXX</strong> and send a message to us
           on Proflic.
         </span>
       </div>

@@ -5,9 +5,9 @@ import * as DrawDotsEx from "./DrawDotsExample";
 import DrawBox from "./DrawBox";
 import * as DrawChoice from "./DrawChoice";
 import * as DrawCorFeedback from "./DrawCorFeedback";
-import style from "./style/taskStyle.module.css";
+import style from "./style/perTaskStyle.module.css";
 import * as utils from "./utils.js";
-import * as staircase from "./staircase.js";
+import * as staircase from "./PerStaircase.js";
 import withRouter from "./withRouter.js";
 import * as ConfSliderEx from "./DrawConfSliderExample.js";
 import astrodude from "./img/astronaut.png";
@@ -24,7 +24,7 @@ import { DATABASE_URL } from "./config";
 // 4) Quiz on instructions
 // 5) If quiz fail once, bring to instructions on confidence, if fail twice, bring to the start of instructions
 
-class MetaPerTut extends React.Component {
+class PerTut extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   // CONSTRUCTOR
   constructor(props) {
@@ -39,12 +39,11 @@ class MetaPerTut extends React.Component {
     const prolificID = this.props.state.prolificID;
     const condition = this.props.state.condition;
     const userID = this.props.state.userID;
-    const userID = this.props.state.userID;
     const date = this.props.state.date;
     const startTime = this.props.state.startTime;
 
     const memCorrectPer = this.props.state.memCorrectPer;
-    const perCorrectPer = this.props.state.perCorrectPer;
+    const perCorrectPer = this.props.state.perCorrectPer; //if perception task is done, it will be filled, else zero
 
     var trialNumTotal = 16; //26
 
@@ -132,7 +131,6 @@ class MetaPerTut extends React.Component {
       taskSection: null,
       debug: false,
 
-      
       memCorrectPer: memCorrectPer,
       perCorrectPer: perCorrectPer,
     };
@@ -507,9 +505,10 @@ class MetaPerTut extends React.Component {
   instructText(instructNum) {
     let text;
     let text2;
+    let taskCond;
 
     //If fail quiz once, this brings me to instruct before confidence
-    if (this.state.quizTry === 2 || this.state.quizTry === 3) {
+    if (this.state.quizTry === 2 && this.state.quizTry === 3) {
       text2 = (
         <span>
           You scored {this.state.quizCorTotal}/{this.state.quizNumTotal} on the
@@ -544,18 +543,36 @@ class MetaPerTut extends React.Component {
       );
     }
 
+    if (this.state.condition === 1) {
+      taskCond = (
+        <span>
+          Welcome to spaceship!
+          <br /> <br />
+          The ship has been damaged with an asteriod hit and we are glad you are
+          here to help.
+          <br />
+          <br />
+          We have found that the spaceship is running low on power.
+        </span>
+      );
+    } else {
+      taskCond = (
+        <span>
+          After we settled the animals, we attempted to restart the spaceship.
+          Unforunately, we have found that it is running low on power!
+        </span>
+      );
+    }
+
     let instruct_text1 = (
       <div>
         <span>
           {text}
-          Welcome to spaceship, engineer!
-          <br /> <br />
-          The ship has been running low on power, and we are glad you are here
-          to help.
-          <br /> <br />
-          As the engineer, we need you to replace the battery cards fueling the
-          spaceship. However, the new battery cards have different charge levels
-          - we need your assistance in selecting the ones with{" "}
+          {taskCond}
+          <br /><br />
+          We need you to replace the battery cards fueling the spaceship.
+          However, the new battery cards have different charge levels - we need
+          your assistance in selecting the ones with{" "}
           <strong>high charge</strong> for use.
           <br /> <br />
           <center>
@@ -1063,7 +1080,7 @@ class MetaPerTut extends React.Component {
           instructNum: 10,
           taskSection: "instruct",
         });
-      } else if (quizCorTotal !== this.state.quizNumTotal && quizTry <= 2) {
+      } else if (quizCorTotal !== this.state.quizNumTotal && quizTry < 4) {
         //if they got one wrong
         //  console.log("FAIL QUIZ");
         quizTry = quizTry + 1;
@@ -1075,7 +1092,7 @@ class MetaPerTut extends React.Component {
           taskSection: "instruct",
           quizTry: quizTry,
         });
-      } else if (quizCorTotal !== this.state.quizNumTotal && quizTry > 2) {
+      } else {
         //if they got more than one wrong
         tutorialTry = tutorialTry + 1;
         //  console.log("FAIL QUIZ");
@@ -1286,7 +1303,7 @@ class MetaPerTut extends React.Component {
   }
 
   renderTutorSave() {
-    var userID = this.state.userID;
+    var prolificID = this.state.prolificID;
 
     let saveString = {
       prolificID: this.state.prolificID,
@@ -1328,7 +1345,7 @@ class MetaPerTut extends React.Component {
     };
 
     try {
-      fetch(`${DATABASE_URL}/tutorial_data/` + prolificID, {
+      fetch(`${DATABASE_URL}/per_tutorial_data/` + prolificID, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -1395,17 +1412,16 @@ class MetaPerTut extends React.Component {
   redirectToNextTask() {
     document.removeEventListener("keyup", this._handleInstructKey);
     document.removeEventListener("keyup", this._handleBeginKey);
-    this.props.navigate("/MetaPerTask?PROLIFIC_PID=" + this.state.prolificID, {
+    this.props.navigate("/PerTask?PROLIFIC_PID=" + this.state.prolificID, {
       state: {
         prolificID: this.state.prolificID,
-        userID: this.state.userID,
         condition: this.state.condition,
         userID: this.state.userID,
         date: this.state.date,
         startTime: this.state.startTime,
         dotStair: this.state.dotStair,
-        perCorrectPer: this.state.perCorrectPer,
         memCorrectPer: this.state.memCorrectPer,
+        perCorrectPer: this.state.perCorrectPer,
       },
     });
 
@@ -1534,4 +1550,4 @@ class MetaPerTut extends React.Component {
 
 //      If I want to disable mouse events to force them to use the keyboard <div style={{ pointerEvents: "none" }}>
 
-export default withRouter(MetaPerTut);
+export default withRouter(PerTut);
