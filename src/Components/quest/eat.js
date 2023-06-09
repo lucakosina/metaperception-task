@@ -77,7 +77,7 @@ export const eat26 = [
       { value: "EAT_23", text: "I engage in dieting behaviour." },
       { value: "EAT_24", text: "I like my stomach to be empty." },
       { value: "EAT_25", text: "I enjoy trying new rich foods." },
-      { value: "EAT_26", text: "I have the impulse to voimit after meals." },
+      { value: "EAT_26", text: "I have the impulse to vomit after meals." },
     ],
   },
 ];

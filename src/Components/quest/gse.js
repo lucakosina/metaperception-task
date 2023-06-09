@@ -43,7 +43,7 @@ export const gse = [
       {
         value: "GSE_7",
         text:
-          "I can remain calm when facing difficulties because I can reply on my coping abilities.",
+          "I can remain calm when facing difficulties because I can rely on my coping abilities.",
       },
       {
         value: "GSE_8",

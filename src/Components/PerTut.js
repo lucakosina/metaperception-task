@@ -569,7 +569,8 @@ class PerTut extends React.Component {
         <span>
           {text}
           {taskCond}
-          <br /><br />
+          <br />
+          <br />
           We need you to replace the battery cards fueling the spaceship.
           However, the new battery cards have different charge levels - we need
           your assistance in selecting the ones with{" "}
@@ -1307,7 +1308,7 @@ class PerTut extends React.Component {
 
     let saveString = {
       prolificID: this.state.prolificID,
-      condition:this.state.condition,
+      condition: this.state.condition,
       userID: this.state.userID,
       date: this.state.date,
       startTime: this.state.startTime,
