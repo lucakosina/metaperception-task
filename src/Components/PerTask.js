@@ -573,8 +573,9 @@ class PerTask extends React.Component {
     let quiz_text1 = (
       <div>
         <center>
-          Before we begin, how well do you think you will be able to select all
-          of the battery cards correctly?
+          Before we begin, out of {this.state.trialNumTotal} set pairs of
+          battery cards, how many times do you think you will choose the higher
+          charge battery card correctly?
         </center>
         <br />
         <br />
@@ -607,8 +608,9 @@ class PerTask extends React.Component {
     let quiz_text2 = (
       <div>
         <center>
-          After going through all the battery cards, how well did you think you
-          selected all the higher charge battery cards correctly?
+          After going through all the {this.state.trialNumTotal} set pairs of
+          battery cards, how many times do you think you selected all the higher
+          charge battery cards correctly?
         </center>
         <br />
         <br />
@@ -646,7 +648,9 @@ class PerTask extends React.Component {
     document.removeEventListener("keyup", this._handleInstructKey);
     document.removeEventListener("keyup", this._handleBeginKey);
     document.addEventListener("keyup", this._handleGlobalConfKey);
-    var initialValue = utils.randomInt(70, 80);
+
+    //randomise the pre-post initial conf value - this has changed to a scale of 0 to 150
+    var initialValue = utils.randomInt(60, 90);
     var confTimeInitial = Math.round(performance.now());
 
     //  console.log("Begining quiz");
@@ -807,8 +811,8 @@ class PerTask extends React.Component {
     var fixTime = Math.round(performance.now()) - this.state.trialTime;
     //  console.log("render stim");
     this.setState({
-      //    instructScreen: false,
-      //    taskScreen: true,
+      instructScreen: false,
+      taskScreen: true,
       taskSection: "stimulus",
       fixTime: fixTime,
     });
@@ -994,8 +998,8 @@ class PerTask extends React.Component {
       section: this.state.section,
       sectionTime: this.state.sectionTime,
       quizState: this.state.quizState,
-      confTimeInitial: this.state.confTimeInitial,
-      confTime: this.state.confTime,
+      //  confTimeInitial: this.state.confTimeInitial,
+      //  confTime: this.state.confTime,
       confInitial: this.state.confInitial,
       confLevel: this.state.confLevel,
     };
