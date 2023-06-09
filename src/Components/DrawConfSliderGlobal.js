@@ -19,28 +19,32 @@ const theme = createTheme({
 
 const marks = [
   {
+    value: 0,
+    label: "0",
+  },
+  {
+    value: 25,
+    label: "25",
+  },
+  {
     value: 50,
-    label: "50%",
+    label: "50",
   },
   {
-    value: 60,
-    label: "60%",
-  },
-  {
-    value: 70,
-    label: "70%",
-  },
-  {
-    value: 80,
-    label: "80%",
-  },
-  {
-    value: 90,
-    label: "90%",
+    value: 75,
+    label: "75",
   },
   {
     value: 100,
-    label: "100%",
+    label: "100",
+  },
+  {
+    value: 125,
+    label: "125",
+  },
+  {
+    value: 150,
+    label: "100",
   },
 ];
 
@@ -62,8 +66,8 @@ export function ConfSliderGlobal({ callBackValue, initialValue }) {
             aria-label="Always visible"
             step={1}
             marks={marks}
-            min={50}
-            max={100}
+            min={0}
+            max={150}
             track={false}
             valueLabelDisplay="on"
             value={value}
@@ -71,8 +75,9 @@ export function ConfSliderGlobal({ callBackValue, initialValue }) {
           />
         </ThemeProvider>
       </Box>
-      <span className={style.confTextLeft}>Chance level</span>
-      <span className={style.confTextRight}>Perfect</span>
+      <span className={style.confTextLeft}>All wrong</span>
+      <span className={style.confTextMiddle}>Chance level</span>
+      <span className={style.confTextRight}>All correct</span>
     </Box>
   );
 }
