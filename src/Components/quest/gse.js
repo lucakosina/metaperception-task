@@ -15,7 +15,7 @@ export const gse = [
       {
         value: "GSE_1",
         text:
-          "I cam always manage to solve difficult problems if I try hard enough.",
+          "I can always manage to solve difficult problems if I try hard enough.",
       },
       {
         value: "GSE_2",
