@@ -497,9 +497,7 @@ class App extends React.Component {
           If the battery on the <strong>right</strong> has higher charge (more
           dots), <strong> press O</strong>.
           <br /> <br />
-          Please respond quickly and to the best of your ability. This time, you{" "}
-          <strong>will not</strong> be told whether your choice was correct or
-          incorrect.
+          Please respond quickly and to the best of your ability.
           <br /> <br />
           <center>
             Use the ← and → keys to navigate the pages.
