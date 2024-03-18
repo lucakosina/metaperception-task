@@ -3,18 +3,12 @@ import { Routes, Route } from "react-router-dom";
 
 
 
-// function App() {
-  // return (
-   
- // );
-// }
-
-
 import React from "react";
 import DrawFix from "./Components/DrawFix";
 import * as DrawDots from "./Components/DrawDots";
 import DrawBox from "./Components/DrawBox";
 import * as DrawChoice from "./Components/DrawChoice";
+// import DrawBlame from "./Components/DrawBlame";
 import style from "./Components/style/perTaskStyle.module.css";
 import * as utils from "./Components/utils.js";
 import * as staircase from "./Components/PerStaircase.js";
@@ -22,6 +16,23 @@ import * as ConfSlider from "./Components/DrawConfSlider.js";
 import * as ConfSliderGlobal from "./Components/DrawConfSliderGlobal.js";
 
 import { DATABASE_URL } from "./Components/config";
+
+/*
+function choosePlayerOrder(PlayerProbs, PlayerProbsOrder, blockNumTotal) {
+  for (let i = 0; i < blockNumTotal; i++) {
+    var randomLevel = Math.random() *3;
+    PlayerProbsOrder[i] = PlayerProbs[randomLevel]; 
+    if (PlayerProbs[randomLevel] !== null) {
+      PlayerProbsOrder[i] = PlayerProbs[randomLevel]; 
+    } else if (PlayerProbs[randomLevel] === null) {
+      choosePlayerOrder(PlayerProbs, PlayerProbsOrder, blockNumTotal);
+    }
+  };
+  return PlayerProbsOrder;
+}
+*/
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -32,6 +43,9 @@ import { DATABASE_URL } from "./Components/config";
 class App extends React.Component {
   //////////////////////////////////////////////////////////////////////////////////////////////
   // CONSTRUCTOR
+
+ 
+
   constructor(props) {
     super(props);
 
@@ -69,8 +83,8 @@ class App extends React.Component {
     var memCorrectPer: 0;
     var perCorrectPer: 0;
 
-    var trialNumTotal = 5; //150
-    var blockNumTotal = 1; //3
+    var trialNumTotal = 15; //150
+    var blockNumTotal = 3; //3
     var trialNumPerBlock = Math.round(trialNumTotal / blockNumTotal);
 
     //the stim position
@@ -79,6 +93,12 @@ class App extends React.Component {
       .concat(Array(Math.round(trialNumTotal / 2)).fill(2));
     utils.shuffle(stimPos);
 
+    var PlayerProbs = [[0.2, 0.6, 0.8], [0.2, 0.8, 0.6], [0.6, 0.2, 0.8], [0.6, 0.8, 0.2], [0.8, 0.6, 0.2],[0.8, 0.2, 0.6]]; 
+
+    var PlayerProbsOrder = PlayerProbs[Math.floor(Math.random() * 7)];
+
+
+    
     //////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////////////////////////////////////////////////////////////////
     // SET STATES
@@ -95,7 +115,7 @@ class App extends React.Component {
       // trial timings in ms
       fixTimeLag: 1000, //1000
       stimTimeLag: 300, //300
-      respFbTimeLag: 700,
+      respFbTimeLag: 3000,
 
       //trial parameters
       trialNumTotal: trialNumTotal,
@@ -119,15 +139,20 @@ class App extends React.Component {
       responseKey: 0,
       respTime: 0,
       respFbTime: 0,
+      blameTime: 0, 
       choice: null,
       confLevel: null,
+      blameLevel: null,
       confTimeInitial: null, //this is for the global conf time
       confTime: 0,
       confInitial: null,
+      blame: null,
       //    confMove: null, //can only move to next trial if conf was toggled
       correct: null,
       correctMat: [], //put correct in vector, to cal perf %
       correctPer: 0,
+
+      PlayerProbsOrder: PlayerProbsOrder,
 
       //dot paramters
       dotRadius: 5,
@@ -172,12 +197,17 @@ class App extends React.Component {
     this.handleBegin = this.handleBegin.bind(this);
     this.handleResp = this.handleResp.bind(this);
     this.handleConfResp = this.handleConfResp.bind(this);
+    this.handleBlame = this.handleBlame.bind(this);
     this.instructText = this.instructText.bind(this);
     this.quizText = this.quizText.bind(this);
     //////////////////////////////////////////////////////////////////////////////////////////////
     //End constructor props
   }
 
+
+
+
+  
   handleDebugKey(pressed) {
     var whichButton = pressed;
 
@@ -210,10 +240,10 @@ class App extends React.Component {
     var curInstructNum = this.state.instructNum;
     var whichButton = keyPressed;
 
-    if (whichButton === 1 && curInstructNum === 2) {
+    if ((whichButton === 1 && curInstructNum === 2) || (whichButton === 1 && curInstructNum === 3)) {
       // from page 2 , I can move back a page
       this.setState({ instructNum: curInstructNum - 1 });
-    } else if (whichButton === 2 && curInstructNum === 1) {
+    } else if ((whichButton === 2 && curInstructNum === 1) || (whichButton === 2 && curInstructNum === 2)) {
       // from page 1 , I can move forward a page
       this.setState({ instructNum: curInstructNum + 1 });
     }
@@ -222,7 +252,7 @@ class App extends React.Component {
   handleBegin(keyPressed) {
     var curInstructNum = this.state.instructNum;
     var whichButton = keyPressed;
-    if (whichButton === 3 && curInstructNum === 2) {
+    if (whichButton === 3 && curInstructNum === 3) {
       this.setState({
         quizState: "pre",
       });
@@ -234,7 +264,7 @@ class App extends React.Component {
         }.bind(this),
         10
       );
-    } else if (whichButton === 3 && curInstructNum === 3) {
+    } else if (whichButton === 3 && curInstructNum === 4) {
       // continue after a block break
       var blockNum = this.state.blockNum + 1;
       this.setState({
@@ -251,7 +281,7 @@ class App extends React.Component {
         }.bind(this),
         10
       );
-    } else if (whichButton === 3 && curInstructNum === 4) {
+    } else if (whichButton === 3 && curInstructNum === 5) {
       this.setState({
         quizState: "post",
       });
@@ -262,7 +292,7 @@ class App extends React.Component {
         }.bind(this),
         10
       );
-    } else if (whichButton === 3 && curInstructNum === 5) {
+    } else if (whichButton === 3 && curInstructNum === 6) {
       setTimeout(
         function () {
           this.redirectToNextTask();
@@ -332,6 +362,45 @@ class App extends React.Component {
     var correctPer =
       Math.round((utils.getAvg(correctMat) + Number.EPSILON) * 100) / 100; //2 dec pl
 
+
+
+
+
+    var PlayerSuccess = this.state.PlayerProbsOrder[this.state.blockNum-1];
+      
+    console.log(this.state.PlayerProbsOrder);
+
+    console.log(PlayerSuccess);
+
+    const results = [];
+
+
+    for (let i = 0; i < this.state.trialNumPerBlock; i++) {
+        
+        const randomValue = Math.random();
+
+        if (randomValue < PlayerSuccess) {
+            results.push(1);
+        } else {
+            results.push(0);
+        }
+    }
+
+    console.log(results);
+
+
+    var blame; 
+    if (correct === 1 && results[this.state.trialNumInBlock-1] === 1) {
+      blame = 1;
+    } else if (correct === 0 && results[this.state.trialNumInBlock-1] === 0) {
+      blame = 2; 
+    } else if ((correct === 0 && results[this.state.trialNumInBlock-1] === 1) || (correct === 1 && results[this.state.trialNumInBlock-1] === 0)) {
+      blame = 3;
+    };
+
+    console.log(blame);
+
+
     this.setState({
       responseKey: keyPressed,
       choice: choice,
@@ -340,6 +409,7 @@ class App extends React.Component {
       responseMatrix: responseMatrix,
       correctMat: correctMat,
       correctPer: correctPer,
+      blame: blame,
     });
 
     setTimeout(
@@ -364,18 +434,52 @@ class App extends React.Component {
             this.state.respFbTime,
         ];
 
+
+    
       this.setState({
         confTime: confTime,
+
       });
 
       setTimeout(
         function () {
-          this.renderTaskSave();
+          this.renderBlame();
         }.bind(this),
-        10
+        0
       );
     }
   }
+
+  handleBlame(keyPressed, timePressed) {
+    var whichButton = keyPressed; 
+
+    if  (whichButton === 3 && this.state.blameLevel !== null) {
+      var blameTime = timePressed - [
+        this.state.trialTime +
+            this.state.fixTime +
+            this.state.stimTime +
+            this.state.respTime +
+            this.state.respFbTime +
+            this.state.confTime,
+        ];
+
+        this.setState({
+          blameTime: blameTime,
+
+
+        });
+  
+        setTimeout(
+          function () {
+            this.renderTaskSave();
+          }.bind(this),
+          10
+        );
+    }
+  }
+
+
+
 
   // handle key keyPressed
   _handleInstructKey = (event) => {
@@ -468,6 +572,23 @@ class App extends React.Component {
     }
   };
 
+  _handleBlameKey = (event) => {
+    var keyPressed;
+    var timePressed;
+
+
+    switch (event.keyCode) {
+      case 32:
+        //    this is enter
+        keyPressed = 3;
+        timePressed = Math.round(performance.now());
+        this.handleBlame(keyPressed, timePressed);
+        break;
+      default:
+    }
+  };
+
+
   handleCallbackConf(callBackValue) {
     this.setState({ confLevel: callBackValue });
     //  console.log("Confidence is: " + callBackValue);
@@ -477,6 +598,14 @@ class App extends React.Component {
     //}
   }
 
+  handleCallbackBlame(callBackValue) {
+    this.setState({ blameLevel: callBackValue });
+    //  console.log("Confidence is: " + callBackValue);
+
+    //  if (this.state.confLevel !== null) {
+    //    this.setState({ confMove: true });
+    //}
+  }
   // To ask them for the valence rating of the noises
   // before we start the task
   instructText(instructNum) {
@@ -497,7 +626,7 @@ class App extends React.Component {
           If the battery on the <strong>right</strong> has higher charge (more
           dots), <strong> press O</strong>.
           <br /> <br />
-          Please respond quickly and to the best of your ability.
+          Please respond quickly and to the best of your ability. 
           <br /> <br />
           <center>
             Use the ← and → keys to navigate the pages.
@@ -507,6 +636,7 @@ class App extends React.Component {
         </span>
       </div>
     );
+
 
     let instruct_text2 = (
       <div>
@@ -520,6 +650,29 @@ class App extends React.Component {
           You will not be allowed to move on to the next set of batteries if you
           do not adjust the rating scale.
           <br /> <br />
+          <center>
+            Use the ← and → keys to navigate the pages.
+            <br />
+            <br />[<strong>→</strong>]
+          </center>
+        </span>
+      </div>
+    );
+
+    let instruct_text3 = (
+      <div>
+        <span>
+          While you choose we match your results with another players. 
+          
+          <br /> <br /> 
+          Only if both of you choose the right card you will win the round and the battery will be charged. 
+          <br /> <br />
+          If only one of you chooses the right card the battery will not be charged. 
+          Also, if none chooses the right card, you both receive no points.
+          <br /> <br />
+          After every round you will receive feedback if both of you got it right/wrong or if one of you chose the wrong card.
+          You will not find out who has chosen wrongly but instead will have to rate your opinion who is to blame. 
+          <br /> <br />
           If you do well in the task, you can receive up to{" "}
           <strong>£2 bonus</strong>!
           <br /> <br />
@@ -529,11 +682,13 @@ class App extends React.Component {
             <br />
             <br />[<strong>←</strong>]
           </center>
+         
         </span>
       </div>
-    );
+    )
 
-    let instruct_text3 = (
+
+    let instruct_text4 = (
       <div>
         <span>
           You have completed {this.state.blockNum} out of{" "}
@@ -551,7 +706,7 @@ class App extends React.Component {
       </div>
     );
 
-    let instruct_text4 = (
+    let instruct_text5 = (
       <div>
         <span>
           Amazing!
@@ -567,7 +722,7 @@ class App extends React.Component {
       </div>
     );
 
-    let instruct_text5 = (
+    let instruct_text6 = (
       <div>
         <span>
           Whew! Our spaceship power is now back to a good level, thanks to the
@@ -592,6 +747,8 @@ class App extends React.Component {
         return <div>{instruct_text4}</div>;
       case 5:
         return <div>{instruct_text5}</div>;
+      case 6:
+        return <div>{instruct_text6}</div>;
       default:
     }
   }
@@ -714,7 +871,7 @@ class App extends React.Component {
       instructScreen: true,
       taskScreen: false,
       quizScreen: false,
-      instructNum: 4,
+      instructNum: 5,
       taskSection: null,
     });
   }
@@ -908,11 +1065,36 @@ class App extends React.Component {
       respFbTime: respFbTime,
     });
 
+   
+
     // it will deploy the next trial with spacebar keypress
   }
 
+  renderBlame() {
+    document.addEventListener("keyup", this._handleBlameKey);
+
+    var initialValue = utils.randomInt(40, 80);
+
+    var blameTime = 
+      Math.round(performance.now()) -
+      [
+        this.state.trialTime +
+          this.state.fixTime +
+          this.state.stimTime +
+          this.state.respTime +
+          this.state.respFbTime,
+      ];
+
+      this.setState({
+        taskSection: "blame",
+        blameInitial: initialValue,
+        blameTime: blameTime,
+      });
+
+  }
+
   renderTaskSave() {
-    document.removeEventListener("keyup", this._handleConfRespKey);
+    document.removeEventListener("keyup", this._handleBlameKey); //_handleConfRespKey
 
     //  console.log("trialNumInBlock Save: " + this.state.trialNumInBlock);
 
@@ -940,9 +1122,11 @@ class App extends React.Component {
       responseKey: this.state.responseKey,
       respTime: this.state.respTime,
       respFbTime: this.state.respFbTime,
+      blameTime: this.state.blameTime,
       choice: this.state.choice,
       confInitial: this.state.confInitial,
       confLevel: this.state.confLevel,
+      blameLevel: this.state.blameLevel, 
       confTime: this.state.confTime,
       correct: this.state.correct,
       correctMat: this.state.correctMat,
@@ -1059,7 +1243,7 @@ class App extends React.Component {
         instructScreen: true,
         taskScreen: false,
         quizScreen: false,
-        instructNum: 5,
+        instructNum: 5, //4
         taskSection: null,
       });
     }
@@ -1068,7 +1252,7 @@ class App extends React.Component {
   restBlock() {
     this.setState({
       instructScreen: true,
-      instructNum: 3,
+      instructNum: 4, //3
       taskScreen: false,
       taskSection: "break",
     });
@@ -1195,7 +1379,7 @@ class App extends React.Component {
           <div>
             <center>
               Rate your confidence on the probability that your choice was
-              correct:
+              correct. 
             </center>
             <br />
             <br />
@@ -1220,10 +1404,73 @@ class App extends React.Component {
             </center>
           </div>
         );
-      } else {
-        console.log("ERROR CAN'T FIND THE RIGHT PAGE");
-        return null;
-      }
+      } else if (
+        this.state.instructScreen === false &&
+        this.state.quizScreen === false &&
+        this.state.taskScreen === true &&
+        this.state.taskSection === "blame"
+      )
+      {
+        if (this.state.blame === 1) {
+          console.log("here 1");
+          this.state.blameLevel = 200;
+          text = (<div>
+            <center>
+                You both got it right and the card will charge the battery. 
+              </center>
+              <br />
+              <br />
+              <br />
+              <center>
+                Press [SPACEBAR] to continue.
+                <br />
+              </center>
+              </div> 
+          );
+
+        } else if (this.state.blame === 2) {
+          console.log("here 2");
+          this.state.blameLevel = 200;
+          text = (<div>
+            <center>
+                You both got it wrong and the card will NOT charge the battery. 
+              </center>
+              <br />
+              <br />
+              <br />
+              <center>
+                Press [SPACEBAR] to continue.
+                <br />
+              </center>
+              </div> 
+          );
+
+        } else if (this.state.blame === 3) {
+          console.log("here 3");
+          text = (
+            <div>
+              <center>
+              One of you has chosen the wrong card. 
+              Rate how likely it is that you or the other player got it wrong. 
+              If you think your choice was correct and the other player was wrong move the slider to the right. 
+              If you think your choice was wrong and the other player was right move the slider to the left. 
+              </center>
+              <br />
+              <br />
+              <br />
+              <center>
+                <ConfSlider.ConfSlider
+                  callBackValue={this.handleCallbackBlame.bind(this)} //callBackValue={this.handleCallbackBlame.bind(this)}
+                  initialValue={this.state.blameInitial} //                  initialValue={this.state.blameInitial}
+                />
+              </center>
+              <br />
+              <br />
+            </div>
+          );         
+
+        }
+        
     } else if (this.state.debug === true) {
       document.addEventListener("keyup", this._handleDebugKey);
       text = (
@@ -1237,6 +1484,9 @@ class App extends React.Component {
           </p>
         </div>
       );
+    } else {
+      console.log("ERROR CAN'T FIND THE RIGHT PAGE");
+      return null;
     }
 
     return (
@@ -1247,6 +1497,7 @@ class App extends React.Component {
       </div>
     );
   }
+}
 }
 
 export default App;
