@@ -93,7 +93,7 @@ class App extends React.Component {
       .concat(Array(Math.round(trialNumTotal / 2)).fill(2));
     utils.shuffle(stimPos);
 
-    var PlayerProbs = [[0.2, 0.6, 0.8], [0.2, 0.8, 0.6], [0.6, 0.2, 0.8], [0.6, 0.8, 0.2], [0.8, 0.6, 0.2],[0.8, 0.2, 0.6]]; 
+    var PlayerProbs = [[0.2, 0.5, 0.8], [0.2, 0.8, 0.5], [0.5, 0.2, 0.8], [0.5, 0.8, 0.2], [0.8, 0.5, 0.2],[0.8, 0.2, 0.5]]; 
 
     var PlayerProbsOrder = PlayerProbs[Math.floor(Math.random() * 7)];
 
