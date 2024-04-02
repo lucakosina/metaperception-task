@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Slider from "@mui/material/Slider";
@@ -19,24 +20,24 @@ const theme = createTheme({
 
 const marks = [
   {
-    value: 50,
-    label: "50%",
+    value: 0,
+    label: "0%",
+  },
+  {
+    value: 20,
+    label: "20%",
+  },
+  {
+    value: 40,
+    label: "40%",
   },
   {
     value: 60,
     label: "60%",
   },
   {
-    value: 70,
-    label: "70%",
-  },
-  {
     value: 80,
     label: "80%",
-  },
-  {
-    value: 90,
-    label: "90%",
   },
   {
     value: 100,
