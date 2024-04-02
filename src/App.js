@@ -719,6 +719,7 @@ class App extends React.Component {
         <br/>
         <strong>Whether only one person got it wrong (0)</strong>
         <br/> 
+        <br/>
         If only one person got it wrong, you will have to rate the probability that you or Player Z got it wrong. 
         Please do your best to select your rating accurately and do take advantage of the whole length of the rating scale.
         You will not be allowed to move on to the next set of batteries if you do not adjust the rating scale.
