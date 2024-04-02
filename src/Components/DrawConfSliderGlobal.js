@@ -59,7 +59,7 @@ export function ConfSliderGlobal({ callBackValue, initialValue }) {
             step={1}
             marks={marks}
             min={0}
-            max={150}
+            max={100}
             track={false}
             valueLabelDisplay="on"
             value={value}
