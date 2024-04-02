@@ -59,7 +59,7 @@ export function BlameSlider({ callBackValue, initialValue }) {
             aria-label="Always visible"
             step={1}
             marks={marks}
-            min={50}
+            min={0}
             max={100}
             track={false}
             valueLabelDisplay="on"
