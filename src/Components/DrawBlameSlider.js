@@ -24,20 +24,16 @@ const marks = [
     label: "0%",
   },
   {
-    value: 20,
-    label: "20%",
+    value: 25,
+    label: "25%",
   },
   {
-    value: 40,
-    label: "40%",
+    value: 50,
+    label: "50%",
   },
   {
-    value: 60,
-    label: "60%",
-  },
-  {
-    value: 80,
-    label: "80%",
+    value: 75,
+    label: "75%",
   },
   {
     value: 100,
