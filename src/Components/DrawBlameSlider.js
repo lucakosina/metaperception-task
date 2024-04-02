@@ -68,9 +68,9 @@ export function BlameSlider({ callBackValue, initialValue }) {
           />
         </ThemeProvider>
       </Box>
-      <span className={style.confTextLeft}>I am 100% wrong</span>
+      <span className={style.confTextLeft}>I am wrong</span>
       <span className={style.confTextMiddle}>Unsure</span>
-      <span className={style.confTextRight}>Player Z is 100% wrong</span>
+      <span className={style.confTextRight}>Player Z is wrong</span>
     </Box>
   );
 }
