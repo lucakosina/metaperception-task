@@ -38,14 +38,6 @@ const marks = [
     value: 100,
     label: "100",
   },
-  {
-    value: 125,
-    label: "125",
-  },
-  {
-    value: 150,
-    label: "100",
-  },
 ];
 
 export function ConfSliderGlobal({ callBackValue, initialValue }) {
