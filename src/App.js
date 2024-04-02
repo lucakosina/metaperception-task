@@ -709,17 +709,19 @@ class App extends React.Component {
       <div>
         <span>
         Also, remember that we will be pairing your performance with Player Z. After you rate your confidence, you will be shown the following feedback:
-        <br/>
-        <br/>
-        <strong>Whether you’re both correct (+1)</strong>
-        <br/>
-        <br/>
-        <strong>Whether you’re both wrong (-1)</strong>
-        <br/>
-        <br/>
-        <strong>Whether only one person got it wrong (0)</strong>
-        <br/> 
-        <br/>
+      <center>
+          <br/>
+          <br/>
+          <strong>Whether you’re both correct (+1)</strong>
+          <br/>
+          <br/>
+          <strong>Whether you’re both wrong (-1)</strong>
+          <br/>
+          <br/>
+          <strong>Whether only one person got it wrong (0)</strong>
+          <br/> 
+          <br/>
+      </center>
         If only one person got it wrong, you will have to rate the probability that you or Player Z got it wrong. 
         Please do your best to select your rating accurately and do take advantage of the whole length of the rating scale.
         You will not be allowed to move on to the next set of batteries if you do not adjust the rating scale.
@@ -743,6 +745,7 @@ class App extends React.Component {
           <br />
           <br />
           You will now be taken to a page where you can take a break. But first answer the following question:
+          <br/>
           <br/>
           After going through the previous {this.state.trialNumInBlock} pairs of battery cards how often do you think you chose correctly compared to Player Z?<br />
           <br />
