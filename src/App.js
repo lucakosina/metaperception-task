@@ -709,11 +709,14 @@ class App extends React.Component {
       <div>
         <span>
         Also, remember that we will be pairing your performance with Player Z. After you rate your confidence, you will be shown the following feedback:
-        <br/> 
+        <br/>
+        <br/>
         <strong>Whether you’re both correct (+1)</strong>
-        <br/> 
+        <br/>
+        <br/>
         <strong>Whether you’re both wrong (-1)</strong>
-        <br/> 
+        <br/>
+        <br/>
         <strong>Whether only one person got it wrong (0)</strong>
         <br/> 
         If only one person got it wrong, you will have to rate the probability that you or Player Z got it wrong. 
